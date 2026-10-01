@@ -317,7 +317,7 @@ function qnFilter(){ return {obligfldcd:S.ans.qnField||[],seriescd:S.ans.qnSerie
 const COOK_STEPS=[['📮','채용공고 모으는 중'],['📜','자격증 정보 모으는 중'],['🔗','공고와 자격 연결'],['🍽️','코스 플레이팅']];
 function scCook(){
   $('scr').innerHTML=`<div class="splash cook">
-    <div class="sp-stage small">${capSvg(CAP_OF[S.force]||'helmet')}<div class="flame"><i></i><i></i><i></i></div></div>
+    <div class="sp-stage small">${capSvg('helmet')}<div class="flame"><i></i><i></i><i></i></div></div>
     <div class="anlt"><b id="apct">0%</b><span>당신의 군생활을 요리하는 중</span></div>
     <div class="abar"><i id="abar"></i></div>
     <div class="asteps">${COOK_STEPS.map(s=>`<div class="astep"><span class="ai">${s[0]}</span><span class="an">${s[1]}</span><span class="ac"></span></div>`).join('')}</div></div>`;
@@ -326,12 +326,13 @@ function scCook(){
     const p=Math.min(1,(t-t0)/T),e=1-Math.pow(1-p,2.2);
     $('abar').style.width=e*100+'%';$('apct').textContent=Math.round(e*100)+'%';
     document.querySelectorAll('.astep').forEach((s,i)=>{s.classList.toggle('doing',e>=i/N&&e<(i+1)/N);s.classList.toggle('done',e>=(i+1)/N);});
-    if(p<1) requestAnimationFrame(tk); else setTimeout(()=>{S.res=cookResult();go('result',{tab:'course',page:0});},300);
+    if(p<1) requestAnimationFrame(tk); else setTimeout(()=>{S.res=cookResult();go('result',{tab:S.plan==='school'?'post':'course',page:0,target:null,cslide:0});},300);
   })(t0);
 }
 
 /* ═══ 결과 계산 — 두 API 응답 결합 ═══ */
 const AREA_NAME=Object.fromEntries(JK_AREA1);
+function jtLabel(g){ return String(g.job_type_label||'').split(',').filter(t=>t&&t!=='0').join(',')||'미기재'; }
 function payText(g){
   const [a,b]=String(g.GI_Pay_Term||'0,0').split(',').map(Number), r=b&&b!==a?`${won(a)}~${won(b)}`:won(a);
   switch(+g.GI_Pay){case 1:return `연봉 ${r}만원`;case 2:return `월급 ${r}만원`;case 5:return `시급 ${r}원`;case 4:return `일급 ${r}원`;case 6:return `건별 ${r}원`;}
@@ -371,8 +372,10 @@ function cookResult(){
 function scResult(){
   const R=S.res;
   $('scr').innerHTML=`<div class="seg" style="margin-top:4px">
-      <button class="${S.tab==='course'?'on':''}" data-t="course">코스</button>
-      <button class="${S.tab==='post'?'on':''}" data-t="post">채용공고<em>${R.total>99?'99+':R.total}</em></button>
+      ${S.plan==='school'?`<button class="${S.tab==='post'?'on':''}" data-t="post">① 목표 공고<em>${R.total>99?'99+':R.total}</em></button>
+      <button class="${S.tab==='course'?'on':''}" data-t="course">② 나의 코스</button>`
+      :`<button class="${S.tab==='course'?'on':''}" data-t="course">코스</button>
+      <button class="${S.tab==='post'?'on':''}" data-t="post">채용공고<em>${R.total>99?'99+':R.total}</em></button>`}
       <button class="${S.tab==='cert'?'on':''}" data-t="cert">자격증<em>${R.certs.length}</em></button></div>
     <div id="rbody" class="rbody"></div>`;
   document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{haptic();S.tab=b.dataset.t;S.page=0;render();});
@@ -380,7 +383,7 @@ function scResult(){
   ({course:resCourse,post:resPost,cert:resCert})[S.tab]($('rbody'));
   $('cta').innerHTML=`<div class="btn-row"><button class="btn sub" id="again" style="flex:0 0 104px">다시 요리</button><button class="btn" id="inv">📤 선후임에게 공유하기</button></div>`;
   $('inv').onclick=openInvite;
-  $('again').onclick=()=>{haptic();Object.assign(S,{partied:false,plan:null,cslide:0,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
+  $('again').onclick=()=>{haptic();Object.assign(S,{partied:false,plan:null,cslide:0,target:null,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
 }
 function resSum(box){
   const R=S.res, tc=R.certs.filter(c=>c.need).slice(0,3), ok=R.certs.filter(c=>c.el.ok).length;
@@ -408,12 +411,13 @@ function certRow(c){
 }
 function resPost(box){
   const R=S.res;
-  box.innerHTML=`<div class="fgrid one" id="pg" data-swipe-pager="ppg"></div><div id="ppg"></div>`;
+  box.innerHTML=`${S.plan==='school'?`<div class="pickh"><b>🎯 졸업 후 지원할 목표 공고를 골라주세요</b><span>고른 공고에 맞춰 복학 기간 동안의 자격 코스를 짜드려요</span></div>`:''}
+    <div class="fgrid one" id="pg" data-swipe-pager="ppg"></div><div id="ppg"></div>`;
   box.className='rbody col';
   if(!R.posts.length){$('pg').innerHTML='<div class="empty">조건에 맞는 공고가 없어요. 다시 요리하며 답을 바꿔보세요.</div>';return;}
   requestAnimationFrame(()=>{
     const r=fillPaged($('pg'),R.posts.length,86,S.page,i=>{const p=R.posts[i];
-      return `<button class="post2" data-i="${i}"><span class="co">${esc(p.co)}${/전역|군필|병역|제대/.test(p.title+p.g.GI_Keyword)?' · 🎖️군필 우대':''}</span>
+      return `<button class="post2 ${S.target===i?'tgt':''}" data-i="${i}">${S.target===i?'<i class="tgtb">🎯 목표</i>':''}<span class="co">${esc(p.co)}${/전역|군필|병역|제대/.test(p.title+p.g.GI_Keyword)?' · 🎖️군필 우대':''}</span>
         <b class="ti">${esc(p.title)}</b>
         <span class="mt">${esc(p.area)} · ${esc(p.g.career_label||JK_CAREER[+p.g.GI_Career]||'')} · ${esc(p.pay)} · ${p.dday==null?'상시':p.dday<=0?'<em>오늘 마감</em>':`<em>D-${p.dday}</em>`}</span>
         <span class="cc">${p.certs.slice(0,3).map(c=>`<i class="${eligibility(c).ok?'ok':''}">📜 ${esc(c.jmfldnm)}</i>`).join('')||'<i class="none">연결된 자격 없음</i>'}</span></button>`;},1);
@@ -438,14 +442,14 @@ function openPost(p){
   openSheet(`<div class="sbody">
     <div style="font-size:12.5px;color:var(--g500);font-weight:600">${esc(p.co)}${p.job?' · '+p.job[2]:''}</div>
     <h3 style="margin-top:2px">${esc(p.title)}</h3>
-    <div class="meta"><b>📍 ${esc(p.area)}</b><b>${esc(g.job_type_label||'')}</b><b>${esc(g.career_label||'')}${g.GI_Career==='2'&&+g.GI_Career_Year_Cnt?` ${g.GI_Career_Year_Cnt}년↑`:''}</b>
+    <div class="meta"><b>📍 ${esc(p.area)}</b><b>${esc(jtLabel(g))}</b><b>${esc(g.career_label||'')}${g.GI_Career==='2'&&+g.GI_Career_Year_Cnt?` ${g.GI_Career_Year_Cnt}년↑`:''}</b>
       <b>🎓 ${esc(g.edu_label||'학력무관')}</b><b>💰 ${esc(p.pay)}</b><b class="${p.dday!=null&&p.dday<=7?'warn':''}">⏰ ${p.dday==null?'상시':p.dday<=0?'오늘 마감':'D-'+p.dday}</b></div>
     ${g.GI_Keyword?`<div class="tags">${g.GI_Keyword.split(',').slice(0,8).map(t=>`<i>#${esc(t.trim())}</i>`).join('')}</div>`:''}
     <div class="sec" style="margin-top:14px">이 공고와 연결된 자격</div>
     ${p.certs.length?p.certs.map(c=>certRow({it:c,need:0,el:eligibility(c)})).join(''):'<p class="fine">연결된 자격이 없어요.</p>'}
     <p class="fine">자격은 공고 제목·키워드·직무로 연결했어요. 실제 우대 조건은 원문에서 확인하세요.<br>출처 잡코리아 · 채용기업과 잡코리아의 동의 없이 무단 전재·재배포할 수 없어요.</p>
-  </div><div class="sfoot"><button class="btn sub sm" id="sc" style="flex:0 0 90px">닫기</button>${p.url?`<a class="btn sm" href="${esc(p.url)}" target="_blank" rel="noopener">공고 원문 보기 ↗</a>`:''}</div>`,sh=>{
-    $('sc').onclick=closeSheet; sh.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>openCert(b.dataset.j));});
+  </div><div class="sfoot">${p.url?`<a class="btn sub sm" href="${esc(p.url)}" target="_blank" rel="noopener" style="flex:0 0 112px">원문 보기 ↗</a>`:''}<button class="btn sm" id="sc">🎯 이 공고로 내 코스 짜기</button></div>`,sh=>{
+    $('sc').onclick=()=>{haptic();const i=S.res.posts.indexOf(p);closeSheet();S.target=i<0?null:i;S.tab='course';S.cslide=0;slide(1,render);}; sh.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>openCert(b.dataset.j));});
 }
 const SERIES_INFO={'05':'기초 기능을 익히는 입문 자격이에요. 학력·경력 제한 없이 누구나 응시할 수 있어요.',
   '04':'기초 이론과 숙련 기능을 함께 보는 자격이에요. 관련학과 전문대 이상이거나 실무 경력이 있으면 응시할 수 있어요.',
@@ -540,7 +544,11 @@ function certWhen(c){
   return '경력 쌓은 뒤';
 }
 function resCourse(box){
-  const R=S.res, A=analyzeCourse(R), menu=resMenu(), road=courseItems();
+  const R=S.res;
+  if(S.target!=null&&R.posts[S.target]) return resCourseTarget(box,R.posts[S.target]);
+  if(S.plan==='school'){ box.className='rbody col'; box.innerHTML=`<div class="empty pick0"><span>🎯</span><b>먼저 목표 공고를 골라주세요</b><small>공고에 맞춰 복학 기간의 자격 코스를 짜드려요</small><button class="btn sm" id="gopost">목표 공고 고르기</button></div>`;
+    $('gopost').onclick=()=>{haptic();S.tab='post';render();}; return; }
+  const A=analyzeCourse(R), menu=resMenu(), road=courseItems();
   box.className='rbody col course2';
   const bar=A.edu.map(([l,v],i)=>v?`<i class="e${i}" style="flex:${v}" title="${l} ${v}%"></i>`:'').join('');
   const cards=[
@@ -582,6 +590,64 @@ function resCourse(box){
   box.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>openCardSheet(b.dataset.card));
   if($('tp')) $('tp').onclick=()=>{haptic();openPost(A.top);};
 }
+
+/* ── 목표 공고 1건 기준 코스 (복학) ── */
+function roadFor(certs){
+  const fld=(certs.find(c=>c.obligfldcd)||{}).obligfldcd||courseField();
+  return ['05','04','03'].map(sc=>certs.find(x=>x.obligfldcd===fld&&x.seriescd===sc)||QNET_ITEMS.find(x=>x.obligfldcd===fld&&x.seriescd===sc)).filter(Boolean).slice(0,3);
+}
+function resCourseTarget(box,p){
+  const g=p.g, myEdu=eduCode(effEdu()), needEdu=+g.GI_EDU_CutLine;
+  const eduOk=[0,255].includes(needEdu)||needEdu<=myEdu, newOk=['1','3','4'].includes(g.GI_Career);
+  const vet=VET_RX.test(p.title+' '+g.GI_Keyword);
+  const tags=String(g.GI_Keyword||'').split(',').map(t=>t.trim()).filter(t=>t&&!TAG_STOP.has(t)).slice(0,10);
+  const rb=p.job?p.job[1]:(g.parts.map(x=>RB_OF_PART[x]).find(Boolean)||(S.ans.rbcd2||[])[0]||'10027');
+  const proc=PROC[rb]||PROC['10027'], found=PROC_HINT.filter(([rx])=>rx.test(p.title+' '+g.GI_Keyword)).map(([,l])=>l);
+  const certs=p.certs.length?p.certs:R0certs(), road=roadFor(certs);
+  const lineup=[...new Map([...road,...certs].map(c=>[c.jmcd,c])).values()].slice(0,5);
+  const when=c=>{const e=eligibility(c); if(c.seriescd==='05'||c.qualgbcd==='S') return e.ok?['복학 1학기','now']:['요건 확인','no'];
+    return e.ok?(c.seriescd==='04'?['복학 2~3학기','mid']:['졸업 학기','end']):['입사 후 경력','no'];};
+  const myEduName=EDU5.find(x=>x[0]===effEdu())?.[1]||'-';
+  const row=(k,need,mine,ok)=>`<div class="req ${ok?'ok':'no'}"><span>${k}</span><b>${need}</b><em>${ok?'✓ 충족':'✕ 준비 필요'}</em>${mine?`<small>나: ${mine}</small>`:''}</div>`;
+  const cards=[
+    ['📋','공고 지원 자격',`${row('학력',esc(g.edu_label||'학력무관'),`졸업 후 ${esc(myEduName)}`,eduOk)}
+      ${row('경력',esc(g.career_label||'-')+(g.GI_Career==='2'&&+g.GI_Career_Year_Cnt?` ${g.GI_Career_Year_Cnt}년↑`:''),'신입(졸업 예정)',newOk)}
+      <div class="kv2"><span>고용 형태</span><b>${esc(jtLabel(g))}</b></div>
+      <div class="kv2"><span>근무지 · 급여</span><b>${esc(p.area)} · ${esc(p.pay)}</b></div>
+      <div class="kv2 hi"><span>🎖️ 군필·전역 우대</span><b>${vet?'공고에 언급 있음':'언급 없음'}</b></div>`],
+    ['📜','이 공고에 맞출 자격',`<div class="road3 mini">${road.map((x,i)=>{const e=eligibility(x);return `<button class="rd ${e.ok?'ok':''}" data-j="${x.jmcd}"><i>${COURSE[i][0]} ${COURSE[i][1]}</i><b>${esc(x.jmfldnm)}</b><span>${e.ok?'✓ ':''}${e.t}</span></button>`;}).join('<em>→</em>')}</div>
+      <div class="clist">${lineup.map(c=>{const w=when(c);return `<button class="cl2" data-j="${c.jmcd}"><b>${esc(c.jmfldnm)}</b><span>${p.certs.some(x=>x.jmcd===c.jmcd)?'이 공고와 연결된 자격':'같은 분야 단계 자격'}</span><em class="${w[1]==='no'?'no':'ok'}">${w[0]}</em></button>`;}).join('')}</div>`],
+    ['✨','우대 역량 키워드',`<div class="tcloud">${tags.map((t,i)=>`<span style="--w:${Math.max(.85,1.2-i*.04)}">#${esc(t)}</span>`).join('')||'<p class="fine">공고에 키워드 태그가 없어요. 원문에서 우대사항을 확인하세요.</p>'}</div>
+      <p class="fine">공고의 키워드 태그예요. 복학 기간에 수업·프로젝트로 하나씩 채워보세요.</p>`],
+    ['🧭','채용 프로세스',`<ol class="proc">${proc.map((s,i)=>`<li><b>${i+1}</b><span>${esc(s)}</span>${found.some(f=>s.includes(f.split('·')[0]))?'<em>공고 확인</em>':''}</li>`).join('')}</ol>
+      <p class="fine">${esc(JK_RB[rb]||'')} 직무의 일반 전형${found.length?` · 공고 문구에서 찾은 단계: <b>${found.join(' · ')}</b>`:''}. 정확한 절차는 원문에서 확인하세요.</p>`],
+    ['🗓️','나의 코스',`<ol class="tl">
+      <li class="done"><b>군 복무</b><span>${esc(S.force)} ${esc(mosLabel())} · ${months()}개월 — 자소서에 쓸 경험 정리</span></li>
+      <li><b>복학 1학기</b><span>${lineup[0]?esc(lineup[0].jmfldnm)+' 취득':'기초 자격 취득'} · ${tags[0]?'#'+esc(tags[0])+' 기초 다지기':esc(S.major||'전공')+' 기초'}</span></li>
+      <li><b>복학 2~3학기</b><span>${lineup[1]?esc(lineup[1].jmfldnm)+' 준비':'상위 자격 준비'} · ${tags.slice(1,3).map(t=>'#'+esc(t)).join(' ')||'관련 프로젝트'}${proc[1]?` · ${esc(proc[1])} 연습`:''}</span></li>
+      <li><b>졸업 학기</b><span>${lineup[2]?esc(lineup[2].jmfldnm)+' 도전 · ':''}학력 요건 ${eduOk?'충족 ✓':'확인 필요'} · 같은 회사·직무 공고 알림 설정</span></li>
+      <li class="goal"><b>${esc(p.co)} 지원</b><span>${esc(p.job?p.job[2]:p.title)} · ${proc.join(' → ')}</span></li></ol>`]];
+  box.className='rbody col course2';
+  box.innerHTML=`
+    <div class="chd up"><div class="ctx"><span class="k">🎯 목표 공고에 맞춘 <b>코스 서비스</b></span><b>${esc(p.co)}</b>
+        <small>${esc(p.title)}</small></div>
+      <div class="mico"><button id="chg" aria-label="공고 바꾸기">🔁<span>공고 변경</span></button><button data-card="dis" aria-label="전역카드">🎖️<span>전역카드</span></button></div></div>
+    <div class="crs" id="crs">${cards.map(([e,t,b],i)=>`<section class="ccard"><h4><span>${e}</span>${t}<em>${i+1}/${cards.length}</em></h4><div class="cb">${b}</div></section>`).join('')}</div>
+    <div class="dots" id="dots">${cards.map((c,i)=>`<button data-d="${i}" aria-label="${c[1]}">${c[0]}</button>`).join('')}</div>
+    <button class="toppost" id="tp"><span>원문</span><b>자격요건·우대사항·전형은 공고 원문에서 확인</b><em>보기 ↗</em></button>`;
+  stagger('.ccard,.chd',box);
+  if(!S.partied){S.partied=true;setTimeout(()=>party('big'),450);}
+  const crs=$('crs'), dots=[...box.querySelectorAll('[data-d]')];
+  const mark=()=>{const i=Math.round(crs.scrollLeft/Math.max(1,crs.clientWidth)); S.cslide=i; dots.forEach((d,k)=>d.classList.toggle('on',k===i));};
+  crs.addEventListener('scroll',()=>requestAnimationFrame(mark),{passive:true});
+  dots.forEach(d=>d.onclick=()=>{haptic();crs.scrollTo({left:+d.dataset.d*crs.clientWidth,behavior:'smooth'});});
+  requestAnimationFrame(()=>{crs.scrollLeft=(S.cslide||0)*crs.clientWidth; mark();});
+  box.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{haptic();openCert(b.dataset.j);});
+  box.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>openCardSheet(b.dataset.card));
+  $('chg').onclick=()=>{haptic();S.tab='post';render();};
+  $('tp').onclick=()=>{haptic(); if(p.url) window.open(p.url,'_blank','noopener'); else openPost(p);};
+}
+function R0certs(){ return (S.res?S.res.certs:[]).slice(0,3).map(c=>c.it); }
 
 /* ── 뒤로 ── */
 $('back').onclick=()=>{

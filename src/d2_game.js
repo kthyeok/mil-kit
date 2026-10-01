@@ -38,16 +38,7 @@ const EVENTS={
   '일병':[
     {id:'rpcd',scene:'🛠️',where:'주특기 교육 시간',npc:'교관',q:'그중에서도 특히 해보고 싶은 일은?\n세 개까지 골라봐.',
      kind:'multi',max:3,p:'jk:rpcd',why:'업·직종 소분류',
-     opts:()=>JK_JOBS.filter(j=>(S.ans.rbcd||[]).length?S.ans.rbcd.includes(j[1]):true).map(j=>({v:j[0],l:j[2]})),gain:{tech:2}},
-    {id:'qnField',scene:'🖥️',where:'사지방(사이버지식정보방) 자유시간',npc:'행정병',q:'자격증 공부 시작했다며?\n어느 분야야?',
-     kind:'multi',max:2,p:'qn:obligfldcd',why:'대직무분야',opts:()=>QN_FIELD5.map(v=>({v,l:QN_FIELD_LABEL[v],star:(FAM_QN[fam()]||[]).includes(v)||majorQn().includes(v)})),
-     gain:{tech:2,dili:1}},
-    {id:'qnSeries',scene:'📚',where:'주말 원격강좌 신청',npc:'중대장',q:'목표 등급을 정해보자.\n지금 학력이면 이렇게 돼.',
-     kind:'single',p:'qn:seriescd',why:'계열(등급)',opts:()=>[
-       {v:'05',l:'기능사',sub:'누구나 응시'},
-       {v:'04',l:'산업기사',sub:canSeries('04')?'지금 응시 가능':'기능사 + 실무 1년'},
-       {v:'03',l:'기사',sub:canSeries('03')?'지금 응시 가능':'관련학과 4년제 또는 경력'},
-       {v:'all',l:'일단 다 보여줘',sub:'등급 무관'}],gain:{dili:2}},
+     opts:()=>JK_JOBS.filter(j=>(S.ans.rbcd||[]).length?S.ans.rbcd.includes(j[1]):true).map(j=>({v:j[0],l:j[2]})),gain:{tech:2,dili:1}},
   ],
   '상병':[
     {id:'pay',scene:'💳',where:'월급날 · 장병적금 통장 확인',npc:'경리병',q:'전역하면 연봉은 얼마쯤 받고 싶어?',

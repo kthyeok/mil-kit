@@ -123,7 +123,7 @@ function scSplash(){
     <div class="sp-brand">${typeof MILKIT_LOGO==='function'?'':''}<b>Mil-Kit</b><span>Your Next Step</span></div>
     ${CH?`<div class="chal"><b>🫡 ${esc(CH.w)}이 보낸 도전장</b><span>${esc(CH.f)} · "${esc(CH.m)} 정식" — 나는 뭐가 나올까?</span></div>`
       :`<p class="sp-note">실제 채용공고 ${won(JK_DB.length)}건 · 국가자격 ${won(QNET_ITEMS.length)}종${MK.at?` (${MK.at.slice(0,10)} 기준)`:''}<br>입력은 이 기기 안에서만 쓰여요.</p>`}
-    <div class="spcnt"><small>지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명이 군생활을 요리했어요</small>${countStrip()}</div>
+    <div class="spcnt"><small>지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명이 군생활을 요리했어요</small>${countStrip()}<em class="pphint">👆 숫자를 누르면 우리 군 롤링페이퍼</em></div>
   </div>`;
   $('cta').innerHTML=`<button class="btn hold" id="start">🍳 ${CH?'나도 요리해 보기':'요리 시작하기'}</button>`;
   $('start').onclick=()=>{haptic();go('force');};
@@ -138,11 +138,11 @@ function scSplash(){
 /* ═══ 1. 입대 — 군 선택 ═══ */
 function scForce(){
   $('scr').innerHTML=`
-    <div class="letter up"><span>📨</span><div><b>입영통지서가 도착했습니다</b><small>어느 군으로 입대했나요? · 지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명 입대</small></div></div>
+    <div class="letter up"><span>📨</span><div><b>입영통지서가 도착했습니다</b><small>어느 군으로 입대했나요? · 지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명 입대 · <u data-paper="${S.force||'육군'}">📜 롤링페이퍼</u></small></div></div>
     <div class="fgrid f5">${FORCE5.map((f,n)=>`<button class="opt tile up ${S.force===f.n?'on':''} ${f.n==='기타'?'wide':''}" style="--d:${60+n*40}ms" data-f="${f.n}">
       <span class="ck">✓</span><span class="big">${f.i}</span><span class="tt">${f.n}</span>
       <span class="dd">${f.d||`복무 ${(DS_SERVICE.find(x=>x.군별===f.n)||{}).복무기간_개월}개월 · 특기 ${DS_MOS.filter(x=>x.군별===f.n).length}종`}</span>
-      <span class="fcnt">👥 <b data-cnt="${f.n}">${kfmt(CNT.v[f.n])}</b>명 입대</span></button>`).join('')}</div>`;
+      <span class="fcnt" data-paper="${f.n}">👥 <b data-cnt="${f.n}">${kfmt(CNT.v[f.n])}</b>명 입대 📜</span></button>`).join('')}</div>`;
   $('scr').querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{haptic();S.force=b.dataset.f;
     $('scr').querySelectorAll('.opt').forEach(o=>o.classList.toggle('on',o===b));$('next').disabled=false;$('next').textContent=`${S.force} 입대하기`;});
   $('cta').innerHTML=`<button class="btn" id="next" ${S.force?'':'disabled'}>${S.force?S.force+' 입대하기':'군을 골라주세요'}</button>`;
@@ -251,12 +251,28 @@ function scEvent(){
     $('ok').onclick=()=>{haptic();answer([lo,lo+1000]);}; $('any').onclick=()=>{haptic();answer(null);};
   } else if(e.kind==='text'){
     const sug=[...new Set(JK_JOBS.filter(j=>(S.ans.rpcd||[]).includes(j[0])).flatMap(j=>j[4].split(',')))].slice(0,8);
-    b.className='evbody up evtext';
-    b.innerHTML=`<div class="rolling"><input class="inp" id="kw" maxlength="16" placeholder="예) 보안관제, 정비, 물류" value="${esc(cur||'')}"><small>— 후임들 롤링페이퍼에 남겨요</small></div>
+    b.className='evbody up evtext rp';
+    b.innerHTML=`<div class="rpwall" id="rpw"><div class="ppload">${S.force} 롤링페이퍼 불러오는 중…</div></div>
+      <div class="rpwrite"><span class="rpto">To. ${S.force} 전우들 <em>From. ${esc(mosLabel())} 병장</em></span>
+        <div class="ppbox"><textarea id="rpm" maxlength="80" rows="2" placeholder="전역하며 남기는 한마디 (80자)">${esc(S.paperMsg||'')}</textarea><b id="rpc">${(S.paperMsg||'').length}/80</b></div></div>
+      <div class="rolling"><span>💭 내 꿈 한 단어</span><input class="inp" id="kw" maxlength="16" placeholder="예) 보안관제, 정비, 물류" value="${esc(cur||'')}"></div>
       <div class="quick">${(sug.length?sug:['정비','보안','물류','전기','조리','안전']).map(k=>`<button data-k="${esc(k)}">#${esc(k)}</button>`).join('')}</div>`;
     b.querySelectorAll('[data-k]').forEach(x=>x.onclick=()=>{haptic();$('kw').value=x.dataset.k;});
+    $('rpm').oninput=x=>{S.paperMsg=x.target.value;$('rpc').textContent=`${x.target.value.length}/80`;};
+    $('scr').querySelector('.evfoot span').innerHTML=`📜 한마디는 <b>${S.force} 롤링페이퍼</b>에 공개돼요 · 꿈은 검색어로만 쓰여요`;
+    loadPapers(S.force).then(({list})=>{const w=$('rpw'); if(!w) return;
+      w.innerHTML=list.length?list.slice(0,12).map(noteHtml).join('')
+        :`<div class="ppempty sm"><span>📝</span><b>첫 ${S.force} 롤링페이퍼 주인공이 되어보세요</b><small>후임들과 전우들이 읽게 돼요</small></div>`;});
     $('cta').innerHTML=`<div class="btn-row"><button class="btn sub" id="skip" style="flex:0 0 108px">건너뛰기</button><button class="btn" id="ok">남기고 전역 준비</button></div>`;
-    $('ok').onclick=()=>{haptic();answer($('kw').value.trim());}; $('skip').onclick=()=>{haptic();answer('');};
+    $('ok').onclick=()=>{haptic();
+      const m=paperClean($('rpm').value,80);
+      if(m.length>=2&&!S.paperSent){
+        if(PAPER_LINK.test(m)){toast('링크는 남길 수 없어요');return;}
+        S.paperSent=true;
+        postPaper(S.force,`${mosLabel()} 병장`,m).then(sv=>toast(sv.local?'📜 롤링페이퍼를 이 기기에 남겼어요':'📜 롤링페이퍼에 남겼어요'));
+      }
+      answer($('kw').value.trim());};
+    $('skip').onclick=()=>{haptic();answer('');};
   }
 }
 function answer(v){
@@ -385,7 +401,7 @@ function scResult(){
   ({course:resCourse,post:resPost,cert:resCert})[S.tab]($('rbody'));
   $('cta').innerHTML=`<div class="btn-row"><button class="btn sub" id="again" style="flex:0 0 104px">다시 요리</button><button class="btn" id="inv">📤 선후임에게 공유하기</button></div>`;
   $('inv').onclick=openInvite;
-  $('again').onclick=()=>{haptic();Object.assign(S,{counted:false,partied:false,plan:null,cslide:0,target:null,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
+  $('again').onclick=()=>{haptic();Object.assign(S,{counted:false,paperSent:false,paperMsg:'',partied:false,plan:null,cslide:0,target:null,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
 }
 function resSum(box){
   const R=S.res, tc=R.certs.filter(c=>c.need).slice(0,3), ok=R.certs.filter(c=>c.el.ok).length;

@@ -53,7 +53,7 @@ const EVENTS={
      kind:'single',p:'jk:mcareerchk',why:'경력 조건',opts:()=>[{v:'1',l:'신입으로 지원',sub:'신입 공고 위주'},{v:'3',l:'신입·경력 둘 다',sub:'경력 인정 공고까지'},{v:'0',l:'상관없음',sub:'전체'}],gain:{lead:2}},
     {id:'ob',scene:'📅',where:'전역 D-30 · 달력에 X 치는 중',npc:'후임',q:'공고는 어떤 순서로 볼 거예요?',
      kind:'single',p:'jk:Ob',why:'정렬',opts:()=>[{v:'3',l:'⏰ 마감 임박 순',sub:'바로 지원할래'},{v:'1',l:'🆕 새 공고 순',sub:'천천히 고를래'},{v:'2',l:'✏️ 최근 수정 순',sub:'활발한 회사'}],gain:{dili:1}},
-    {id:'kw',scene:'📝',where:'후임들의 롤링페이퍼',npc:'후임들',q:'선임님 꿈을 한 단어로 적어주세요!',
+    {id:'kw',scene:'📝',where:'후임들의 롤링페이퍼',npc:'후임들',q:'전역 축하드립니다! 롤링페이퍼 한 장 남겨주시고\n꿈도 한 단어로 알려주세요!',
      kind:'text',p:'jk:Keyword',why:'검색어',gain:{comm:2}},
   ],
 };

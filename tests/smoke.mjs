@@ -34,7 +34,7 @@ const shot=async name=>{await sleep(700);const r=await send('Page.captureScreens
 const click=async sel=>{const ok=await ev(`(()=>{const e=document.querySelector(${JSON.stringify(sel)});if(!e) return false;e.click();return true;})()`);if(!ok) errs.push('NOCLICK '+sel);await sleep(250);};
 
 
-await ev(`Object.assign(CNT.v,{육군:12345,해군:3210,공군:4567,해병:2890,기타:640});refreshCountUI()`);
+await ev(`Object.assign(CNT.base,{육군:12345,해군:3210,공군:4567,해병:2890,기타:640});recount();refreshCountUI()`);
 await sleep(1400); await shot('00_splash_mid'); await sleep(1200); await shot('01_splash_done');
 await click('#start'); await shot('02_force');
 await click('[data-f="해군"]'); await click('#next'); await shot('03_form');
@@ -50,7 +50,7 @@ for(let guard=0;guard<30;guard++){
   if(k==='multi'){ await click('.evchip'); await ev(`(()=>{const c=document.querySelectorAll('.evchip');if(c[1]) c[1].click();})()`); await sleep(150); await click('#ok'); }
   else if(k==='single'){ await click('.evopt'); await sleep(350); }
   else if(k==='slider'){ await click('#ok'); }
-  else if(k==='text'){ await click('.quick button'); await click('#ok'); }
+  else if(k==='text'){ await ev(`(()=>{const m=document.getElementById('rpm');if(m){m.value='전역 축하합니다 모두 건강하세요';m.dispatchEvent(new Event('input'));}})()`); await sleep(600); await shot('ev_rolling_paper'); await click('.quick button'); await click('#ok'); await sleep(300); console.log('paper saved:',await ev(`JSON.stringify(PAPER.local.map(p=>p.name+': '+p.msg))`)); }
   await sleep(250);
 }
 const PLAN=process.env.PLAN||'school';

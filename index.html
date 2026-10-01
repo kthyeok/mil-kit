@@ -1415,15 +1415,15 @@ html,body{overflow:hidden}            /* 화면 넘김 중 스크롤바가 생�
 .spcnt{display:flex;flex-direction:column;align-items:center;gap:6px;animation:up .5s 2s backwards;margin-top:2px}
 .spcnt small{font-size:12px;color:var(--g600)}.spcnt small b{color:var(--blue-d);font-weight:900}
 .cstrip{display:flex;justify-content:center;gap:5px;flex-wrap:nowrap}
-.cstrip span{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 6px 5px;border-radius:12px;background:#fff;
+.cstrip button{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 6px 5px;border-radius:12px;background:#fff;
   box-shadow:0 4px 14px -10px rgba(0,0,0,.35);border:1px solid var(--g100)}
 .cstrip i{font-style:normal;font-size:17px;line-height:1.1}
 .cstrip em{font-style:normal;font-size:10.5px;color:var(--g500);font-weight:700}
 .cstrip b{font-size:14px;font-weight:900;color:var(--g900);font-variant-numeric:tabular-nums}
 .cstrip.sm{gap:4px}
-.cstrip.sm span{flex:1;min-width:0;flex-direction:row;justify-content:center;gap:3px;padding:4px 2px;border-radius:10px;box-shadow:none;background:#fff}
+.cstrip.sm button{flex:1;min-width:0;flex-direction:row;justify-content:center;gap:3px;padding:4px 2px;border-radius:10px;box-shadow:none;background:#fff}
 .cstrip.sm i{font-size:12px}.cstrip.sm em{display:none}.cstrip.sm b{font-size:12px}
-.cstrip.sm span.me{background:var(--blue-bg);border-color:var(--blue)}.cstrip.sm span.me b{color:var(--blue-d)}
+.cstrip.sm button.me{background:var(--blue-bg);border-color:var(--blue)}.cstrip.sm button.me b{color:var(--blue-d)}
 .fcnt{font-size:11.5px;color:var(--blue-d);font-weight:700}.fcnt b{font-weight:900}
 .letter small b{color:var(--blue-d)}
 .rcnt{flex:0 0 auto}
@@ -1431,7 +1431,7 @@ html,body{overflow:hidden}            /* 화면 넘김 중 스크롤바가 생�
 [data-cnt].bump{animation:bump .5s cubic-bezier(.34,1.56,.64,1)}
 @keyframes bump{0%{transform:scale(1.5);color:var(--blue)}100%{transform:scale(1)}}
 html.compact .spcnt small{font-size:11px}
-html.compact .cstrip span{min-width:50px;padding:4px 4px 3px}
+html.compact .cstrip button{min-width:50px;padding:4px 4px 3px}
 html.compact .fcnt{font-size:10.5px}
 .letter small b{display:inline;font-size:inherit;font-weight:900;margin:0}
 .opt.tile{position:relative}
@@ -1439,6 +1439,63 @@ html.compact .fcnt{font-size:10.5px}
   background:#fff;color:var(--blue-d);font-weight:800;box-shadow:0 2px 8px -4px rgba(0,0,0,.25)}
 .fcnt b{display:inline!important;font-size:inherit!important;font-weight:900;margin:0!important;color:inherit}
 html.compact .fcnt{font-size:10px;left:7px;top:7px;padding:3px 6px}
+
+/* ═══ 롤링페이퍼 ═══ */
+.cstrip button{cursor:pointer;transition:transform .15s,box-shadow .2s}
+.cstrip button:hover{transform:translateY(-2px);box-shadow:0 8px 18px -10px rgba(49,130,246,.6)}
+.cstrip button:active{transform:scale(.95)}
+.pphint{font-style:normal;font-size:11px;color:var(--g500)}
+[data-paper]{cursor:pointer}
+.letter small u{text-decoration:none;color:var(--olive);font-weight:800;white-space:nowrap}
+.fcnt{cursor:pointer}
+.pph{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.pph h3{margin:0}.pph span{font-size:12px;color:var(--g500)}.pph b{color:var(--blue-d)}
+.ppseg{display:flex;gap:4px;margin:10px 0 8px;overflow-x:auto;scrollbar-width:none}
+.ppseg::-webkit-scrollbar{display:none}
+.ppseg button{flex:1 0 auto;padding:7px 9px;border-radius:999px;background:var(--g100);font-size:12.5px;font-weight:800;color:var(--g700)}
+.ppseg button.on{background:var(--g900);color:#fff}
+.pplist{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:min(40vh,320px);overflow-y:auto;padding:4px 2px 6px;
+  background:repeating-linear-gradient(0deg,transparent 0 23px,rgba(0,0,0,.035) 23px 24px),#FBF8F1;border-radius:14px;padding:10px}
+.note{background:var(--c);border-radius:4px 14px 6px 12px;padding:10px 10px 8px;transform:rotate(var(--r));box-shadow:0 6px 12px -8px rgba(0,0,0,.35);
+  display:flex;flex-direction:column;gap:6px;animation:noteIn .45s cubic-bezier(.34,1.56,.64,1) backwards;min-height:84px}
+.note p{margin:0;font-size:13px;line-height:1.45;font-weight:600;word-break:keep-all;overflow-wrap:anywhere;flex:1}
+.note span{font-size:10.5px;color:rgba(0,0,0,.55);font-weight:700;display:flex;justify-content:space-between;gap:4px}
+.note em{font-style:normal;font-weight:500}
+.note.mine{outline:2px solid var(--blue);outline-offset:1px}
+@keyframes noteIn{from{transform:rotate(var(--r)) scale(.6);opacity:0}}
+.ppload,.ppempty{grid-column:1/-1;text-align:center;color:var(--g500);font-size:13px;padding:22px 0;display:flex;flex-direction:column;gap:4px;align-items:center}
+.ppempty span{font-size:30px}.ppempty b{color:var(--g800)}
+.ppw{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ppw .inp{height:40px;font-size:14px}
+.ppbox{position:relative}
+.ppbox textarea{width:100%;resize:none;border:1.5px solid var(--g200);border-radius:12px;padding:10px 12px 18px;font:inherit;font-size:14px;background:#fff}
+.ppbox textarea:focus{outline:none;border-color:var(--blue)}
+.ppbox b{position:absolute;right:10px;bottom:6px;font-size:10.5px;color:var(--g400);font-weight:600}
+
+/* 병장 롤링페이퍼 이벤트 */
+.evtext.rp{display:flex;flex-direction:column;gap:8px;justify-content:flex-start;padding-top:10px}
+.rpwall{flex:0 0 auto;display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 12px 12px;border-radius:16px;scrollbar-width:none;
+  background:repeating-linear-gradient(0deg,transparent 0 23px,rgba(0,0,0,.035) 23px 24px),#FBF8F1;min-height:112px;align-items:stretch}
+.rpwall::-webkit-scrollbar{display:none}
+.rpwall .note{flex:0 0 150px;scroll-snap-align:start;min-height:0}
+.rpwall .note p{font-size:12.5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.rpwall .ppload,.rpwall .ppempty{flex:1;padding:8px 0}
+.ppempty.sm span{font-size:22px}.ppempty.sm b{font-size:13px}.ppempty.sm small{font-size:11px;color:var(--g500)}
+.rpwrite{display:flex;flex-direction:column;gap:5px;background:#FFFCEB;border:1.5px dashed #E8D9A0;border-radius:14px;padding:9px 10px}
+.rpto{font-size:12px;font-weight:800;color:#8A6D12;display:flex;justify-content:space-between;gap:6px}
+.rpto em{font-style:normal;font-weight:600;color:var(--g500)}
+.rpwrite textarea{background:#fff}
+.evtext.rp .rolling{display:flex;align-items:center;gap:8px}
+.evtext.rp .rolling span{font-size:12.5px;font-weight:800;color:var(--g700);white-space:nowrap}
+.evtext.rp .rolling .inp{flex:1;min-width:0;height:42px}
+html.compact .rpwall{min-height:96px;padding:8px 10px 10px}
+html.compact .rpwall .note{flex-basis:136px;padding:8px 9px 6px}
+html.compact .evtext.rp .quick{display:none}
+html.compact .rpwrite textarea{padding:8px 10px 16px;font-size:13px}
+html.compact .evtext.rp{gap:6px;padding-top:6px}
+html.compact .rpwall{min-height:86px}
+html.compact .rpwrite{padding:7px 9px;gap:4px}
+html.compact .evtext.rp .rolling .inp{height:38px}
 
 </style>
 </head>
@@ -2616,7 +2673,7 @@ const EVENTS={
      kind:'single',p:'jk:mcareerchk',why:'경력 조건',opts:()=>[{v:'1',l:'신입으로 지원',sub:'신입 공고 위주'},{v:'3',l:'신입·경력 둘 다',sub:'경력 인정 공고까지'},{v:'0',l:'상관없음',sub:'전체'}],gain:{lead:2}},
     {id:'ob',scene:'📅',where:'전역 D-30 · 달력에 X 치는 중',npc:'후임',q:'공고는 어떤 순서로 볼 거예요?',
      kind:'single',p:'jk:Ob',why:'정렬',opts:()=>[{v:'3',l:'⏰ 마감 임박 순',sub:'바로 지원할래'},{v:'1',l:'🆕 새 공고 순',sub:'천천히 고를래'},{v:'2',l:'✏️ 최근 수정 순',sub:'활발한 회사'}],gain:{dili:1}},
-    {id:'kw',scene:'📝',where:'후임들의 롤링페이퍼',npc:'후임들',q:'선임님 꿈을 한 단어로 적어주세요!',
+    {id:'kw',scene:'📝',where:'후임들의 롤링페이퍼',npc:'후임들',q:'전역 축하드립니다! 롤링페이퍼 한 장 남겨주시고\n꿈도 한 단어로 알려주세요!',
      kind:'text',p:'jk:Keyword',why:'검색어',gain:{comm:2}},
   ],
 };
@@ -3109,11 +3166,16 @@ function stagger(sel,root){
 /* ═══════════════════════════════════════════════════════════════
    [Mil-Kit · COUNT] 군별 사용자 수
    - 입영통지서에서 고른 군을 DB(public.milkit_force_count)에 1씩 센다
-   - <meta name="counter-api" content="https://…"> 에 카운터 API 주소가 있으면 실시간,
-     없으면 data.js 스냅샷에 담긴 값(+ 이 기기에서 방금 센 1)을 보여준다
+   - <meta name="counter-api" content="https://…"> 에 API 주소가 있으면 서버 값이 기준(실시간)
+   - API가 없을 때: data.js 스냅샷 값 + 이 기기에서 센 수(localStorage 'mine')
+     → 처음 화면으로 돌아가거나 새로고침해도 내 입대 수가 사라지지 않는다
    ═══════════════════════════════════════════════════════════════ */
+const FORCE_KEYS=['육군','해군','공군','해병','기타'];
 const CNT={api:((document.querySelector('meta[name="counter-api"]')||{}).content||'').trim().replace(/\/$/,''),
-  v:Object.assign({육군:0,해군:0,공군:0,해병:0,기타:0},(window.MK_DATA||{}).counts||{}),live:false};
+  base:Object.assign(Object.fromEntries(FORCE_KEYS.map(f=>[f,0])),(window.MK_DATA||{}).counts||{}),
+  mine:LS.get('mine',{}),live:false,v:{}};
+function recount(){ CNT.v=Object.fromEntries(FORCE_KEYS.map(f=>[f,(+CNT.base[f]||0)+(CNT.live?0:(+CNT.mine[f]||0))])); }
+recount();
 /* 1,234 → 1.2k · 56,000 → 56k · 1,200,000 → 1.2m */
 function kfmt(n){
   n=Math.max(0,+n||0);
@@ -3123,25 +3185,101 @@ function kfmt(n){
 const countTotal=()=>Object.values(CNT.v).reduce((a,b)=>a+(+b||0),0);
 function refreshCountUI(){
   document.querySelectorAll('[data-cnt]').forEach(el=>{
-    const v=el.dataset.cnt==='all'?countTotal():CNT.v[el.dataset.cnt];
-    if(el.textContent!==kfmt(v)){el.textContent=kfmt(v); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');}
+    const t=kfmt(el.dataset.cnt==='all'?countTotal():CNT.v[el.dataset.cnt]);
+    if(el.textContent!==t){el.textContent=t; el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');}
   });
 }
+function takeServer(j){ if(j&&typeof j==='object'){ CNT.base=Object.assign(CNT.base,j); CNT.live=true; CNT.mine={}; LS.set('mine',{}); recount(); refreshCountUI(); } }
 async function loadCounts(){
   if(!CNT.api) return;
-  try{ const r=await fetch(CNT.api+'/counts',{cache:'no-store'}); if(r.ok){Object.assign(CNT.v,await r.json()); CNT.live=true; refreshCountUI();} }catch(e){}
+  try{ const r=await fetch(CNT.api+'/counts',{cache:'no-store'}); if(r.ok) takeServer(await r.json()); }catch(e){}
 }
 function hitForce(f){
-  CNT.v[f]=(+CNT.v[f]||0)+1; refreshCountUI();
+  if(!CNT.api||!CNT.live){ CNT.mine[f]=(+CNT.mine[f]||0)+1; LS.set('mine',CNT.mine); }
+  recount(); if(CNT.live) CNT.v[f]++; refreshCountUI();
   if(!CNT.api) return;
   fetch(CNT.api+'/hit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({force:f}),keepalive:true})
-    .then(r=>r.ok?r.json():null).then(j=>{if(j){Object.assign(CNT.v,j); CNT.live=true; refreshCountUI();}}).catch(()=>{});
+    .then(r=>r.ok?r.json():null).then(takeServer).catch(()=>{});
 }
-/* 군별 카운트 띠 — sm: 작은 크기 · 내 군 강조 */
+/* 군별 카운트 띠 — 숫자를 누르면 그 군 롤링페이퍼 · sm: 작은 크기(내 군 강조) */
 function countStrip(sm){
-  return `<div class="cstrip ${sm?'sm':''}">${FORCE5.map(f=>`<span class="${sm&&S.force===f.n?'me':''}"><i>${f.i}</i><em>${f.n}</em><b data-cnt="${f.n}">${kfmt(CNT.v[f.n])}</b></span>`).join('')}</div>`;
+  return `<div class="cstrip ${sm?'sm':''}">${FORCE5.map(f=>`<button class="${sm&&S.force===f.n?'me':''}" data-paper="${f.n}" aria-label="${f.n} 롤링페이퍼"><i>${f.i}</i><em>${f.n}</em><b data-cnt="${f.n}">${kfmt(CNT.v[f.n])}</b></button>`).join('')}</div>`;
 }
 const countLine=()=>S.force?`벌써 ${S.force} ${kfmt(CNT.v[S.force])}명이 요리했어요 🔥`:`벌써 ${kfmt(countTotal())}명이 요리했어요 🔥`;
+
+
+/* ═══════════════════════════════════════════════════════════════
+   [Mil-Kit · PAPER] 군별 롤링페이퍼 (public.milkit_rolling_paper)
+   - 통계 숫자([data-paper])를 누르면 그 군의 롤링페이퍼가 열린다
+   - API가 있으면 서버에 저장·조회, 없으면 data.js 스냅샷 + 이 기기에 남긴 글
+   ═══════════════════════════════════════════════════════════════ */
+const PAPER={local:LS.get('papers',[]),cache:{}};
+const PAPER_BAD=/씨발|시발|ㅅㅂ|ㅆㅂ|병신|ㅂㅅ|개새|좆|존나|지랄|꺼져|닥쳐|느금|fuck|shit/gi;
+const PAPER_LINK=/https?:|www\.|\.(com|net|kr|io|me|ly)\b/i;
+const NOTE_C=['#FFF4B8','#FFDDE4','#D9EEFF','#DDF6E4','#EEE5FF','#FFE8CC'];
+const paperClean=(v,max)=>String(v||'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim().slice(0,max).replace(PAPER_BAD,m=>'*'.repeat(m.length));
+function ago(t){
+  const s=Math.max(0,(Date.now()-new Date(t).getTime())/1000);
+  return s<60?'방금':s<3600?`${Math.floor(s/60)}분 전`:s<86400?`${Math.floor(s/3600)}시간 전`:s<86400*30?`${Math.floor(s/86400)}일 전`:new Date(t).toLocaleDateString('ko-KR');
+}
+async function loadPapers(f){
+  if(CNT.api){
+    try{ const r=await fetch(`${CNT.api}/papers?force=${encodeURIComponent(f)}&limit=40`,{cache:'no-store'});
+      if(r.ok){ PAPER.cache[f]=await r.json(); return {list:PAPER.cache[f],live:true}; } }catch(e){}
+  }
+  const snap=((window.MK_DATA||{}).papers||{})[f]||[];
+  const mine=PAPER.local.filter(p=>p.force===f);
+  return {list:[...mine,...snap].sort((a,b)=>new Date(b.at)-new Date(a.at)),live:false};
+}
+function noteHtml(p,i){
+  const c=NOTE_C[Math.abs((p.id||i)*7+(p.msg||'').length)%NOTE_C.length], rot=((p.id||i)%5-2)*1.1;
+  return `<div class="note ${p.mine?'mine':''}" style="--c:${c};--r:${rot}deg"><p>${esc(p.msg)}</p><span>— ${esc(p.name||'익명의 예비역')}<em>${ago(p.at)}</em></span></div>`;
+}
+/* 저장: API가 있으면 DB, 아니면 이 기기 — 저장된 글을 돌려준다 */
+async function postPaper(f,name,msg){
+  let saved=null;
+  if(CNT.api){ try{ const r=await fetch(CNT.api+'/papers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({force:f,name,msg})});
+      if(r.ok) saved=await r.json(); else if(r.status===429) toast('잠시 후 다시 남겨주세요'); }catch(e){} }
+  if(!saved){ saved={id:Date.now(),name,msg,at:new Date().toISOString(),force:f,local:true}; PAPER.local.unshift(saved); PAPER.local=PAPER.local.slice(0,50); LS.set('papers',PAPER.local); }
+  saved.mine=true; return saved;
+}
+async function openPapers(f){
+  haptic();
+  if(!FORCE_KEYS.includes(f)) f=S.force||'육군';
+  openSheet(`<div class="pph"><h3>📜 ${f} 롤링페이퍼</h3><span>${f} <b data-cnt="${f}">${kfmt(CNT.v[f])}</b>명이 요리했어요</span></div>
+    <div class="ppseg">${FORCE5.map(x=>`<button class="${x.n===f?'on':''}" data-pf="${x.n}">${x.i} ${x.n}</button>`).join('')}</div>
+    <div class="pplist" id="ppl"><div class="ppload">불러오는 중…</div></div>
+    <div class="ppw"><input class="inp" id="ppn" maxlength="12" placeholder="닉네임 (선택)">
+      <div class="ppbox"><textarea id="ppm" maxlength="80" rows="2" placeholder="${f} 전우들에게 한마디 (80자)"></textarea><b id="ppc">0/80</b></div>
+      <button class="btn sm" id="ppgo">✍️ ${f} 롤링페이퍼에 남기기</button>
+      <p class="fine" id="ppnote"></p></div>`,async sh=>{
+    sh.querySelectorAll('[data-pf]').forEach(b=>b.onclick=()=>openPapers(b.dataset.pf));
+    $('ppm').oninput=e=>{$('ppc').textContent=`${e.target.value.length}/80`;};
+    const {list,live}=await loadPapers(f);
+    if(!$('ppl')) return;
+    $('ppl').innerHTML=list.length?list.map(noteHtml).join(''):`<div class="ppempty"><span>📝</span><b>아직 ${f} 롤링페이퍼가 비어 있어요</b><small>첫 번째 한마디를 남겨보세요</small></div>`;
+    $('ppnote').textContent=live?'남긴 글은 모두에게 보여요. 욕설은 가려지고 링크는 남길 수 없어요.'
+      :CNT.api?'서버에 연결하지 못해 이 기기에만 저장돼요.':'아직 서버(API)가 연결되지 않아 이 기기에만 저장돼요.';
+    $('ppgo').onclick=async()=>{
+      const msg=paperClean($('ppm').value,80), name=paperClean($('ppn').value,12);
+      if(msg.length<2){toast('두 글자 이상 적어주세요');return;}
+      if(PAPER_LINK.test(msg+name)){toast('링크는 남길 수 없어요');return;}
+      haptic(); $('ppgo').disabled=true;
+      const saved=await postPaper(f,name,msg);
+      const box=$('ppl'); if(!box) return;
+      if(box.querySelector('.ppempty')) box.innerHTML='';
+      box.insertAdjacentHTML('afterbegin',noteHtml(saved,0)); box.scrollTop=0;
+      $('ppm').value=''; $('ppc').textContent='0/80'; $('ppgo').disabled=false;
+      if(typeof party==='function') party('small');
+      toast(saved.local?'이 기기에 남겼어요':'롤링페이퍼에 남겼어요');
+    };
+  });
+}
+/* 통계 숫자 어디서든 누르면 롤링페이퍼 (타일 선택보다 먼저 가로챈다) */
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-paper]'); if(!el) return;
+  e.preventDefault(); e.stopPropagation(); openPapers(el.dataset.paper);
+},true);
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3455,7 +3593,7 @@ function scSplash(){
     <div class="sp-brand">${typeof MILKIT_LOGO==='function'?'':''}<b>Mil-Kit</b><span>Your Next Step</span></div>
     ${CH?`<div class="chal"><b>🫡 ${esc(CH.w)}이 보낸 도전장</b><span>${esc(CH.f)} · "${esc(CH.m)} 정식" — 나는 뭐가 나올까?</span></div>`
       :`<p class="sp-note">실제 채용공고 ${won(JK_DB.length)}건 · 국가자격 ${won(QNET_ITEMS.length)}종${MK.at?` (${MK.at.slice(0,10)} 기준)`:''}<br>입력은 이 기기 안에서만 쓰여요.</p>`}
-    <div class="spcnt"><small>지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명이 군생활을 요리했어요</small>${countStrip()}</div>
+    <div class="spcnt"><small>지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명이 군생활을 요리했어요</small>${countStrip()}<em class="pphint">👆 숫자를 누르면 우리 군 롤링페이퍼</em></div>
   </div>`;
   $('cta').innerHTML=`<button class="btn hold" id="start">🍳 ${CH?'나도 요리해 보기':'요리 시작하기'}</button>`;
   $('start').onclick=()=>{haptic();go('force');};
@@ -3470,11 +3608,11 @@ function scSplash(){
 /* ═══ 1. 입대 — 군 선택 ═══ */
 function scForce(){
   $('scr').innerHTML=`
-    <div class="letter up"><span>📨</span><div><b>입영통지서가 도착했습니다</b><small>어느 군으로 입대했나요? · 지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명 입대</small></div></div>
+    <div class="letter up"><span>📨</span><div><b>입영통지서가 도착했습니다</b><small>어느 군으로 입대했나요? · 지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명 입대 · <u data-paper="${S.force||'육군'}">📜 롤링페이퍼</u></small></div></div>
     <div class="fgrid f5">${FORCE5.map((f,n)=>`<button class="opt tile up ${S.force===f.n?'on':''} ${f.n==='기타'?'wide':''}" style="--d:${60+n*40}ms" data-f="${f.n}">
       <span class="ck">✓</span><span class="big">${f.i}</span><span class="tt">${f.n}</span>
       <span class="dd">${f.d||`복무 ${(DS_SERVICE.find(x=>x.군별===f.n)||{}).복무기간_개월}개월 · 특기 ${DS_MOS.filter(x=>x.군별===f.n).length}종`}</span>
-      <span class="fcnt">👥 <b data-cnt="${f.n}">${kfmt(CNT.v[f.n])}</b>명 입대</span></button>`).join('')}</div>`;
+      <span class="fcnt" data-paper="${f.n}">👥 <b data-cnt="${f.n}">${kfmt(CNT.v[f.n])}</b>명 입대 📜</span></button>`).join('')}</div>`;
   $('scr').querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{haptic();S.force=b.dataset.f;
     $('scr').querySelectorAll('.opt').forEach(o=>o.classList.toggle('on',o===b));$('next').disabled=false;$('next').textContent=`${S.force} 입대하기`;});
   $('cta').innerHTML=`<button class="btn" id="next" ${S.force?'':'disabled'}>${S.force?S.force+' 입대하기':'군을 골라주세요'}</button>`;
@@ -3583,12 +3721,28 @@ function scEvent(){
     $('ok').onclick=()=>{haptic();answer([lo,lo+1000]);}; $('any').onclick=()=>{haptic();answer(null);};
   } else if(e.kind==='text'){
     const sug=[...new Set(JK_JOBS.filter(j=>(S.ans.rpcd||[]).includes(j[0])).flatMap(j=>j[4].split(',')))].slice(0,8);
-    b.className='evbody up evtext';
-    b.innerHTML=`<div class="rolling"><input class="inp" id="kw" maxlength="16" placeholder="예) 보안관제, 정비, 물류" value="${esc(cur||'')}"><small>— 후임들 롤링페이퍼에 남겨요</small></div>
+    b.className='evbody up evtext rp';
+    b.innerHTML=`<div class="rpwall" id="rpw"><div class="ppload">${S.force} 롤링페이퍼 불러오는 중…</div></div>
+      <div class="rpwrite"><span class="rpto">To. ${S.force} 전우들 <em>From. ${esc(mosLabel())} 병장</em></span>
+        <div class="ppbox"><textarea id="rpm" maxlength="80" rows="2" placeholder="전역하며 남기는 한마디 (80자)">${esc(S.paperMsg||'')}</textarea><b id="rpc">${(S.paperMsg||'').length}/80</b></div></div>
+      <div class="rolling"><span>💭 내 꿈 한 단어</span><input class="inp" id="kw" maxlength="16" placeholder="예) 보안관제, 정비, 물류" value="${esc(cur||'')}"></div>
       <div class="quick">${(sug.length?sug:['정비','보안','물류','전기','조리','안전']).map(k=>`<button data-k="${esc(k)}">#${esc(k)}</button>`).join('')}</div>`;
     b.querySelectorAll('[data-k]').forEach(x=>x.onclick=()=>{haptic();$('kw').value=x.dataset.k;});
+    $('rpm').oninput=x=>{S.paperMsg=x.target.value;$('rpc').textContent=`${x.target.value.length}/80`;};
+    $('scr').querySelector('.evfoot span').innerHTML=`📜 한마디는 <b>${S.force} 롤링페이퍼</b>에 공개돼요 · 꿈은 검색어로만 쓰여요`;
+    loadPapers(S.force).then(({list})=>{const w=$('rpw'); if(!w) return;
+      w.innerHTML=list.length?list.slice(0,12).map(noteHtml).join('')
+        :`<div class="ppempty sm"><span>📝</span><b>첫 ${S.force} 롤링페이퍼 주인공이 되어보세요</b><small>후임들과 전우들이 읽게 돼요</small></div>`;});
     $('cta').innerHTML=`<div class="btn-row"><button class="btn sub" id="skip" style="flex:0 0 108px">건너뛰기</button><button class="btn" id="ok">남기고 전역 준비</button></div>`;
-    $('ok').onclick=()=>{haptic();answer($('kw').value.trim());}; $('skip').onclick=()=>{haptic();answer('');};
+    $('ok').onclick=()=>{haptic();
+      const m=paperClean($('rpm').value,80);
+      if(m.length>=2&&!S.paperSent){
+        if(PAPER_LINK.test(m)){toast('링크는 남길 수 없어요');return;}
+        S.paperSent=true;
+        postPaper(S.force,`${mosLabel()} 병장`,m).then(sv=>toast(sv.local?'📜 롤링페이퍼를 이 기기에 남겼어요':'📜 롤링페이퍼에 남겼어요'));
+      }
+      answer($('kw').value.trim());};
+    $('skip').onclick=()=>{haptic();answer('');};
   }
 }
 function answer(v){
@@ -3717,7 +3871,7 @@ function scResult(){
   ({course:resCourse,post:resPost,cert:resCert})[S.tab]($('rbody'));
   $('cta').innerHTML=`<div class="btn-row"><button class="btn sub" id="again" style="flex:0 0 104px">다시 요리</button><button class="btn" id="inv">📤 선후임에게 공유하기</button></div>`;
   $('inv').onclick=openInvite;
-  $('again').onclick=()=>{haptic();Object.assign(S,{counted:false,partied:false,plan:null,cslide:0,target:null,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
+  $('again').onclick=()=>{haptic();Object.assign(S,{counted:false,paperSent:false,paperMsg:'',partied:false,plan:null,cslide:0,target:null,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
 }
 function resSum(box){
   const R=S.res, tc=R.certs.filter(c=>c.need).slice(0,3), ok=R.certs.filter(c=>c.el.ok).length;

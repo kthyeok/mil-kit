@@ -97,7 +97,15 @@ def main():
         counts = {f: int(n) for f, n in cur.fetchall()}
     except Exception:
         c.rollback()
-    snap = {'at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), 'qn': qn, 'jk': jk, 'counts': counts}
+    papers = {}
+    try:   # 군별 롤링페이퍼 최신 30장 (숨김 제외)
+        cur.execute("select force, id, name, msg, created_at from (select *, row_number() over (partition by force order by created_at desc) rn "
+                    "from public.milkit_rolling_paper where not hidden) t where rn <= 30 order by force, created_at desc")
+        for f, i, n, m, t in cur.fetchall():
+            papers.setdefault(f, []).append({'id': int(i), 'name': n, 'msg': m, 'at': t.isoformat()})
+    except Exception:
+        c.rollback()
+    snap = {'at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), 'qn': qn, 'jk': jk, 'counts': counts, 'papers': papers}
     with open(OUT, 'w', encoding='utf-8') as f:
         f.write('/* Mil-Kit 데이터 스냅샷 · export_snapshot.py 로 생성 · 잡코리아 채용정보 + Q-Net 국가자격 종목 */\n')
         f.write('window.MK_DATA=' + json.dumps(snap, ensure_ascii=False, separators=(',', ':')) + ';\n')

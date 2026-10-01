@@ -1,0 +1,24 @@
+# Render Blueprint — 카운터·롤링페이퍼 API 원클릭 배포
+# https://render.com/deploy?repo=https://github.com/kthyeok/mil-kit
+services:
+  - type: web
+    name: milkit-counter
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install
+    startCommand: node counter-api.mjs
+    healthCheckPath: /health
+    envVars:
+      - key: PGHOST
+        sync: false
+      - key: PGPORT
+        sync: false
+      - key: PGUSER
+        sync: false
+      - key: PGPASSWORD
+        sync: false
+      - key: PGDATABASE
+        value: postgres
+      - key: ALLOW_ORIGIN
+        value: https://kthyeok.github.io

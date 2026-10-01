@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<meta name="description" content="군 생활 이벤트로 조건을 모아 실제 채용공고와 국가자격 코스를 찾아주는 Mil-Kit">
+<meta property="og:title" content="Mil-Kit · 당신의 군생활을 요리해 드립니다">
+<meta property="og:description" content="이병부터 병장까지, 내 군생활로 맞춤 채용공고와 자격증 코스를 요리해 보세요.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kthyeok.github.io/mil-kit/">
+<meta property="og:image" content="https://kthyeok.github.io/mil-kit/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!-- 카카오톡 공유 카드: Kakao Developers 앱의 JavaScript 키를 content 에 넣으세요 (비우면 휴대폰 공유창으로 보냄) -->
+<meta name="kakao-js-key" content="">
+<title>Mil-Kit · 당신의 군생활을 요리해 드립니다</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
+<script src="data.js"></script>
+<style>
+/*CSS*/
+</style>
+</head>
+<body>
+<div class="bgfx" aria-hidden="true"><i></i><i></i><i></i></div>
+<aside class="side" aria-hidden="true">
+  <b>Mil-Kit</b><span>당신의 군생활을<br>요리해 드립니다</span>
+  <ul><li>🪖 이병 → 병장 진급 게임</li><li>📮 실제 채용공고 연결</li><li>📜 국가자격 코스 추천</li><li>🎖️ 전역카드 · 선후임 공유</li></ul>
+</aside>
+<div class="app" id="app">
+  <div class="topbar">
+    <div class="row">
+      <button class="iconbtn" id="back" hidden aria-label="뒤로">‹</button>
+      <span class="tb-title" id="tbTitle"></span>
+      <span class="tb-right"><span class="tb-step" id="tbStep"></span></span>
+    </div>
+    <div class="prog" id="prog"><i id="progBar"></i></div>
+  </div>
+  <main id="scr"></main>
+  <div class="cta" id="cta"></div>
+</div>
+<div id="tst" role="status" aria-live="polite"></div>
+<div class="sheetbg" id="sheetBg"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<script>
+/*JS*/
+</script>
+</body>
+</html>

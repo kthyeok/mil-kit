@@ -8,11 +8,20 @@
 <meta name="description" content="군 생활 이벤트로 조건을 모아 실제 채용공고와 국가자격 코스를 찾아주는 Mil-Kit">
 <meta property="og:title" content="Mil-Kit · 당신의 군생활을 요리해 드립니다">
 <meta property="og:description" content="이병부터 병장까지, 내 군생활로 맞춤 채용공고와 자격증 코스를 요리해 보세요.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kthyeok.github.io/mil-kit/">
+<meta property="og:image" content="https://kthyeok.github.io/mil-kit/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!-- 카카오톡 공유 카드: Kakao Developers 앱의 JavaScript 키를 content 에 넣으세요 (비우면 휴대폰 공유창으로 보냄) -->
+<meta name="kakao-js-key" content="">
 <title>Mil-Kit · 당신의 군생활을 요리해 드립니다</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 <script src="data.js"></script>
 <style>
 
@@ -1218,7 +1227,6 @@ body{font-family:'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgu
 @keyframes glow{to{transform:scale(1.15);opacity:.7}}
 
 /* 진급 */
-.rankbig{transform-style:preserve-3d}
 .fstage{box-shadow:inset 0 -40px 60px -30px rgba(0,0,0,.35)}
 
 /* 결과 */
@@ -1236,6 +1244,70 @@ body{font-family:'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgu
 .chips5.mj .chip{padding-top:6px;padding-bottom:6px}
 .paper{gap:7px}
 .pseal{line-height:1.1}
+
+/* 진급 문구: 또렷하게 */
+.celebrate .rankbig{color:var(--g900);font-size:31px;font-weight:900;letter-spacing:-1.2px;opacity:1;animation:none}
+.celebrate .rankbig em{color:var(--blue-d);background:linear-gradient(transparent 62%,#DCEBFF 62%);padding:0 2px}
+.celebrate .badge-up{background:var(--blue);color:#fff;font-weight:800;animation:none}
+.deltas b{background:#fff;border:1.5px solid var(--g200);color:var(--g800)}
+/* 공유 시트 */
+.kakao{background:#FEE500!important;color:#191919!important;box-shadow:0 8px 20px -10px rgba(180,150,0,.6)!important}
+.kakao::after{display:none}
+.kakao svg{width:20px;height:20px}
+.shrow{display:flex;gap:8px;margin-top:8px}
+.shrow .btn{flex:1}
+.ivcard img{width:100%;border-radius:8px;margin-bottom:6px;display:block}
+.ivcard{width:78%}
+
+/* ═══ 상단 제목 ═══ */
+.tb-title{gap:8px;margin-left:6px}
+.tbc{font-size:10.5px;font-weight:900;letter-spacing:.4px;color:#fff;background:linear-gradient(135deg,#3F4D22,#6B7A4A);padding:4px 8px;border-radius:7px;
+  box-shadow:0 3px 8px -3px rgba(63,77,34,.6)}
+.tbc.rk{background:linear-gradient(135deg,#1B64DA,#3182F6);box-shadow:0 3px 8px -3px rgba(49,130,246,.6)}
+.tbi{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--g100);font-size:15px}
+.tbi .rkm{width:12px;height:16px;fill:#3F4D22}
+.tbt{font-size:16.5px;font-weight:900;letter-spacing:-.6px;color:var(--g900)}
+.topbar .row{border-bottom:0}
+
+/* ═══ 신상명세서: 공문서 서식 ═══ */
+.paper{background:#FFFEF9;border:1px solid #2B2B2B;border-radius:4px;outline:3px double #2B2B2B;outline-offset:3px;padding:12px 12px 10px;
+  box-shadow:0 14px 30px -18px rgba(0,0,0,.45);margin:10px 4px 6px;position:relative;
+  background-image:radial-gradient(circle at 85% 18%,rgba(31,59,115,.05) 0 60px,transparent 61px),linear-gradient(#FFFEF9,#FFFDF4)}
+.paper::before{content:'병무청';position:absolute;right:16px;bottom:70px;font-size:46px;font-weight:900;color:rgba(31,59,115,.045);transform:rotate(-14deg);pointer-events:none}
+.ph2{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:8px;border-bottom:2px solid #2B2B2B;padding-bottom:8px}
+.ph2 .emb svg{width:38px;height:38px;display:block}
+.ph2 .pt{text-align:center;display:flex;flex-direction:column;line-height:1.15}
+.ph2 .pt small{font-size:9.5px;color:var(--g500);font-weight:700}
+.ph2 .pt b{font-size:20px;font-weight:900;letter-spacing:7px;font-family:'Nanum Myeongjo','Batang','Pretendard Variable',serif;margin:2px 0}
+.ph2 .pt span{font-size:10.5px;color:var(--g600)}
+.serial{display:flex;flex-direction:column;align-items:center;gap:2px}
+.serial .bar{width:44px;height:18px;background:repeating-linear-gradient(90deg,#222 0 1px,transparent 1px 3px,#222 3px 5px,transparent 5px 6px,#222 6px 7px,transparent 7px 9px)}
+.serial em{font-style:normal;font-size:8.5px;color:var(--g500);font-variant-numeric:tabular-nums}
+/* 표 형태 칸 */
+.paper .pf{display:grid;grid-template-columns:30px 1fr;border:1px solid #2B2B2B;border-radius:0;min-height:0}
+.paper .pf+.pf{border-top:0;margin-top:-7px}
+.paper .pf>label{writing-mode:vertical-rl;text-orientation:upright;display:grid;place-items:center;margin:0;background:#EEF0E6;border-right:1px solid #2B2B2B;
+  font-size:12px;font-weight:900;letter-spacing:6px;color:#2B2B2B}
+.paper .pf>label small{display:none}
+.paper .chips5{padding:7px;gap:5px}
+.paper .chips5 .chip{border:1px solid #BFC3B6;border-radius:3px;background:#fff;color:#2B2B2B;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px}
+.paper .chips5 .chip::before{content:'';flex:0 0 12px;width:12px;height:12px;border:1.5px solid #555;border-radius:2px;background:#fff;
+  display:grid;place-items:center;font-size:10px;line-height:1;color:#fff}
+.paper .chips5 .chip.on{background:#EAF2FF;border-color:#1B64DA;color:#123E8C}
+.paper .chips5 .chip.on::before{content:'✓';background:#1B64DA;border-color:#1B64DA}
+.pfoot{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;flex:0 0 auto;padding-top:2px}
+.pfoot .pseal{position:static;font-size:10px;color:var(--g500)}
+.sign{position:relative;font-size:13px;font-weight:900;letter-spacing:3px;font-family:'Nanum Myeongjo','Batang',serif;padding-right:30px}
+.stamp{position:absolute;right:-4px;top:50%;width:34px;height:34px;margin-top:-17px;border:2.5px solid #D62F2F;border-radius:50%;color:#D62F2F;
+  font-style:normal;font-size:9px;line-height:1.05;font-weight:900;letter-spacing:0;display:grid;place-items:center;text-align:center;
+  transform:rotate(-12deg);opacity:.85;mix-blend-mode:multiply;animation:stampin .45s 1.5s cubic-bezier(.3,1.6,.6,1) backwards}
+@keyframes stampin{from{transform:rotate(-12deg) scale(2.2);opacity:0}}
+html.compact .ph2 .pt b{font-size:17px}
+html.compact .paper .pf>label{font-size:11px}
+.paper{overflow:hidden}
+.paper .chips5.edu .chip{font-size:12px;gap:4px;padding:8px 3px;letter-spacing:-.5px;white-space:nowrap}
+.paper .chips5.edu .chip::before{flex-basis:11px;width:11px;height:11px}
+html.compact .pfoot{justify-content:flex-end}
 
 </style>
 </head>
@@ -2802,8 +2874,8 @@ function tick(){
 
 /* ═══════════════════════════════════════════════════════════════
    [Mil-Kit v7 · FX] 화면 전환 · 효과
-   - 갤럭시(One UI)식 전체 화면 넘김: 새 화면이 오른쪽에서 통째로 밀려 들어오고,
-     이전 화면은 왼쪽으로 살짝 밀리며 작아지고 어두워진다. 뒤로 가기는 반대.
+   - 전체 화면 넘김(세로): 새 화면이 아래에서 통째로 올라오고,
+     이전 화면은 위로 살짝 밀리며 작아지고 어두워진다. 뒤로 가기는 반대(아래로 내려감).
    - 왼쪽 가장자리에서 오른쪽으로 쓸면 뒤로 가기
    - 버튼 물결(ripple) · 숫자 올라가기 · 축하 꽃가루 (CDN 라이브러리 없으면 조용히 생략)
    ═══════════════════════════════════════════════════════════════ */
@@ -2827,10 +2899,10 @@ function slide(dir,doRender){
   app.style.zIndex='50';
   const ease='cubic-bezier(.32,.72,0,1)', D=560;
   const wide=innerWidth>=900;   // 데스크톱 휴대폰 무대: 프레임 밖으로 나가지 않게 짧게 밀고 흐리게
-  const back=wide?[{transform:'translateX(0) scale(1)',opacity:1},{transform:'translateX(-12%) scale(.94)',opacity:0}]
-    :[{transform:'translateX(0) scale(1)',filter:'brightness(1)'},{transform:'translateX(-26%) scale(.92)',filter:'brightness(.62)'}];
-  const front=wide?[{transform:'translateX(18%)',opacity:0},{transform:'translateX(0)',opacity:1}]
-    :[{transform:'translateX(100%)'},{transform:'translateX(0)'}];
+  const back=wide?[{transform:'translateY(0) scale(1)',opacity:1},{transform:'translateY(-10%) scale(.94)',opacity:0}]
+    :[{transform:'translateY(0) scale(1)',filter:'brightness(1)',borderRadius:'0px'},{transform:'translateY(-12%) scale(.92)',filter:'brightness(.6)',borderRadius:'28px'}];
+  const front=wide?[{transform:'translateY(16%)',opacity:0},{transform:'translateY(0)',opacity:1}]
+    :[{transform:'translateY(100%)',borderRadius:'28px 28px 0 0'},{transform:'translateY(0)',borderRadius:'0px'}];
   let a1,a2;
   if(dir>0){ a1=app.animate(front,{duration:D,easing:ease}); a2=ghost.animate(back,{duration:D,easing:ease,fill:'forwards'}); }
   else { a1=ghost.animate([...front].reverse(),{duration:D,easing:ease,fill:'forwards'}); a2=app.animate([...back].reverse(),{duration:D,easing:ease}); }
@@ -2959,13 +3031,28 @@ function cardFile(k){
   const cv=document.createElement('canvas'), [W]=CARD_DIM[k]; renderCard(cv,k,W*3/((window.devicePixelRatio||1)));
   return new Promise(r=>cv.toBlob(b=>r(b?new File([b],k==='dis'?'Mil-Kit_전역카드.png':'Mil-Kit_명함.png',{type:'image/png'}):null),'image/png'));
 }
-async function shareCardImage(k){
-  haptic();
-  const f=await cardFile(k); if(!f){toast('이미지를 만들지 못했어요');return;}
-  try{ if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Mil-Kit'});return;} }
-  catch(e){ if(e&&e.name==='AbortError') return; }
+/* 공유는 '클릭 순간'에 바로 호출해야 한다 (iOS Safari는 await 뒤 share()를 막는다).
+   그래서 이미지 파일은 시트를 열 때 미리 만들어 둔다. */
+const SHARE={file:{}};
+function prepCard(k){ SHARE.file[k]=null; cardFile(k).then(f=>{SHARE.file[k]=f;}); }
+function canShareFile(f){ try{return !!(f&&navigator.canShare&&navigator.canShare({files:[f]}));}catch(e){return false;} }
+function downloadFile(f){
   try{ const a=document.createElement('a'); a.download=f.name; a.href=URL.createObjectURL(f); document.body.appendChild(a); a.click(); a.remove();
     setTimeout(()=>URL.revokeObjectURL(a.href),4000); toast('이미지를 저장했어요'); }catch(e){ toast('이 환경에서는 저장이 막혀 있어요'); }
+}
+function shareCardImage(k,text){
+  haptic();
+  const f=SHARE.file[k];
+  if(!f){toast('이미지를 준비 중이에요. 잠시 후 다시 눌러주세요');prepCard(k);return;}
+  if(canShareFile(f)){ navigator.share(text?{files:[f],text}:{files:[f]}).catch(e=>{if(e&&e.name!=='AbortError') downloadFile(f);}); return; }
+  downloadFile(f);
+}
+function copyText(t,msg){
+  const ok=()=>toast(msg||'복사했어요');
+  const legacy=()=>{try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;opacity:0';
+    document.body.appendChild(ta);ta.select();const r=document.execCommand('copy');ta.remove();r?ok():toast('복사가 막혀 있어요 · 길게 눌러 복사해 주세요');}
+    catch(e){toast('복사가 막혀 있어요');}};
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(t).then(ok,legacy); else legacy();
 }
 
 /* ── 카드 시트 (요약 '오늘의 메뉴' 옆 아이콘) ── */
@@ -2981,16 +3068,24 @@ function openCardSheet(k){
     const box=$('cvbox'), [W,H]=CARD_DIM[k];
     const draw=()=>{const bw=box.clientWidth-8, bh=k==='dis'?Math.min(innerHeight*0.44,bw*H/W):bw*H/W;
       box.style.height=Math.round(bh+8)+'px'; renderCard($('cardCv'),k,Math.min(bw,bh*W/H));};
-    requestAnimationFrame(draw);
+    requestAnimationFrame(draw); prepCard(k);
     sh.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{if(b.dataset.ck!==k) openCardSheet(b.dataset.ck);});
-    $('ncName').oninput=e=>{CARD.name=e.target.value;draw();};
-    if($('ncTel')) $('ncTel').oninput=e=>{CARD.tel=e.target.value;draw();};
+    let pt=0; const re=()=>{clearTimeout(pt);pt=setTimeout(()=>prepCard(k),350);};
+    $('ncName').oninput=e=>{CARD.name=e.target.value;draw();re();};
+    if($('ncTel')) $('ncTel').oninput=e=>{CARD.tel=e.target.value;draw();re();};
     $('cvSave').onclick=()=>shareCardImage(k);
     $('cvInv').onclick=()=>openInvite();
   });
 }
 
-/* ── 선후임에게 공유하기 (도전장) ── */
+/* ── 선후임에게 공유하기 (카카오톡 · 이미지 · 링크) ── */
+const SITE_URL='https://kthyeok.github.io/mil-kit/';
+const OG_IMAGE=SITE_URL+'og.png';
+function kakaoKey(){ const m=document.querySelector('meta[name="kakao-js-key"]'); return m?m.content.trim():''; }
+function kakaoReady(){
+  const key=kakaoKey(); if(!key||!window.Kakao) return false;
+  try{ if(!Kakao.isInitialized()) Kakao.init(key); return Kakao.isInitialized()&&!!Kakao.Share; }catch(e){ return false; }
+}
 function inviteText(to){
   const menu=resMenu(), me=`${S.force} ${S.mos?S.mos.특기명:''}`;
   return {
@@ -2998,39 +3093,52 @@ function inviteText(to){
     '선임':`선임님! 제 군생활 요리해봤더니 "${menu} 정식" 나왔습니다 🫡\n선임님은 무슨 메뉴 나오실지 궁금합니다. 한번 해보십시오!`,
     '동기':`동기야 이거 해봐 ㅋㅋ 나 "${menu} 정식" 나옴 🍳\n너는 뭐 나오는지 보자!`}[to];
 }
+const FROM={'후임':'선임','선임':'후임','동기':'동기'};   // 받는 사람 입장에서 보낸 사람
 function inviteUrl(to){
-  if(!/^https?:/.test(location.protocol)) return '';
-  const w={'후임':'선임','선임':'후임','동기':'동기'}[to];   // 받는 사람 입장에서 보낸 사람
-  return location.href.split('#')[0]+'#ch='+encodeURIComponent(JSON.stringify({f:S.force,m:resMenu(),w}));
+  const base=/^https?:/.test(location.protocol)?location.href.split('#')[0]:SITE_URL;
+  return base+'#ch='+encodeURIComponent(JSON.stringify({f:S.force,m:resMenu(),w:FROM[to]}));
+}
+const KAKAO_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#191919" d="M12 3C6.5 3 2 6.5 2 10.8c0 2.8 1.9 5.2 4.7 6.6l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.5.1 1 .1 1.5.1 5.5 0 10-3.5 10-7.9S17.5 3 12 3z"/></svg>';
+function sendKakao(to){
+  const u=inviteUrl(to);
+  /* ① 카카오 JavaScript 키가 있으면: 카카오톡 공유 카드 */
+  if(kakaoReady()){
+    try{
+      Kakao.Share.sendDefault({objectType:'feed',
+        content:{title:`🍳 ${resMenu()} 정식이 나왔어요!`,description:`${FROM[to]}이 보낸 도전장 · 당신의 군생활을 요리해 드립니다`,
+          imageUrl:OG_IMAGE,imageWidth:1200,imageHeight:630,link:{mobileWebUrl:u,webUrl:u}},
+        buttons:[{title:'나도 요리해 보기',link:{mobileWebUrl:u,webUrl:u}}]});
+      return;
+    }catch(e){}
+  }
+  /* ② 휴대폰 공유창 — 카카오톡을 고르면 문구 + 링크 미리보기 카드가 간다 */
+  if(navigator.share){
+    navigator.share({title:'Mil-Kit · 당신의 군생활을 요리해 드립니다',text:inviteText(to),url:u})
+      .catch(e=>{if(e&&e.name!=='AbortError') copyText(inviteText(to)+'\n'+u,'복사했어요 · 카카오톡 대화창에 붙여넣어 주세요');});
+    return;
+  }
+  /* ③ PC — 복사해서 붙여넣기 */
+  copyText(inviteText(to)+'\n'+u,'복사했어요 · 카카오톡 대화창에 붙여넣어 주세요');
 }
 function openInvite(){
   haptic();
-  let to='후임', withImg=true;
-  openSheet(`<h3>선후임에게 공유하기</h3><p class="sub" style="margin:4px 0 10px">결과를 보내면 받은 사람도 바로 요리해 볼 수 있어요</p>
+  let to='후임';
+  prepCard('dis');
+  const kk=kakaoReady();
+  openSheet(`<h3>선후임에게 공유하기</h3><p class="sub" style="margin:4px 0 10px">링크를 받은 사람도 바로 요리해 볼 수 있어요</p>
     <div class="seg" id="toSeg">${['후임','선임','동기'].map(w=>`<button data-w="${w}" class="${w===to?'on':''}">${w}에게</button>`).join('')}</div>
-    <div class="invmsg"><span class="ivh">💬 미리보기</span><p id="ivTxt"></p><div class="ivcard" id="ivCard"></div></div>
-    <label class="ivchk"><input type="checkbox" id="ivImg" checked> 전역카드 이미지 같이 보내기</label>
-    <p class="fine" id="ivNote"></p>
-    <div class="sfoot"><button class="btn sub sm" id="ivCopy" style="flex:0 0 110px">문구 복사</button><button class="btn sm" id="ivGo">공유하기</button></div>`,sh=>{
-    const sync=()=>{$('ivTxt').textContent=inviteText(to);
-      const u=inviteUrl(to);
-      $('ivCard').innerHTML=`<b>🍳 Mil-Kit</b><span>당신의 군생활을 요리해 드립니다${u?'':' · 링크는 웹에 올리면 붙어요'}</span>`;
-      $('ivNote').textContent=u?`받은 사람 화면에 "${({'후임':'선임','선임':'후임','동기':'동기'})[to]}이 보낸 도전장"이 떠요. 군·메뉴만 담기고 이름은 안 담겨요.`
-        :'지금은 로컬 파일이라 링크 대신 문구만 보내져요.';};
+    <div class="invmsg"><span class="ivh">💬 미리보기</span><p id="ivTxt"></p>
+      <div class="ivcard"><img src="og.png" alt="" onerror="this.remove()"><b>🍳 Mil-Kit</b><span>당신의 군생활을 요리해 드립니다</span></div></div>
+    <p class="fine" id="ivNote">${kk?'카카오톡 공유 카드로 보내요.':navigator.share?'공유 창에서 <b>카카오톡</b>을 골라주세요. 링크 미리보기 카드가 함께 가요.':'PC에서는 문구와 링크를 복사해요. 카카오톡 대화창에 붙여넣어 주세요.'}
+      받는 사람 화면에 도전장이 떠요(군·메뉴만 담겨요).</p>
+    <button class="btn kakao" id="ivKakao">${KAKAO_ICON} 카카오톡으로 보내기</button>
+    <div class="shrow"><button class="btn sub sm" id="ivImg">🖼️ 전역카드 이미지</button><button class="btn sub sm" id="ivCopy">🔗 링크 복사</button></div>`,sh=>{
+    const sync=()=>{$('ivTxt').textContent=inviteText(to);};
     sync();
     sh.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{haptic();to=b.dataset.w;sh.querySelectorAll('[data-w]').forEach(x=>x.classList.toggle('on',x===b));sync();});
-    $('ivImg').onchange=e=>{withImg=e.target.checked;};
-    const full=()=>{const u=inviteUrl(to);return inviteText(to)+'\n\n👉 Mil-Kit · 당신의 군생활을 요리해 드립니다'+(u?'\n'+u:'');};
-    $('ivCopy').onclick=async()=>{haptic();try{await navigator.clipboard.writeText(full());toast('문구를 복사했어요');}catch(e){toast('복사가 막혀 있어요 · 길게 눌러 복사해 주세요');}};
-    $('ivGo').onclick=async()=>{haptic();
-      const u=inviteUrl(to), data={title:'Mil-Kit',text:inviteText(to)+'\n\n👉 Mil-Kit · 당신의 군생활을 요리해 드립니다'};
-      if(u) data.url=u;
-      try{
-        if(withImg){const f=await cardFile('dis'); if(f&&navigator.canShare&&navigator.canShare({...data,files:[f]})) data.files=[f];}
-        if(navigator.share){await navigator.share(data);closeSheet();return;}
-      }catch(e){ if(e&&e.name==='AbortError') return; }
-      try{await navigator.clipboard.writeText(full());toast('공유를 지원하지 않아 문구를 복사했어요');}catch(e){toast('이 환경에서는 공유가 막혀 있어요');}
-    };
+    $('ivKakao').onclick=()=>{haptic();sendKakao(to);};
+    $('ivImg').onclick=()=>shareCardImage('dis',inviteText(to)+'\n'+inviteUrl(to));
+    $('ivCopy').onclick=()=>{haptic();copyText(inviteText(to)+'\n'+inviteUrl(to),'문구와 링크를 복사했어요');};
   });
 }
 
@@ -3065,44 +3173,68 @@ function render(){
   $('prog').hidden=full||S.scr==='result';
   $('progBar').style.width=Math.min(100,stepNo()/STEPS_TOTAL*100)+'%';
   $('back').hidden=!['form','mos','ev'].includes(S.scr);
-  $('tbTitle').innerHTML={force:'입대',form:'병무청 · 신상명세서',mos:'자대 배치 면담',ev:`${S.force} · ${RANK5[S.si]} 생활`,promo:'',result:'오늘의 메뉴'}[S.scr]||'';
+  const TB={force:['STEP 1','📮','입영 통지서'],form:['STEP 2','🏛️','병무청 신상명세서'],mos:['STEP 3','🏕️','자대 배치 면담'],
+    ev:[RANK5[S.si],rankMark(S.si),`${S.force} ${RANK5[S.si]} 생활`],result:['완성','🍽️','오늘의 메뉴']}[S.scr];
+  $('tbTitle').innerHTML=TB?`<span class="tbc ${S.scr==='ev'?'rk':''}">${TB[0]}</span><span class="tbi">${TB[1]}</span><b class="tbt">${TB[2]}</b>`:'';
   $('tbStep').textContent=S.scr==='ev'?`${S.ei+1}/${EVENTS[RANK5[S.si]].length}`:'';
   $('scr').className=S.scr==='result'?'hub':'';
 
   $('cta').innerHTML='';
   ({splash:scSplash,force:scForce,form:scForm,mos:scMos,ev:scEvent,promo:scPromo,cook:scCook,result:scResult})[S.scr]();
 }
+/* 계급장(병) — 이병 1줄 · 일병 2줄 · 상병 3줄 · 병장 4줄 */
+function rankMark(i){ return `<svg class="rkm" viewBox="0 0 14 18" aria-hidden="true">${Array.from({length:i+1},(_,k)=>`<rect x="1" y="${15-k*4.4}" width="12" height="2.6" rx="1"/>`).join('')}</svg>`; }
 let rzT=0; addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(!$('sheetBg').classList.contains('on')) render();},150);});
 function go(scr,o={},dir=1){Object.assign(S,o);S.scr=scr;slide(dir,render);}   // dir: 1 앞으로 · -1 뒤로
 
 /* ═══ 0. 스플래시 — 거꾸로 놓인 군모 냄비 · 2초 요리 ═══ */
-function capSvg(){
-  const r=mulberry32(7), cam=['#4E5A33','#7E8B57','#5E4B33','#2E3322','#9AA36E','#6B7A4A'];
-  const px=Array.from({length:120},()=>{const w=4+Math.floor(r()*3)*3;return `<rect x="${Math.round(26+r()*170)}" y="${Math.round(58+r()*92)}" width="${w}" height="${w-(r()<.5?0:3)}" fill="${cam[Math.floor(r()*cam.length)]}"/>`;}).join('');
-  return `<svg class="capsvg" viewBox="0 0 200 170" aria-hidden="true">
-    <defs><clipPath id="capBody"><path d="M30 66 L42 132 Q44 141 53 141 L147 141 Q156 141 158 132 L170 66 Z"/></clipPath>
-      <clipPath id="capBrim"><path d="M148 124 Q184 120 194 140 Q172 152 146 142 Z"/></clipPath></defs>
-    <g class="steam">${['#3E8E41','#1D4ED8','#38BDF8','#EF4444'].map((c,i)=>`<path class="st st${i}" d="M${62+i*25} 56c-9-11 8-17 0-29s8-17 1-27" stroke="${c}" stroke-width="7" stroke-linecap="round" fill="none"/>`).join('')}</g>
-    <!-- 챙: 뒤집혀서 손잡이처럼 옆으로 -->
-    <path d="M148 124 Q184 120 194 140 Q172 152 146 142 Z" fill="#55623A"/>
-    <g clip-path="url(#capBrim)" opacity=".7">${px}</g>
-    <path d="M152 130 Q180 128 188 140" stroke="#2E3322" stroke-width="1" stroke-dasharray="3 2" fill="none"/>
-    <!-- 몸체: 디지털 무늬 -->
-    <path d="M30 66 L42 132 Q44 141 53 141 L147 141 Q156 141 158 132 L170 66 Z" fill="#6B7A4A"/>
-    <g clip-path="url(#capBody)">${px}</g>
-    <path d="M30 66 L42 132 Q44 141 53 141 L147 141 Q156 141 158 132 L170 66" fill="none" stroke="#3D4628" stroke-width="2.5"/>
-    <path d="M100 66 L100 140" stroke="#3D4628" stroke-width="1" stroke-dasharray="3 2" opacity=".6"/>
-    <!-- 입구(안쪽 땀받이) -->
-    <ellipse cx="100" cy="66" rx="70" ry="14" fill="#3D4628"/><ellipse cx="100" cy="67" rx="63" ry="10" fill="#1F2416"/>
-    <!-- 태극기 패치 + 명찰 -->
-    <g class="mark"><rect x="80" y="86" width="40" height="27" rx="2" fill="#fff" stroke="#3D4628" stroke-width="1.2"/>
+const CAP_CFG={
+  '육군':{cam:['#4E5A33','#7E8B57','#5E4B33','#2E3322','#9AA36E','#6B7A4A'],base:'#6B7A4A',line:'#3D4628',tape:'#2E3322',ink:'#E9E4C9',label:'대한민국 육군'},
+  '공군':{cam:['#4F5E70','#7D8DA0','#3C4756','#2A323C','#A3B1C2','#64748A'],base:'#64748A',line:'#36414E',tape:'#2A323C',ink:'#DCE6F2',label:'대한민국 공군'},
+  '기타':{cam:['#4E5A33','#7E8B57','#5E4B33','#2E3322','#9AA36E','#6B7A4A'],base:'#6B7A4A',line:'#3D4628',tape:'#2E3322',ink:'#E9E4C9',label:'대한민국'},
+  '해병':{cam:['#6A5A3A','#8C7B52','#4B4130','#2F2A1E','#A8956A','#7A6A46'],base:'#7A6A46',line:'#3F3626',tape:'#C0392B',ink:'#F2C230',label:'해병대'}};
+function capSvg(kind='육군'){
+  const steam=`<g class="steam">${['#3E8E41','#1D4ED8','#38BDF8','#EF4444'].map((c,i)=>`<path class="st st${i}" d="M${62+i*25} 56c-9-11 8-17 0-29s8-17 1-27" stroke="${c}" stroke-width="7" stroke-linecap="round" fill="none"/>`).join('')}</g>`;
+  /* 해군: 흰 수병모 + 검은 띠 '대한민국 해군' */
+  if(kind==='해군') return `<svg class="capsvg" viewBox="0 0 200 170" aria-hidden="true">${steam}
+    <defs><clipPath id="navyBody"><path d="M34 66 Q36 122 62 136 Q100 150 138 136 Q164 122 166 66 Z"/></clipPath>
+      <linearGradient id="navySh" x1="0" x2="1"><stop offset="0" stop-color="#E4E7EA"/><stop offset=".45" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D9DDE2"/></linearGradient></defs>
+    <path d="M34 66 Q36 122 62 136 Q100 150 138 136 Q164 122 166 66 Z" fill="url(#navySh)" stroke="#C3C9D0" stroke-width="2"/>
+    <g clip-path="url(#navyBody)"><rect x="20" y="84" width="160" height="16" fill="#1B1F2A"/>
+      <text x="100" y="95.5" font-size="8.5" text-anchor="middle" font-weight="900" fill="#D4AF37" font-family="sans-serif" letter-spacing="2">대한민국 해군</text>
+      <path d="M40 120 Q100 136 160 120" stroke="#E1E5EA" stroke-width="2" fill="none"/></g>
+    <g class="mark" transform="translate(100 120)" fill="none" stroke="#2B4A7A" stroke-width="2.2" stroke-linecap="round">
+      <circle cx="0" cy="-9" r="2.6"/><path d="M0 -6.4 V9"/><path d="M-6 -2 H6"/><path d="M-8 4 Q-6 10 0 10 Q6 10 8 4"/></g>
+    <ellipse cx="100" cy="66" rx="70" ry="15" fill="#FFFFFF" stroke="#C3C9D0" stroke-width="2"/><ellipse cx="100" cy="67" rx="60" ry="10" fill="#2A3140"/>
+  </svg>`;
+  const C=CAP_CFG[kind]||CAP_CFG['육군'], r=mulberry32(7);
+  const marine=kind==='해병';
+  const body=marine?'M28 66 L36 118 L52 141 L148 141 L164 118 L172 66 Z':'M30 66 L42 132 Q44 141 53 141 L147 141 Q156 141 158 132 L170 66 Z';
+  const px=Array.from({length:120},()=>{const w=4+Math.floor(r()*3)*3;return `<rect x="${Math.round(26+r()*170)}" y="${Math.round(58+r()*92)}" width="${w}" height="${w-(r()<.5?0:3)}" fill="${C.cam[Math.floor(r()*C.cam.length)]}"/>`;}).join('');
+  const flag=`<rect x="80" y="86" width="40" height="27" rx="2" fill="#fff" stroke="${C.line}" stroke-width="1.2"/>
       <circle cx="100" cy="99.5" r="7" fill="#0047A0"/><path d="M93 99.5 a7 7 0 0 1 14 0 a3.5 3.5 0 0 1 -7 0 a3.5 3.5 0 0 0 -7 0Z" fill="#C8102E"/>
       <g fill="#111"><rect x="83" y="89" width="7" height="1.4" transform="rotate(35 86.5 89.7)"/><rect x="83" y="91.4" width="7" height="1.4" transform="rotate(35 86.5 92.1)"/>
         <rect x="110" y="89" width="7" height="1.4" transform="rotate(-35 113.5 89.7)"/><rect x="110" y="91.4" width="7" height="1.4" transform="rotate(-35 113.5 92.1)"/>
         <rect x="83" y="107" width="7" height="1.4" transform="rotate(-35 86.5 107.7)"/><rect x="83" y="109.4" width="7" height="1.4" transform="rotate(-35 86.5 110.1)"/>
-        <rect x="110" y="107" width="7" height="1.4" transform="rotate(35 113.5 107.7)"/><rect x="110" y="109.4" width="7" height="1.4" transform="rotate(35 113.5 110.1)"/></g>
-      <rect x="74" y="118" width="52" height="10" rx="1.5" fill="#2E3322"/>
-      <text x="100" y="125.6" font-size="6.6" text-anchor="middle" font-weight="900" fill="#E9E4C9" font-family="sans-serif" letter-spacing="1">대한민국</text></g>
+        <rect x="110" y="107" width="7" height="1.4" transform="rotate(35 113.5 107.7)"/><rect x="110" y="109.4" width="7" height="1.4" transform="rotate(35 113.5 110.1)"/></g>`;
+  /* 해병: 팔각모 + 금색 닻·별 마크 */
+  const emblem=marine?`<g fill="#D4AF37" stroke="#8A6D12" stroke-width=".8"><path d="M100 84 l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z"/>
+      <path d="M98.6 100 h2.8 v10 q5.5-.6 8-5.4 l2.4 1.4 q-3.6 7.6-12.2 8.2 q-8.6-.6-12.2-8.2 l2.4-1.4 q2.5 4.8 8 5.4z"/><rect x="94" y="102" width="12" height="2.4" rx="1"/></g>`:flag;
+  return `<svg class="capsvg" viewBox="0 0 200 170" aria-hidden="true">
+    <defs><clipPath id="capBody${kind}"><path d="${body}"/></clipPath>
+      <clipPath id="capBrim${kind}"><path d="M148 124 Q184 120 194 140 Q172 152 146 142 Z"/></clipPath></defs>${steam}
+    <path d="M148 124 Q184 120 194 140 Q172 152 146 142 Z" fill="${C.line}"/>
+    <g clip-path="url(#capBrim${kind})" opacity=".7">${px}</g>
+    <path d="M152 130 Q180 128 188 140" stroke="${C.tape}" stroke-width="1" stroke-dasharray="3 2" fill="none"/>
+    <path d="${body}" fill="${C.base}"/>
+    <g clip-path="url(#capBody${kind})">${px}</g>
+    <path d="${body}" fill="none" stroke="${C.line}" stroke-width="2.5"/>
+    ${marine?`<path d="M36 118 L164 118 M52 141 L44 70 M148 141 L156 70" stroke="${C.line}" stroke-width="1.2" opacity=".55" fill="none"/>`
+      :`<path d="M100 66 L100 140" stroke="${C.line}" stroke-width="1" stroke-dasharray="3 2" opacity=".6"/>`}
+    <ellipse cx="100" cy="66" rx="70" ry="14" fill="${C.line}"/><ellipse cx="100" cy="67" rx="63" ry="10" fill="#1F2416"/>
+    <g class="mark">${emblem}
+      <rect x="70" y="118" width="60" height="10" rx="1.5" fill="${C.tape}"/>
+      <text x="100" y="125.6" font-size="6.6" text-anchor="middle" font-weight="900" fill="${C.ink}" font-family="sans-serif" letter-spacing=".4">${C.label}</text></g>
   </svg>`;
 }
 function scSplash(){
@@ -3146,11 +3278,15 @@ function scForm(){
     <div class="mma"><div class="mma-av">${npcSvg('mma')}</div>
       <div class="mma-b"><em>병무청 담당자</em><p>${S.force} 입영을 축하드려요! 배치에 참고하도록 <b>신상명세서</b>를 작성해 주세요 ✍️</p></div></div>
     <div class="paper handoff">
-      <div class="ph"><b>신 상 명 세 서</b><span>병무청 · ${S.force} 입영 대상자</span></div>
+      <div class="ph2"><span class="emb"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#fff" stroke="#1F3B73" stroke-width="2"/>
+          <circle cx="20" cy="20" r="9" fill="#0047A0"/><path d="M11 20a9 9 0 0 1 18 0a4.5 4.5 0 0 1-9 0a4.5 4.5 0 0 0-9 0Z" fill="#C8102E"/></svg></span>
+        <div class="pt"><small>병무청 서식 제12호</small><b>신 상 명 세 서</b><span>${S.force} 입영 대상자용</span></div>
+        <span class="serial"><i class="bar"></i><em>No. ${new Date().getFullYear()}-${String(Math.floor(1000+Math.random()*8999))}</em></span></div>
       <div class="pf"><label>최종 학력</label><div class="chips5 edu">${EDU5.map(([v,l])=>`<button class="chip ${S.edu===v?'on':''}" data-e="${v}">${l}</button>`).join('')}</div></div>
       <div class="pf grow"><label>전공 <small>${S.edu===3?'(고졸이면 관심 있는 계열)':''}</small></label>
         <div class="chips5 mj">${MAJOR5.map(([m])=>`<button class="chip ${S.major===m?'on':''}" data-m="${m}">${m}</button>`).join('')}</div></div>
-      <div class="pseal">🔒 기기 안에서만 쓰여요</div>
+      <div class="pfoot"><span class="pseal">🔒 기재 내용은 이 기기 안에서만 쓰여요</span>
+        <span class="sign">병 무 청 장<i class="stamp">병무<br>청장</i></span></div>
     </div>`;
   const sync=()=>{const ok=S.edu!=null&&S.major;$('next').disabled=!ok;$('next').textContent=ok?'제출하고 자대 배치 받기':'학력과 전공을 골라주세요';};
   $('scr').querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{haptic();S.edu=+b.dataset.e;
@@ -3287,7 +3423,7 @@ function scPromo(){
       ${got.map(x=>`<div class="cl"><span>${x.w}</span><b>${esc(x.a)}</b></div>`).join('')}</div>`;
   requestAnimationFrame(()=>{const h=Math.max(70,$('pst').clientHeight-16);mount($('cP'),Math.min(200,Math.floor(h*GW/GH)));});
   setTimeout(()=>party(last?'big':'small'),380);
-  if(window.gsap&&!FX.reduce) gsap.from('.rankbig',{scale:.4,rotateX:80,opacity:0,duration:.7,ease:'back.out(2)',delay:.15});
+  if(window.gsap&&!FX.reduce) gsap.fromTo('.rankbig',{scale:.6},{scale:1,duration:.6,ease:'back.out(2.4)',delay:.1,clearProps:'transform'});
   $('cta').innerHTML=`<button class="btn" id="next">${last?'🍳 요리 완성하기':'계속 복무하기'}</button>`;
   $('next').onclick=()=>{haptic();if(last) go('cook'); else go('ev',{si:S.si+1,ei:0});};
 }
@@ -3311,7 +3447,7 @@ function qnFilter(){ return {obligfldcd:S.ans.qnField||[],seriescd:S.ans.qnSerie
 const COOK_STEPS=[['📮','채용공고 모으는 중'],['📜','자격증 정보 모으는 중'],['🔗','공고와 자격 연결'],['🍽️','코스 플레이팅']];
 function scCook(){
   $('scr').innerHTML=`<div class="splash cook">
-    <div class="sp-stage small">${capSvg()}<div class="flame"><i></i><i></i><i></i></div></div>
+    <div class="sp-stage small">${capSvg(S.force)}<div class="flame"><i></i><i></i><i></i></div></div>
     <div class="anlt"><b id="apct">0%</b><span>당신의 군생활을 요리하는 중</span></div>
     <div class="abar"><i id="abar"></i></div>
     <div class="asteps">${COOK_STEPS.map(s=>`<div class="astep"><span class="ai">${s[0]}</span><span class="an">${s[1]}</span><span class="ac"></span></div>`).join('')}</div></div>`;

@@ -11,12 +11,38 @@
 |---|---|
 | `index.html` | 앱 본체 (Pretendard · GSAP · canvas-confetti CDN 사용, 없어도 동작) |
 | `data.js` | 실데이터 스냅샷 — 잡코리아 채용정보 + Q-Net 국가자격 종목 목록 |
+| `og.png` | 카카오톡·SNS 링크 미리보기 이미지 |
+| `src/` | 앱 소스 조각 (CSS·JS·HTML 셸) — `build.py`가 합쳐 `index.html`을 만듦 |
+| `build.py` | 빌드 스크립트 |
+| `tests/smoke.mjs` | 헤드리스 크롬으로 전체 흐름 자동 완주·화면 넘침·콘솔 에러 검사 |
 | `tools/export_snapshot.py` | Postgres → `data.js` 스냅샷 생성기 |
 
 - 군 선택: 육군 · 해군 · 공군 · 해병 · 기타(상근예비역 · 카투사 등)
 - 흐름: 스플래시 → 입대 → 병무청 신상명세서(학력·전공) → 자대 배치 면담 → 계급별 생활 이벤트 → 요리(결과)
 - 결과: 오늘의 메뉴 · 코스 서비스(자격 로드맵) · 채용공고(원문 링크) · 자격증 · 전역카드/명함 · 선후임 공유(도전장 링크)
 - 화면 전환: 갤럭시식 전체 화면 넘김, 왼쪽 가장자리 스와이프로 뒤로 가기
+
+## 개발
+```bash
+python build.py                    # src/ → index.html
+node tests/smoke.mjs 390x844 shots # 전체 흐름 자동 점검 (Node 22+, Chrome)
+```
+| 소스 | 역할 |
+|---|---|
+| `src/shell.html` | HTML 뼈대 · 메타(OG·카카오 키) · CDN |
+| `src/a1_app.js` | 화면 흐름 (스플래시 → 입대 → 신상명세서 → 자대 배치 → 계급별 이벤트 → 결과) |
+| `src/a2_card.js` | 전역카드 · 명함 · 카카오톡/선후임 공유 |
+| `src/a3_fx.js` | 화면 넘김(아래→위) · 물결 · 꽃가루 · 숫자 올라가기 |
+| `src/d1_api.js` | 잡코리아 요청 변수 → 스냅샷 필터 · Q-Net 목록 |
+| `src/d2_game.js` | 계급별 이벤트 = API 요청 변수 매핑 |
+| `src/d3_art.js` | 군별 배경 일러스트 · 교관 아바타 |
+| `src/legacy/` | 병무청 군사특기 데이터 · 픽셀 캐릭터 |
+
+## 카카오톡 공유 카드 켜기
+1. [Kakao Developers](https://developers.kakao.com)에서 앱을 만들고 **JavaScript 키**를 복사
+2. 앱 설정 → 플랫폼 → Web → 사이트 도메인에 `https://kthyeok.github.io` 등록
+3. `src/shell.html`의 `<meta name="kakao-js-key" content="">`에 키를 넣고 `python build.py` 후 푸시
+   (키가 없으면 휴대폰 공유창 → 카카오톡으로 문구 + 링크 미리보기 카드가 전송됩니다)
 
 ## 데이터 갱신
 정적 호스팅(GitHub Pages)은 DB에 직접 붙지 않으므로 스냅샷을 다시 만들어 올립니다.

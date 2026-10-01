@@ -1,0 +1,4 @@
+shots/
+prof*/
+__pycache__/
+*.pyc

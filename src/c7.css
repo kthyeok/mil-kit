@@ -1,0 +1,138 @@
+/* ═══ v7 · 효과 · 데스크톱 무대 ═══ */
+body{font-family:'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#EEF1F5}
+.app{isolation:isolate;will-change:transform}
+.ghost{will-change:transform,filter}
+.ghost *{animation:none!important;transition:none!important}
+
+/* 움직이는 배경 (데스크톱에서 보임) */
+.bgfx{position:fixed;inset:0;overflow:hidden;z-index:-1;background:linear-gradient(135deg,#EEF3E6,#E8F0FB 55%,#FDF2E7)}
+.bgfx i{position:absolute;width:46vmax;height:46vmax;border-radius:50%;filter:blur(70px);opacity:.55;animation:blob 18s ease-in-out infinite alternate}
+.bgfx i:nth-child(1){background:#B9CC8E;left:-12vmax;top:-10vmax}
+.bgfx i:nth-child(2){background:#9EC5FF;right:-14vmax;top:20vh;animation-duration:22s}
+.bgfx i:nth-child(3){background:#FFD59E;left:20vw;bottom:-20vmax;animation-duration:26s}
+@keyframes blob{to{transform:translate(8vmax,6vmax) scale(1.15)}}
+.side{display:none}
+
+/* 넓은 화면: 휴대폰 무대 + 소개 */
+@media(min-width:900px){
+  body{display:flex;align-items:center;justify-content:center;gap:72px;min-height:100dvh}
+  .app{margin:0;height:min(880px,calc(100dvh - 48px));width:410px;flex:0 0 410px;border-radius:44px;
+    box-shadow:0 0 0 10px #15181D,0 0 0 12px #2A2F37,0 40px 90px -20px rgba(20,30,50,.45)}
+  .side{display:flex;flex-direction:column;gap:14px;max-width:320px;color:#1F2A14;animation:up .8s .2s backwards}
+  .side b{font-size:54px;font-weight:900;letter-spacing:-2px;line-height:1;background:linear-gradient(120deg,#3F4D22,#6B7A4A 40%,#3182F6);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .side span{font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1.3}
+  .side ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .side li{background:rgba(255,255,255,.7);backdrop-filter:blur(8px);border-radius:14px;padding:11px 14px;font-weight:700;font-size:15px;
+    box-shadow:0 4px 18px -8px rgba(0,0,0,.15)}
+  .sheetbg{border-radius:0}
+}
+
+/* 물결 */
+.rip{position:absolute;border-radius:50%;background:currentColor;opacity:.18;transform:scale(0);pointer-events:none;animation:rip .6s ease-out forwards}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+
+/* 버튼 · 선택 반응 */
+.btn{position:relative;overflow:hidden;box-shadow:0 8px 20px -10px rgba(49,130,246,.7)}
+.btn:not(:disabled)::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);
+  transform:translateX(-100%);animation:shine 3.2s 1s ease-in-out infinite}
+@keyframes shine{0%,70%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.btn.sub{box-shadow:none}.btn.sub::after,.btn:disabled::after{display:none}
+.opt.on,.evopt.on,.evchip.on,.chip.on,.famt.on{animation:popsel .38s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popsel{0%{transform:scale(.94)}100%{transform:scale(1)}}
+.evchip,.evopt,.famt,.opt{transition:transform .15s,background .2s,border-color .2s,box-shadow .2s}
+.evchip.on,.famt.on,.opt.on{box-shadow:0 6px 18px -10px rgba(49,130,246,.8)}
+
+/* 진행 바 반짝 */
+.prog i{position:relative;overflow:hidden}
+.prog i::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:shine 2.4s linear infinite}
+
+/* 스플래시 */
+.sp-txt .ch{display:inline-block;font-style:normal}
+.splash{position:relative}
+.splash::before{content:'';position:absolute;left:50%;top:46%;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,196,110,.35),transparent 65%);animation:glow 2.6s ease-in-out infinite alternate;pointer-events:none}
+@keyframes glow{to{transform:scale(1.15);opacity:.7}}
+
+/* 진급 */
+.fstage{box-shadow:inset 0 -40px 60px -30px rgba(0,0,0,.35)}
+
+/* 결과 */
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.tags i{font-style:normal;font-size:11.5px;font-weight:700;color:var(--g600);background:var(--g100);padding:3px 8px;border-radius:999px}
+.sfoot a.btn{text-decoration:none}
+.menu .cv{position:relative}
+.menu .cv::after{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,.5) 50%,transparent 60%);
+  animation:shine 4s 1.2s ease-in-out infinite}
+.rd{transition:transform .2s}
+.rd:hover{transform:translateY(-2px)}
+.course .road3 em{animation:arrow 1.6s ease-in-out infinite}
+@keyframes arrow{50%{transform:translateX(3px);color:var(--olive)}}
+.kvs b{font-variant-numeric:tabular-nums}
+.chips5.mj .chip{padding-top:6px;padding-bottom:6px}
+.paper{gap:7px}
+.pseal{line-height:1.1}
+
+/* 진급 문구: 또렷하게 */
+.celebrate .rankbig{color:var(--g900);font-size:31px;font-weight:900;letter-spacing:-1.2px;opacity:1;animation:none}
+.celebrate .rankbig em{color:var(--blue-d);background:linear-gradient(transparent 62%,#DCEBFF 62%);padding:0 2px}
+.celebrate .badge-up{background:var(--blue);color:#fff;font-weight:800;animation:none}
+.deltas b{background:#fff;border:1.5px solid var(--g200);color:var(--g800)}
+/* 공유 시트 */
+.kakao{background:#FEE500!important;color:#191919!important;box-shadow:0 8px 20px -10px rgba(180,150,0,.6)!important}
+.kakao::after{display:none}
+.kakao svg{width:20px;height:20px}
+.shrow{display:flex;gap:8px;margin-top:8px}
+.shrow .btn{flex:1}
+.ivcard img{width:100%;border-radius:8px;margin-bottom:6px;display:block}
+.ivcard{width:78%}
+
+/* ═══ 상단 제목 ═══ */
+.tb-title{gap:8px;margin-left:6px}
+.tbc{font-size:10.5px;font-weight:900;letter-spacing:.4px;color:#fff;background:linear-gradient(135deg,#3F4D22,#6B7A4A);padding:4px 8px;border-radius:7px;
+  box-shadow:0 3px 8px -3px rgba(63,77,34,.6)}
+.tbc.rk{background:linear-gradient(135deg,#1B64DA,#3182F6);box-shadow:0 3px 8px -3px rgba(49,130,246,.6)}
+.tbi{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--g100);font-size:15px}
+.tbi .rkm{width:12px;height:16px;fill:#3F4D22}
+.tbt{font-size:16.5px;font-weight:900;letter-spacing:-.6px;color:var(--g900)}
+.topbar .row{border-bottom:0}
+
+/* ═══ 신상명세서: 공문서 서식 ═══ */
+.paper{background:#FFFEF9;border:1px solid #2B2B2B;border-radius:4px;outline:3px double #2B2B2B;outline-offset:3px;padding:12px 12px 10px;
+  box-shadow:0 14px 30px -18px rgba(0,0,0,.45);margin:10px 4px 6px;position:relative;
+  background-image:radial-gradient(circle at 85% 18%,rgba(31,59,115,.05) 0 60px,transparent 61px),linear-gradient(#FFFEF9,#FFFDF4)}
+.paper::before{content:'병무청';position:absolute;right:16px;bottom:70px;font-size:46px;font-weight:900;color:rgba(31,59,115,.045);transform:rotate(-14deg);pointer-events:none}
+.ph2{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:8px;border-bottom:2px solid #2B2B2B;padding-bottom:8px}
+.ph2 .emb svg{width:38px;height:38px;display:block}
+.ph2 .pt{text-align:center;display:flex;flex-direction:column;line-height:1.15}
+.ph2 .pt small{font-size:9.5px;color:var(--g500);font-weight:700}
+.ph2 .pt b{font-size:20px;font-weight:900;letter-spacing:7px;font-family:'Nanum Myeongjo','Batang','Pretendard Variable',serif;margin:2px 0}
+.ph2 .pt span{font-size:10.5px;color:var(--g600)}
+.serial{display:flex;flex-direction:column;align-items:center;gap:2px}
+.serial .bar{width:44px;height:18px;background:repeating-linear-gradient(90deg,#222 0 1px,transparent 1px 3px,#222 3px 5px,transparent 5px 6px,#222 6px 7px,transparent 7px 9px)}
+.serial em{font-style:normal;font-size:8.5px;color:var(--g500);font-variant-numeric:tabular-nums}
+/* 표 형태 칸 */
+.paper .pf{display:grid;grid-template-columns:30px 1fr;border:1px solid #2B2B2B;border-radius:0;min-height:0}
+.paper .pf+.pf{border-top:0;margin-top:-7px}
+.paper .pf>label{writing-mode:vertical-rl;text-orientation:upright;display:grid;place-items:center;margin:0;background:#EEF0E6;border-right:1px solid #2B2B2B;
+  font-size:12px;font-weight:900;letter-spacing:6px;color:#2B2B2B}
+.paper .pf>label small{display:none}
+.paper .chips5{padding:7px;gap:5px}
+.paper .chips5 .chip{border:1px solid #BFC3B6;border-radius:3px;background:#fff;color:#2B2B2B;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px}
+.paper .chips5 .chip::before{content:'';flex:0 0 12px;width:12px;height:12px;border:1.5px solid #555;border-radius:2px;background:#fff;
+  display:grid;place-items:center;font-size:10px;line-height:1;color:#fff}
+.paper .chips5 .chip.on{background:#EAF2FF;border-color:#1B64DA;color:#123E8C}
+.paper .chips5 .chip.on::before{content:'✓';background:#1B64DA;border-color:#1B64DA}
+.pfoot{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;flex:0 0 auto;padding-top:2px}
+.pfoot .pseal{position:static;font-size:10px;color:var(--g500)}
+.sign{position:relative;font-size:13px;font-weight:900;letter-spacing:3px;font-family:'Nanum Myeongjo','Batang',serif;padding-right:30px}
+.stamp{position:absolute;right:-4px;top:50%;width:34px;height:34px;margin-top:-17px;border:2.5px solid #D62F2F;border-radius:50%;color:#D62F2F;
+  font-style:normal;font-size:9px;line-height:1.05;font-weight:900;letter-spacing:0;display:grid;place-items:center;text-align:center;
+  transform:rotate(-12deg);opacity:.85;mix-blend-mode:multiply;animation:stampin .45s 1.5s cubic-bezier(.3,1.6,.6,1) backwards}
+@keyframes stampin{from{transform:rotate(-12deg) scale(2.2);opacity:0}}
+html.compact .ph2 .pt b{font-size:17px}
+html.compact .paper .pf>label{font-size:11px}
+.paper{overflow:hidden}
+.paper .chips5.edu .chip{font-size:12px;gap:4px;padding:8px 3px;letter-spacing:-.5px;white-space:nowrap}
+.paper .chips5.edu .chip::before{flex-basis:11px;width:11px;height:11px}
+html.compact .pfoot{justify-content:flex-end}

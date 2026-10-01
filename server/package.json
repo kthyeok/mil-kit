@@ -1,0 +1,11 @@
+{
+  "name": "milkit-counter-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Mil-Kit 군별 사용자 수 카운터 API (Postgres)",
+  "main": "counter-api.mjs",
+  "scripts": { "start": "node counter-api.mjs" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "pg": "^8.13.0" }
+}

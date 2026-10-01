@@ -91,7 +91,13 @@ def main():
            r['gi_e_time'] or 0, r['career_label'] or '', r['job_type_label'] or '', r['edu_label'] or '', r['pay_label'] or '',
            link(r)] for r in J]
 
-    snap = {'at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), 'qn': qn, 'jk': jk}
+    counts = {}
+    try:   # 군별 사용자 수 (server/schema.sql) — 없으면 건너뜀
+        cur.execute('select force, cnt from public.milkit_force_count')
+        counts = {f: int(n) for f, n in cur.fetchall()}
+    except Exception:
+        c.rollback()
+    snap = {'at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), 'qn': qn, 'jk': jk, 'counts': counts}
     with open(OUT, 'w', encoding='utf-8') as f:
         f.write('/* Mil-Kit 데이터 스냅샷 · export_snapshot.py 로 생성 · 잡코리아 채용정보 + Q-Net 국가자격 종목 */\n')
         f.write('window.MK_DATA=' + json.dumps(snap, ensure_ascii=False, separators=(',', ':')) + ';\n')

@@ -236,3 +236,32 @@ html,body{overflow:hidden}            /* 화면 넘김 중 스크롤바가 생�
 .req.ok em{background:#E6F8EF;color:#0F9D63}.req.no em{background:#FFF0F0;color:#D62F2F}
 .req small{grid-column:1/4;font-size:11px;color:var(--g500);text-align:right}
 .chd small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ═══ 군별 사용자 수 ═══ */
+.spcnt{display:flex;flex-direction:column;align-items:center;gap:6px;animation:up .5s 2s backwards;margin-top:2px}
+.spcnt small{font-size:12px;color:var(--g600)}.spcnt small b{color:var(--blue-d);font-weight:900}
+.cstrip{display:flex;justify-content:center;gap:5px;flex-wrap:nowrap}
+.cstrip span{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 6px 5px;border-radius:12px;background:#fff;
+  box-shadow:0 4px 14px -10px rgba(0,0,0,.35);border:1px solid var(--g100)}
+.cstrip i{font-style:normal;font-size:17px;line-height:1.1}
+.cstrip em{font-style:normal;font-size:10.5px;color:var(--g500);font-weight:700}
+.cstrip b{font-size:14px;font-weight:900;color:var(--g900);font-variant-numeric:tabular-nums}
+.cstrip.sm{gap:4px}
+.cstrip.sm span{flex:1;min-width:0;flex-direction:row;justify-content:center;gap:3px;padding:4px 2px;border-radius:10px;box-shadow:none;background:#fff}
+.cstrip.sm i{font-size:12px}.cstrip.sm em{display:none}.cstrip.sm b{font-size:12px}
+.cstrip.sm span.me{background:var(--blue-bg);border-color:var(--blue)}.cstrip.sm span.me b{color:var(--blue-d)}
+.fcnt{font-size:11.5px;color:var(--blue-d);font-weight:700}.fcnt b{font-weight:900}
+.letter small b{color:var(--blue-d)}
+.rcnt{flex:0 0 auto}
+.ivcard .cstrip{margin-top:6px}
+[data-cnt].bump{animation:bump .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bump{0%{transform:scale(1.5);color:var(--blue)}100%{transform:scale(1)}}
+html.compact .spcnt small{font-size:11px}
+html.compact .cstrip span{min-width:50px;padding:4px 4px 3px}
+html.compact .fcnt{font-size:10.5px}
+.letter small b{display:inline;font-size:inherit;font-weight:900;margin:0}
+.opt.tile{position:relative}
+.fcnt{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:3px;font-size:11px;line-height:1;padding:4px 7px;border-radius:999px;
+  background:#fff;color:var(--blue-d);font-weight:800;box-shadow:0 2px 8px -4px rgba(0,0,0,.25)}
+.fcnt b{display:inline!important;font-size:inherit!important;font-weight:900;margin:0!important;color:inherit}
+html.compact .fcnt{font-size:10px;left:7px;top:7px;padding:3px 6px}

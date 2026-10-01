@@ -134,7 +134,7 @@ function inviteText(to){
   return {
     '후임':`야, 내 군생활(${me}) 요리해봤더니 "${menu} 정식" 나왔다 🍳\n너도 해봐. 뭐 나오는지 보자.`,
     '선임':`선임님! 제 군생활 요리해봤더니 "${menu} 정식" 나왔습니다 🫡\n선임님은 무슨 메뉴 나오실지 궁금합니다. 한번 해보십시오!`,
-    '동기':`동기야 이거 해봐 ㅋㅋ 나 "${menu} 정식" 나옴 🍳\n너는 뭐 나오는지 보자!`}[to];
+    '동기':`동기야 이거 해봐 ㅋㅋ 나 "${menu} 정식" 나옴 🍳\n너는 뭐 나오는지 보자!`}[to]+'\n'+countLine();
 }
 const FROM={'후임':'선임','선임':'후임','동기':'동기'};   // 받는 사람 입장에서 보낸 사람
 function inviteUrl(to){
@@ -148,7 +148,7 @@ function sendKakao(to){
   if(kakaoReady()){
     try{
       Kakao.Share.sendDefault({objectType:'feed',
-        content:{title:`🍳 ${resMenu()} 정식이 나왔어요!`,description:`${FROM[to]}이 보낸 도전장 · 당신의 군생활을 요리해 드립니다`,
+        content:{title:`🍳 ${resMenu()} 정식이 나왔어요!`,description:`${FROM[to]}이 보낸 도전장 · ${countLine()}`,
           imageUrl:OG_IMAGE,imageWidth:1200,imageHeight:630,link:{mobileWebUrl:u,webUrl:u}},
         buttons:[{title:'나도 요리해 보기',link:{mobileWebUrl:u,webUrl:u}}]});
       return;
@@ -171,7 +171,7 @@ function openInvite(){
   openSheet(`<h3>선후임에게 공유하기</h3><p class="sub" style="margin:4px 0 10px">링크를 받은 사람도 바로 요리해 볼 수 있어요</p>
     <div class="seg" id="toSeg">${['후임','선임','동기'].map(w=>`<button data-w="${w}" class="${w===to?'on':''}">${w}에게</button>`).join('')}</div>
     <div class="invmsg"><span class="ivh">💬 미리보기</span><p id="ivTxt"></p>
-      <div class="ivcard"><img src="og.png" alt="" onerror="this.remove()"><b>🍳 Mil-Kit</b><span>당신의 군생활을 요리해 드립니다</span></div></div>
+      <div class="ivcard"><img src="og.png" alt="" onerror="this.remove()"><b>🍳 Mil-Kit</b><span>당신의 군생활을 요리해 드립니다</span>${countStrip(true)}</div></div>
     <p class="fine" id="ivNote">${kk?'카카오톡 공유 카드로 보내요.':navigator.share?'공유 창에서 <b>카카오톡</b>을 골라주세요. 링크 미리보기 카드가 함께 가요.':'PC에서는 문구와 링크를 복사해요. 카카오톡 대화창에 붙여넣어 주세요.'}
       받는 사람 화면에 도전장이 떠요(군·메뉴만 담겨요).</p>
     <button class="btn kakao" id="ivKakao">${KAKAO_ICON} 카카오톡으로 보내기</button>

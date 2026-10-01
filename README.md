@@ -16,6 +16,7 @@
 | `build.py` | 빌드 스크립트 |
 | `tests/smoke.mjs` | 헤드리스 크롬으로 전체 흐름 자동 완주·화면 넘침·콘솔 에러 검사 |
 | `tools/export_snapshot.py` | Postgres → `data.js` 스냅샷 생성기 |
+| `server/` | 군별 사용자 수 카운터 — `schema.sql`(테이블·함수) · `counter-api.mjs`(작은 API 서버) |
 
 - 군 선택: 육군 · 해군 · 공군 · 해병 · 기타(상근예비역 · 카투사 등)
 - 흐름: 스플래시 → 입대 → 병무청 신상명세서(학력·전공) → 자대 배치 면담(8개 분야) → 계급별 생활 이벤트 → 전역 후 진로(바로 취업 / 복학 → 졸업 후 희망 분야 → 목표 공고 선택 → 그 공고에 맞춘 나의 코스) → 요리(결과)
@@ -44,6 +45,20 @@ node tests/smoke.mjs 390x844 shots # 전체 흐름 자동 점검 (Node 22+, Chro
 2. 앱 설정 → 플랫폼 → Web → 사이트 도메인에 `https://kthyeok.github.io` 등록
 3. `src/shell.html`의 `<meta name="kakao-js-key" content="">`에 키를 넣고 `python build.py` 후 푸시
    (키가 없으면 휴대폰 공유창 → 카카오톡으로 문구 + 링크 미리보기 카드가 전송됩니다)
+
+## 군별 사용자 수 카운터
+입영통지서에서 고른 군을 `public.milkit_force_count` 테이블에 1씩 세고, 메인 · 입영통지서 · 결과 · 공유 화면에 k/m 단위로 보여줍니다.
+정적 사이트는 DB에 직접 쓸 수 없으므로(비밀번호 노출) `server/counter-api.mjs`가 DB 앞에서 '1 더하기'와 '읽기'만 대신합니다.
+
+1. DB에 테이블·함수 만들기: `server/schema.sql` 실행 (이미 적용됨). 파일 아래쪽 주석대로 API 전용 최소 권한 계정을 만드는 것을 권장합니다.
+2. API 서버 배포 (HTTPS 필요 — GitHub Pages가 HTTPS라 http API는 브라우저가 막습니다). 예: Render.com Web Service
+   - Root Directory `server` · Build `npm install` · Start `node counter-api.mjs`
+   - 환경변수 `PGHOST` `PGPORT` `PGUSER` `PGPASSWORD` `ALLOW_ORIGIN=https://kthyeok.github.io`
+   - 직접 서버에서 돌린다면 `cd server && npm i && node counter-api.mjs` + HTTPS(예: Cloudflare Tunnel)
+3. `src/shell.html`의 `<meta name="counter-api" content="">`에 API 주소(예: `https://milkit-counter.onrender.com`)를 넣고 `python build.py` 후 푸시
+
+API가 설정되기 전에는 `data.js` 스냅샷에 담긴 카운트(스냅샷 생성 시점 값)를 보여주고, 이 기기에서 고른 1만 더해 보여줍니다.
+API: `GET /counts` → `{"육군":1234,...}` · `POST /hit {"force":"해군"}` (IP당 10분 20회 제한, 허용 도메인만)
 
 ## 데이터 갱신
 정적 호스팅(GitHub Pages)은 DB에 직접 붙지 않으므로 스냅샷을 다시 만들어 올립니다.

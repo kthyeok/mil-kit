@@ -4,7 +4,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, 'src')
 CSS = ['base.css', 'c5.css', 'c7.css']
 JS = ['a0_helpers.js', 'legacy/p2_data_v3.js', 'legacy/p4_etl_v3.js', 'd1_api.js', 'd2_game.js', 'd3_art.js',
-      'legacy/p5a_char_v3.js', 'a3_fx.js', 'a2_card.js', 'a1_app.js']
+      'legacy/p5a_char_v3.js', 'a3_fx.js', 'a4_count.js', 'a2_card.js', 'a1_app.js']
 rd = lambda f: open(os.path.join(SRC, f), encoding='utf-8').read()
 css = '\n'.join(rd(f) for f in CSS)
 js = '\n'.join(rd(f) for f in JS)

@@ -123,6 +123,7 @@ function scSplash(){
     <div class="sp-brand">${typeof MILKIT_LOGO==='function'?'':''}<b>Mil-Kit</b><span>Your Next Step</span></div>
     ${CH?`<div class="chal"><b>🫡 ${esc(CH.w)}이 보낸 도전장</b><span>${esc(CH.f)} · "${esc(CH.m)} 정식" — 나는 뭐가 나올까?</span></div>`
       :`<p class="sp-note">실제 채용공고 ${won(JK_DB.length)}건 · 국가자격 ${won(QNET_ITEMS.length)}종${MK.at?` (${MK.at.slice(0,10)} 기준)`:''}<br>입력은 이 기기 안에서만 쓰여요.</p>`}
+    <div class="spcnt"><small>지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명이 군생활을 요리했어요</small>${countStrip()}</div>
   </div>`;
   $('cta').innerHTML=`<button class="btn hold" id="start">🍳 ${CH?'나도 요리해 보기':'요리 시작하기'}</button>`;
   $('start').onclick=()=>{haptic();go('force');};
@@ -137,14 +138,15 @@ function scSplash(){
 /* ═══ 1. 입대 — 군 선택 ═══ */
 function scForce(){
   $('scr').innerHTML=`
-    <div class="letter up"><span>📨</span><div><b>입영통지서가 도착했습니다</b><small>어느 군으로 입대했나요?</small></div></div>
+    <div class="letter up"><span>📨</span><div><b>입영통지서가 도착했습니다</b><small>어느 군으로 입대했나요? · 지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명 입대</small></div></div>
     <div class="fgrid f5">${FORCE5.map((f,n)=>`<button class="opt tile up ${S.force===f.n?'on':''} ${f.n==='기타'?'wide':''}" style="--d:${60+n*40}ms" data-f="${f.n}">
       <span class="ck">✓</span><span class="big">${f.i}</span><span class="tt">${f.n}</span>
-      <span class="dd">${f.d||`복무 ${(DS_SERVICE.find(x=>x.군별===f.n)||{}).복무기간_개월}개월 · 특기 ${DS_MOS.filter(x=>x.군별===f.n).length}종`}</span></button>`).join('')}</div>`;
+      <span class="dd">${f.d||`복무 ${(DS_SERVICE.find(x=>x.군별===f.n)||{}).복무기간_개월}개월 · 특기 ${DS_MOS.filter(x=>x.군별===f.n).length}종`}</span>
+      <span class="fcnt">👥 <b data-cnt="${f.n}">${kfmt(CNT.v[f.n])}</b>명 입대</span></button>`).join('')}</div>`;
   $('scr').querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{haptic();S.force=b.dataset.f;
     $('scr').querySelectorAll('.opt').forEach(o=>o.classList.toggle('on',o===b));$('next').disabled=false;$('next').textContent=`${S.force} 입대하기`;});
   $('cta').innerHTML=`<button class="btn" id="next" ${S.force?'':'disabled'}>${S.force?S.force+' 입대하기':'군을 골라주세요'}</button>`;
-  $('next').onclick=()=>{haptic();go('form');};
+  $('next').onclick=()=>{haptic(); if(!S.counted){S.counted=true; hitForce(S.force);} go('form');};   // 한 번 요리할 때 1회만 센다
 }
 
 /* ═══ 2. 훈련소 신상명세서 — 학력(edu1) · 전공 ═══ */
@@ -383,7 +385,7 @@ function scResult(){
   ({course:resCourse,post:resPost,cert:resCert})[S.tab]($('rbody'));
   $('cta').innerHTML=`<div class="btn-row"><button class="btn sub" id="again" style="flex:0 0 104px">다시 요리</button><button class="btn" id="inv">📤 선후임에게 공유하기</button></div>`;
   $('inv').onclick=openInvite;
-  $('again').onclick=()=>{haptic();Object.assign(S,{partied:false,plan:null,cslide:0,target:null,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
+  $('again').onclick=()=>{haptic();Object.assign(S,{counted:false,partied:false,plan:null,cslide:0,target:null,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
 }
 function resSum(box){
   const R=S.res, tc=R.certs.filter(c=>c.need).slice(0,3), ok=R.certs.filter(c=>c.el.ok).length;
@@ -576,6 +578,7 @@ function resCourse(box){
     <div class="chd up"><div class="ctx"><span class="k">당신의 꿈을 이루기 위한 <b>코스 서비스</b></span><b>${esc(menu)} 정식</b>
         <small>${S.plan==='school'?'🎓 복학 후 취업':'💼 바로 취업'} · 공고 <b data-count="${A.total}">0</b>건 분석</small></div>
       <div class="mico"><button data-card="dis" aria-label="전역카드">🎖️<span>전역카드</span></button><button data-card="nc" aria-label="명함">🪪<span>명함</span></button></div></div>
+    <div class="rcnt">${countStrip(true)}</div>
     <div class="crs" id="crs">${cards.map(([e,t,b],i)=>`<section class="ccard"><h4><span>${e}</span>${t}<em>${i+1}/${cards.length}</em></h4><div class="cb">${b}</div></section>`).join('')}</div>
     <div class="dots" id="dots">${cards.map((c,i)=>`<button data-d="${i}" aria-label="${c[1]}">${c[0]}</button>`).join('')}</div>
     ${A.top?`<button class="toppost" id="tp"><span>대표 공고</span><b>${esc(A.top.co)} · ${esc(A.top.title)}</b><em>원문 ↗</em></button>`:''}`;
@@ -632,6 +635,7 @@ function resCourseTarget(box,p){
     <div class="chd up"><div class="ctx"><span class="k">🎯 목표 공고에 맞춘 <b>코스 서비스</b></span><b>${esc(p.co)}</b>
         <small>${esc(p.title)}</small></div>
       <div class="mico"><button id="chg" aria-label="공고 바꾸기">🔁<span>공고 변경</span></button><button data-card="dis" aria-label="전역카드">🎖️<span>전역카드</span></button></div></div>
+    <div class="rcnt">${countStrip(true)}</div>
     <div class="crs" id="crs">${cards.map(([e,t,b],i)=>`<section class="ccard"><h4><span>${e}</span>${t}<em>${i+1}/${cards.length}</em></h4><div class="cb">${b}</div></section>`).join('')}</div>
     <div class="dots" id="dots">${cards.map((c,i)=>`<button data-d="${i}" aria-label="${c[1]}">${c[0]}</button>`).join('')}</div>
     <button class="toppost" id="tp"><span>원문</span><b>자격요건·우대사항·전형은 공고 원문에서 확인</b><em>보기 ↗</em></button>`;
@@ -660,4 +664,4 @@ $('back').onclick=()=>{
 };
 $('sheetBg').onclick=e=>{if(e.target===$('sheetBg')) closeSheet();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape') closeSheet();});
-render();tick();
+render();tick();loadCounts();

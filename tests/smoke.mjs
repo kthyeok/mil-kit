@@ -34,6 +34,7 @@ const shot=async name=>{await sleep(700);const r=await send('Page.captureScreens
 const click=async sel=>{const ok=await ev(`(()=>{const e=document.querySelector(${JSON.stringify(sel)});if(!e) return false;e.click();return true;})()`);if(!ok) errs.push('NOCLICK '+sel);await sleep(250);};
 
 
+await ev(`Object.assign(CNT.v,{육군:12345,해군:3210,공군:4567,해병:2890,기타:640});refreshCountUI()`);
 await sleep(1400); await shot('00_splash_mid'); await sleep(1200); await shot('01_splash_done');
 await click('#start'); await shot('02_force');
 await click('[data-f="해군"]'); await click('#next'); await shot('03_form');

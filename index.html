@@ -16,6 +16,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <!-- 카카오톡 공유 카드: Kakao Developers 앱의 JavaScript 키를 content 에 넣으세요 (비우면 휴대폰 공유창으로 보냄) -->
 <meta name="kakao-js-key" content="">
+<!-- 군별 사용자 수 카운터 API 주소 (server/counter-api.mjs 배포 후 입력, 비우면 data.js 스냅샷 값 표시) -->
+<meta name="counter-api" content="">
 <title>Mil-Kit · 당신의 군생활을 요리해 드립니다</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -1408,6 +1410,35 @@ html,body{overflow:hidden}            /* 화면 넘김 중 스크롤바가 생�
 .req.ok em{background:#E6F8EF;color:#0F9D63}.req.no em{background:#FFF0F0;color:#D62F2F}
 .req small{grid-column:1/4;font-size:11px;color:var(--g500);text-align:right}
 .chd small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ═══ 군별 사용자 수 ═══ */
+.spcnt{display:flex;flex-direction:column;align-items:center;gap:6px;animation:up .5s 2s backwards;margin-top:2px}
+.spcnt small{font-size:12px;color:var(--g600)}.spcnt small b{color:var(--blue-d);font-weight:900}
+.cstrip{display:flex;justify-content:center;gap:5px;flex-wrap:nowrap}
+.cstrip span{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 6px 5px;border-radius:12px;background:#fff;
+  box-shadow:0 4px 14px -10px rgba(0,0,0,.35);border:1px solid var(--g100)}
+.cstrip i{font-style:normal;font-size:17px;line-height:1.1}
+.cstrip em{font-style:normal;font-size:10.5px;color:var(--g500);font-weight:700}
+.cstrip b{font-size:14px;font-weight:900;color:var(--g900);font-variant-numeric:tabular-nums}
+.cstrip.sm{gap:4px}
+.cstrip.sm span{flex:1;min-width:0;flex-direction:row;justify-content:center;gap:3px;padding:4px 2px;border-radius:10px;box-shadow:none;background:#fff}
+.cstrip.sm i{font-size:12px}.cstrip.sm em{display:none}.cstrip.sm b{font-size:12px}
+.cstrip.sm span.me{background:var(--blue-bg);border-color:var(--blue)}.cstrip.sm span.me b{color:var(--blue-d)}
+.fcnt{font-size:11.5px;color:var(--blue-d);font-weight:700}.fcnt b{font-weight:900}
+.letter small b{color:var(--blue-d)}
+.rcnt{flex:0 0 auto}
+.ivcard .cstrip{margin-top:6px}
+[data-cnt].bump{animation:bump .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bump{0%{transform:scale(1.5);color:var(--blue)}100%{transform:scale(1)}}
+html.compact .spcnt small{font-size:11px}
+html.compact .cstrip span{min-width:50px;padding:4px 4px 3px}
+html.compact .fcnt{font-size:10.5px}
+.letter small b{display:inline;font-size:inherit;font-weight:900;margin:0}
+.opt.tile{position:relative}
+.fcnt{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:3px;font-size:11px;line-height:1;padding:4px 7px;border-radius:999px;
+  background:#fff;color:var(--blue-d);font-weight:800;box-shadow:0 2px 8px -4px rgba(0,0,0,.25)}
+.fcnt b{display:inline!important;font-size:inherit!important;font-weight:900;margin:0!important;color:inherit}
+html.compact .fcnt{font-size:10px;left:7px;top:7px;padding:3px 6px}
 
 </style>
 </head>
@@ -3076,6 +3107,44 @@ function stagger(sel,root){
 
 
 /* ═══════════════════════════════════════════════════════════════
+   [Mil-Kit · COUNT] 군별 사용자 수
+   - 입영통지서에서 고른 군을 DB(public.milkit_force_count)에 1씩 센다
+   - <meta name="counter-api" content="https://…"> 에 카운터 API 주소가 있으면 실시간,
+     없으면 data.js 스냅샷에 담긴 값(+ 이 기기에서 방금 센 1)을 보여준다
+   ═══════════════════════════════════════════════════════════════ */
+const CNT={api:((document.querySelector('meta[name="counter-api"]')||{}).content||'').trim().replace(/\/$/,''),
+  v:Object.assign({육군:0,해군:0,공군:0,해병:0,기타:0},(window.MK_DATA||{}).counts||{}),live:false};
+/* 1,234 → 1.2k · 56,000 → 56k · 1,200,000 → 1.2m */
+function kfmt(n){
+  n=Math.max(0,+n||0);
+  const f=(v,s)=>(v<10?(Math.floor(v*10)/10).toFixed(1).replace(/\.0$/,''):String(Math.floor(v)))+s;
+  return n>=1e6?f(n/1e6,'m'):n>=1e3?f(n/1e3,'k'):String(n);
+}
+const countTotal=()=>Object.values(CNT.v).reduce((a,b)=>a+(+b||0),0);
+function refreshCountUI(){
+  document.querySelectorAll('[data-cnt]').forEach(el=>{
+    const v=el.dataset.cnt==='all'?countTotal():CNT.v[el.dataset.cnt];
+    if(el.textContent!==kfmt(v)){el.textContent=kfmt(v); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');}
+  });
+}
+async function loadCounts(){
+  if(!CNT.api) return;
+  try{ const r=await fetch(CNT.api+'/counts',{cache:'no-store'}); if(r.ok){Object.assign(CNT.v,await r.json()); CNT.live=true; refreshCountUI();} }catch(e){}
+}
+function hitForce(f){
+  CNT.v[f]=(+CNT.v[f]||0)+1; refreshCountUI();
+  if(!CNT.api) return;
+  fetch(CNT.api+'/hit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({force:f}),keepalive:true})
+    .then(r=>r.ok?r.json():null).then(j=>{if(j){Object.assign(CNT.v,j); CNT.live=true; refreshCountUI();}}).catch(()=>{});
+}
+/* 군별 카운트 띠 — sm: 작은 크기 · 내 군 강조 */
+function countStrip(sm){
+  return `<div class="cstrip ${sm?'sm':''}">${FORCE5.map(f=>`<span class="${sm&&S.force===f.n?'me':''}"><i>${f.i}</i><em>${f.n}</em><b data-cnt="${f.n}">${kfmt(CNT.v[f.n])}</b></span>`).join('')}</div>`;
+}
+const countLine=()=>S.force?`벌써 ${S.force} ${kfmt(CNT.v[S.force])}명이 요리했어요 🔥`:`벌써 ${kfmt(countTotal())}명이 요리했어요 🔥`;
+
+
+/* ═══════════════════════════════════════════════════════════════
    [Mil-Kit v5 · CARD] 전역카드 · 명함 · 선후임 공유(도전장)
    이름·연락처는 명함 그리기에만 쓰이고 저장·전송되지 않는다.
    ═══════════════════════════════════════════════════════════════ */
@@ -3210,7 +3279,7 @@ function inviteText(to){
   return {
     '후임':`야, 내 군생활(${me}) 요리해봤더니 "${menu} 정식" 나왔다 🍳\n너도 해봐. 뭐 나오는지 보자.`,
     '선임':`선임님! 제 군생활 요리해봤더니 "${menu} 정식" 나왔습니다 🫡\n선임님은 무슨 메뉴 나오실지 궁금합니다. 한번 해보십시오!`,
-    '동기':`동기야 이거 해봐 ㅋㅋ 나 "${menu} 정식" 나옴 🍳\n너는 뭐 나오는지 보자!`}[to];
+    '동기':`동기야 이거 해봐 ㅋㅋ 나 "${menu} 정식" 나옴 🍳\n너는 뭐 나오는지 보자!`}[to]+'\n'+countLine();
 }
 const FROM={'후임':'선임','선임':'후임','동기':'동기'};   // 받는 사람 입장에서 보낸 사람
 function inviteUrl(to){
@@ -3224,7 +3293,7 @@ function sendKakao(to){
   if(kakaoReady()){
     try{
       Kakao.Share.sendDefault({objectType:'feed',
-        content:{title:`🍳 ${resMenu()} 정식이 나왔어요!`,description:`${FROM[to]}이 보낸 도전장 · 당신의 군생활을 요리해 드립니다`,
+        content:{title:`🍳 ${resMenu()} 정식이 나왔어요!`,description:`${FROM[to]}이 보낸 도전장 · ${countLine()}`,
           imageUrl:OG_IMAGE,imageWidth:1200,imageHeight:630,link:{mobileWebUrl:u,webUrl:u}},
         buttons:[{title:'나도 요리해 보기',link:{mobileWebUrl:u,webUrl:u}}]});
       return;
@@ -3247,7 +3316,7 @@ function openInvite(){
   openSheet(`<h3>선후임에게 공유하기</h3><p class="sub" style="margin:4px 0 10px">링크를 받은 사람도 바로 요리해 볼 수 있어요</p>
     <div class="seg" id="toSeg">${['후임','선임','동기'].map(w=>`<button data-w="${w}" class="${w===to?'on':''}">${w}에게</button>`).join('')}</div>
     <div class="invmsg"><span class="ivh">💬 미리보기</span><p id="ivTxt"></p>
-      <div class="ivcard"><img src="og.png" alt="" onerror="this.remove()"><b>🍳 Mil-Kit</b><span>당신의 군생활을 요리해 드립니다</span></div></div>
+      <div class="ivcard"><img src="og.png" alt="" onerror="this.remove()"><b>🍳 Mil-Kit</b><span>당신의 군생활을 요리해 드립니다</span>${countStrip(true)}</div></div>
     <p class="fine" id="ivNote">${kk?'카카오톡 공유 카드로 보내요.':navigator.share?'공유 창에서 <b>카카오톡</b>을 골라주세요. 링크 미리보기 카드가 함께 가요.':'PC에서는 문구와 링크를 복사해요. 카카오톡 대화창에 붙여넣어 주세요.'}
       받는 사람 화면에 도전장이 떠요(군·메뉴만 담겨요).</p>
     <button class="btn kakao" id="ivKakao">${KAKAO_ICON} 카카오톡으로 보내기</button>
@@ -3386,6 +3455,7 @@ function scSplash(){
     <div class="sp-brand">${typeof MILKIT_LOGO==='function'?'':''}<b>Mil-Kit</b><span>Your Next Step</span></div>
     ${CH?`<div class="chal"><b>🫡 ${esc(CH.w)}이 보낸 도전장</b><span>${esc(CH.f)} · "${esc(CH.m)} 정식" — 나는 뭐가 나올까?</span></div>`
       :`<p class="sp-note">실제 채용공고 ${won(JK_DB.length)}건 · 국가자격 ${won(QNET_ITEMS.length)}종${MK.at?` (${MK.at.slice(0,10)} 기준)`:''}<br>입력은 이 기기 안에서만 쓰여요.</p>`}
+    <div class="spcnt"><small>지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명이 군생활을 요리했어요</small>${countStrip()}</div>
   </div>`;
   $('cta').innerHTML=`<button class="btn hold" id="start">🍳 ${CH?'나도 요리해 보기':'요리 시작하기'}</button>`;
   $('start').onclick=()=>{haptic();go('force');};
@@ -3400,14 +3470,15 @@ function scSplash(){
 /* ═══ 1. 입대 — 군 선택 ═══ */
 function scForce(){
   $('scr').innerHTML=`
-    <div class="letter up"><span>📨</span><div><b>입영통지서가 도착했습니다</b><small>어느 군으로 입대했나요?</small></div></div>
+    <div class="letter up"><span>📨</span><div><b>입영통지서가 도착했습니다</b><small>어느 군으로 입대했나요? · 지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명 입대</small></div></div>
     <div class="fgrid f5">${FORCE5.map((f,n)=>`<button class="opt tile up ${S.force===f.n?'on':''} ${f.n==='기타'?'wide':''}" style="--d:${60+n*40}ms" data-f="${f.n}">
       <span class="ck">✓</span><span class="big">${f.i}</span><span class="tt">${f.n}</span>
-      <span class="dd">${f.d||`복무 ${(DS_SERVICE.find(x=>x.군별===f.n)||{}).복무기간_개월}개월 · 특기 ${DS_MOS.filter(x=>x.군별===f.n).length}종`}</span></button>`).join('')}</div>`;
+      <span class="dd">${f.d||`복무 ${(DS_SERVICE.find(x=>x.군별===f.n)||{}).복무기간_개월}개월 · 특기 ${DS_MOS.filter(x=>x.군별===f.n).length}종`}</span>
+      <span class="fcnt">👥 <b data-cnt="${f.n}">${kfmt(CNT.v[f.n])}</b>명 입대</span></button>`).join('')}</div>`;
   $('scr').querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{haptic();S.force=b.dataset.f;
     $('scr').querySelectorAll('.opt').forEach(o=>o.classList.toggle('on',o===b));$('next').disabled=false;$('next').textContent=`${S.force} 입대하기`;});
   $('cta').innerHTML=`<button class="btn" id="next" ${S.force?'':'disabled'}>${S.force?S.force+' 입대하기':'군을 골라주세요'}</button>`;
-  $('next').onclick=()=>{haptic();go('form');};
+  $('next').onclick=()=>{haptic(); if(!S.counted){S.counted=true; hitForce(S.force);} go('form');};   // 한 번 요리할 때 1회만 센다
 }
 
 /* ═══ 2. 훈련소 신상명세서 — 학력(edu1) · 전공 ═══ */
@@ -3646,7 +3717,7 @@ function scResult(){
   ({course:resCourse,post:resPost,cert:resCert})[S.tab]($('rbody'));
   $('cta').innerHTML=`<div class="btn-row"><button class="btn sub" id="again" style="flex:0 0 104px">다시 요리</button><button class="btn" id="inv">📤 선후임에게 공유하기</button></div>`;
   $('inv').onclick=openInvite;
-  $('again').onclick=()=>{haptic();Object.assign(S,{partied:false,plan:null,cslide:0,target:null,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
+  $('again').onclick=()=>{haptic();Object.assign(S,{counted:false,partied:false,plan:null,cslide:0,target:null,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
 }
 function resSum(box){
   const R=S.res, tc=R.certs.filter(c=>c.need).slice(0,3), ok=R.certs.filter(c=>c.el.ok).length;
@@ -3839,6 +3910,7 @@ function resCourse(box){
     <div class="chd up"><div class="ctx"><span class="k">당신의 꿈을 이루기 위한 <b>코스 서비스</b></span><b>${esc(menu)} 정식</b>
         <small>${S.plan==='school'?'🎓 복학 후 취업':'💼 바로 취업'} · 공고 <b data-count="${A.total}">0</b>건 분석</small></div>
       <div class="mico"><button data-card="dis" aria-label="전역카드">🎖️<span>전역카드</span></button><button data-card="nc" aria-label="명함">🪪<span>명함</span></button></div></div>
+    <div class="rcnt">${countStrip(true)}</div>
     <div class="crs" id="crs">${cards.map(([e,t,b],i)=>`<section class="ccard"><h4><span>${e}</span>${t}<em>${i+1}/${cards.length}</em></h4><div class="cb">${b}</div></section>`).join('')}</div>
     <div class="dots" id="dots">${cards.map((c,i)=>`<button data-d="${i}" aria-label="${c[1]}">${c[0]}</button>`).join('')}</div>
     ${A.top?`<button class="toppost" id="tp"><span>대표 공고</span><b>${esc(A.top.co)} · ${esc(A.top.title)}</b><em>원문 ↗</em></button>`:''}`;
@@ -3895,6 +3967,7 @@ function resCourseTarget(box,p){
     <div class="chd up"><div class="ctx"><span class="k">🎯 목표 공고에 맞춘 <b>코스 서비스</b></span><b>${esc(p.co)}</b>
         <small>${esc(p.title)}</small></div>
       <div class="mico"><button id="chg" aria-label="공고 바꾸기">🔁<span>공고 변경</span></button><button data-card="dis" aria-label="전역카드">🎖️<span>전역카드</span></button></div></div>
+    <div class="rcnt">${countStrip(true)}</div>
     <div class="crs" id="crs">${cards.map(([e,t,b],i)=>`<section class="ccard"><h4><span>${e}</span>${t}<em>${i+1}/${cards.length}</em></h4><div class="cb">${b}</div></section>`).join('')}</div>
     <div class="dots" id="dots">${cards.map((c,i)=>`<button data-d="${i}" aria-label="${c[1]}">${c[0]}</button>`).join('')}</div>
     <button class="toppost" id="tp"><span>원문</span><b>자격요건·우대사항·전형은 공고 원문에서 확인</b><em>보기 ↗</em></button>`;
@@ -3923,7 +3996,7 @@ $('back').onclick=()=>{
 };
 $('sheetBg').onclick=e=>{if(e.target===$('sheetBg')) closeSheet();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape') closeSheet();});
-render();tick();
+render();tick();loadCounts();
 
 </script>
 </body>

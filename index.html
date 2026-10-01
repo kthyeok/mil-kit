@@ -5,7 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="theme-color" content="#ffffff">
 <meta name="color-scheme" content="light">
-<title>Mil-Kit v6 · 당신의 군생활을 요리해 드립니다</title>
+<meta name="description" content="군 생활 이벤트로 조건을 모아 실제 채용공고와 국가자격 코스를 찾아주는 Mil-Kit">
+<meta property="og:title" content="Mil-Kit · 당신의 군생활을 요리해 드립니다">
+<meta property="og:description" content="이병부터 병장까지, 내 군생활로 맞춤 채용공고와 자격증 코스를 요리해 보세요.">
+<title>Mil-Kit · 당신의 군생활을 요리해 드립니다</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script src="data.js"></script>
 <style>
 
 :root{
@@ -1153,15 +1161,96 @@ html.compact .mico button{height:36px;width:54px}
 .pf.grow>label{flex:0 0 auto}
 .menu .mtx small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
+/* ═══ v7 · 효과 · 데스크톱 무대 ═══ */
+body{font-family:'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#EEF1F5}
+.app{isolation:isolate;will-change:transform}
+.ghost{will-change:transform,filter}
+.ghost *{animation:none!important;transition:none!important}
+
+/* 움직이는 배경 (데스크톱에서 보임) */
+.bgfx{position:fixed;inset:0;overflow:hidden;z-index:-1;background:linear-gradient(135deg,#EEF3E6,#E8F0FB 55%,#FDF2E7)}
+.bgfx i{position:absolute;width:46vmax;height:46vmax;border-radius:50%;filter:blur(70px);opacity:.55;animation:blob 18s ease-in-out infinite alternate}
+.bgfx i:nth-child(1){background:#B9CC8E;left:-12vmax;top:-10vmax}
+.bgfx i:nth-child(2){background:#9EC5FF;right:-14vmax;top:20vh;animation-duration:22s}
+.bgfx i:nth-child(3){background:#FFD59E;left:20vw;bottom:-20vmax;animation-duration:26s}
+@keyframes blob{to{transform:translate(8vmax,6vmax) scale(1.15)}}
+.side{display:none}
+
+/* 넓은 화면: 휴대폰 무대 + 소개 */
+@media(min-width:900px){
+  body{display:flex;align-items:center;justify-content:center;gap:72px;min-height:100dvh}
+  .app{margin:0;height:min(880px,calc(100dvh - 48px));width:410px;flex:0 0 410px;border-radius:44px;
+    box-shadow:0 0 0 10px #15181D,0 0 0 12px #2A2F37,0 40px 90px -20px rgba(20,30,50,.45)}
+  .side{display:flex;flex-direction:column;gap:14px;max-width:320px;color:#1F2A14;animation:up .8s .2s backwards}
+  .side b{font-size:54px;font-weight:900;letter-spacing:-2px;line-height:1;background:linear-gradient(120deg,#3F4D22,#6B7A4A 40%,#3182F6);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .side span{font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1.3}
+  .side ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .side li{background:rgba(255,255,255,.7);backdrop-filter:blur(8px);border-radius:14px;padding:11px 14px;font-weight:700;font-size:15px;
+    box-shadow:0 4px 18px -8px rgba(0,0,0,.15)}
+  .sheetbg{border-radius:0}
+}
+
+/* 물결 */
+.rip{position:absolute;border-radius:50%;background:currentColor;opacity:.18;transform:scale(0);pointer-events:none;animation:rip .6s ease-out forwards}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+
+/* 버튼 · 선택 반응 */
+.btn{position:relative;overflow:hidden;box-shadow:0 8px 20px -10px rgba(49,130,246,.7)}
+.btn:not(:disabled)::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);
+  transform:translateX(-100%);animation:shine 3.2s 1s ease-in-out infinite}
+@keyframes shine{0%,70%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.btn.sub{box-shadow:none}.btn.sub::after,.btn:disabled::after{display:none}
+.opt.on,.evopt.on,.evchip.on,.chip.on,.famt.on{animation:popsel .38s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popsel{0%{transform:scale(.94)}100%{transform:scale(1)}}
+.evchip,.evopt,.famt,.opt{transition:transform .15s,background .2s,border-color .2s,box-shadow .2s}
+.evchip.on,.famt.on,.opt.on{box-shadow:0 6px 18px -10px rgba(49,130,246,.8)}
+
+/* 진행 바 반짝 */
+.prog i{position:relative;overflow:hidden}
+.prog i::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:shine 2.4s linear infinite}
+
+/* 스플래시 */
+.sp-txt .ch{display:inline-block;font-style:normal}
+.splash{position:relative}
+.splash::before{content:'';position:absolute;left:50%;top:46%;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,196,110,.35),transparent 65%);animation:glow 2.6s ease-in-out infinite alternate;pointer-events:none}
+@keyframes glow{to{transform:scale(1.15);opacity:.7}}
+
+/* 진급 */
+.rankbig{transform-style:preserve-3d}
+.fstage{box-shadow:inset 0 -40px 60px -30px rgba(0,0,0,.35)}
+
+/* 결과 */
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.tags i{font-style:normal;font-size:11.5px;font-weight:700;color:var(--g600);background:var(--g100);padding:3px 8px;border-radius:999px}
+.sfoot a.btn{text-decoration:none}
+.menu .cv{position:relative}
+.menu .cv::after{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,.5) 50%,transparent 60%);
+  animation:shine 4s 1.2s ease-in-out infinite}
+.rd{transition:transform .2s}
+.rd:hover{transform:translateY(-2px)}
+.course .road3 em{animation:arrow 1.6s ease-in-out infinite}
+@keyframes arrow{50%{transform:translateX(3px);color:var(--olive)}}
+.kvs b{font-variant-numeric:tabular-nums}
+.chips5.mj .chip{padding-top:6px;padding-bottom:6px}
+.paper{gap:7px}
+.pseal{line-height:1.1}
+
 </style>
 </head>
 <body>
+<div class="bgfx" aria-hidden="true"><i></i><i></i><i></i></div>
+<aside class="side" aria-hidden="true">
+  <b>Mil-Kit</b><span>당신의 군생활을<br>요리해 드립니다</span>
+  <ul><li>🪖 이병 → 병장 진급 게임</li><li>📮 실제 채용공고 연결</li><li>📜 국가자격 코스 추천</li><li>🎖️ 전역카드 · 선후임 공유</li></ul>
+</aside>
 <div class="app" id="app">
   <div class="topbar">
     <div class="row">
       <button class="iconbtn" id="back" hidden aria-label="뒤로">‹</button>
       <span class="tb-title" id="tbTitle"></span>
-      <span class="tb-right"><span class="demo">DEMO</span><span class="tb-step" id="tbStep"></span></span>
+      <span class="tb-right"><span class="tb-step" id="tbStep"></span></span>
     </div>
     <div class="prog" id="prog"><i id="progBar"></i></div>
   </div>
@@ -2168,15 +2257,12 @@ const RULES=[
 
 
 /* ═══════════════════════════════════════════════════════════════
-   [Mil-Kit v5 · DATA] 두 개의 API — 목업
-   ① 한국산업인력공단 국가자격 종목 목록 조회 (Q-Net)
-      GET http://openapi.q-net.or.kr/api/service/rest/InquiryListNationalQualifcationSVC/getList?ServiceKey=…
-      요청 변수: serviceKey 1개 / 응답(XML): qualgbcd · qualgbnm · seriescd · seriesnm · jmcd · jmfldnm
-                 · obligfldcd · obligfldnm · mdobligfldcd · mdobligfldnm
-      → 전체 목록을 받은 뒤 '대직무분야 · 계열(등급) · 전공' 으로 앱에서 거른다.
-   ② 잡코리아 채용정보 (API 이용가이드 v4.1)
-      요청 변수: Size · Page · Ob · Keyword · rbcd · rpcd · area · edu1 · mcareerchk · Jtype · pay · payterm · ctype
-   ⚠️ 두 API 모두 응답 구조만 같은 목업입니다. 종목코드(jmcd)·공고는 예시 값입니다.
+   [Mil-Kit v7 · DATA] 실데이터 — Postgres 스냅샷(data.js · window.MK_DATA)
+   ① public.listnationalqualifcation  — Q-Net 국가자격 종목 목록 (getList 응답과 같은 컬럼)
+   ② public.jobkorea_job_posting      — 잡코리아 채용정보 (API 이용가이드 v4.1 응답 필드)
+   정적 호스팅이라 DB에 직접 붙지 않고 export_snapshot.py 로 만든 스냅샷을 읽는다.
+   요청 변수(Keyword · rbcd · rpcd · area · edu1 · mcareerchk · Jtype · pay/payterm · Ob)는
+   가이드 의미 그대로 스냅샷 위에서 거른다. ctype(기업형태)은 테이블에 컬럼이 없어 요청에만 실린다.
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Q-Net 대직무분야 (obligfldcd) ── */
@@ -2184,54 +2270,13 @@ const QN_OBLIG={'01':'사업관리','02':'경영.회계.사무','03':'금융.보
   '06':'보건.의료','07':'사회복지.종교','08':'문화.예술.디자인.방송','09':'운전.운송','10':'영업.판매','11':'경비.청소',
   '12':'이용.숙박.여행.오락.스포츠','13':'음식서비스','14':'건설','15':'광업자원','16':'기계','17':'재료','18':'화학',
   '19':'섬유.의복','20':'전기.전자','21':'정보통신','22':'식품가공','23':'인쇄.목재.가구.공예','24':'농림어업','25':'안전관리','26':'환경.에너지'};
-const QN_SERIES={'01':'기술사','02':'기능장','03':'기사','04':'산업기사','05':'기능사','06':'급수자격'};
-/* [종목명, 계열코드, 대직무, 중직무코드, 중직무명] — 기술자격(T) */
-const QN_T=[
-  ['정보처리기능사','05','21','211','정보기술'],['정보처리산업기사','04','21','211','정보기술'],['정보처리기사','03','21','211','정보기술'],
-  ['정보보안산업기사','04','21','211','정보기술'],['정보보안기사','03','21','211','정보기술'],['빅데이터분석기사','03','21','211','정보기술'],
-  ['정보통신산업기사','04','21','212','통신'],['정보통신기사','03','21','212','통신'],['통신선로기능사','05','21','212','통신'],
-  ['무선설비기능사','05','21','213','방송.무선'],['무선설비산업기사','04','21','213','방송.무선'],['방송통신기능사','05','21','213','방송.무선'],
-  ['전기기능사','05','20','201','전기'],['전기산업기사','04','20','201','전기'],['전기기사','03','20','201','전기'],['전기기능장','02','20','201','전기'],
-  ['전자기기기능사','05','20','202','전자'],['전자산업기사','04','20','202','전자'],['전자기사','03','20','202','전자'],
-  ['자동차정비기능사','05','16','166','자동차'],['자동차정비산업기사','04','16','166','자동차'],['자동차정비기사','03','16','166','자동차'],
-  ['건설기계정비기능사','05','16','162','기계장비설비.설치'],['공조냉동기계기능사','05','16','162','기계장비설비.설치'],['공조냉동기계산업기사','04','16','162','기계장비설비.설치'],
-  ['설비보전기능사','05','16','162','기계장비설비.설치'],['설비보전기사','03','16','162','기계장비설비.설치'],['일반기계기사','03','16','161','기계제작'],
-  ['컴퓨터응용선반기능사','05','16','161','기계제작'],['항공정비기능사','05','16','165','항공'],['항공산업기사','04','16','165','항공'],['항공기사','03','16','165','항공'],
-  ['용접기능사','05','17','171','금속.재료'],['특수용접기능사','05','17','171','금속.재료'],['용접산업기사','04','17','171','금속.재료'],
-  ['지게차운전기능사','05','14','146','건설기계운전'],['굴착기운전기능사','05','14','146','건설기계운전'],['기중기운전기능사','05','14','146','건설기계운전'],
-  ['측량기능사','05','14','142','토목'],['측량및지형공간정보산업기사','04','14','142','토목'],['건축기사','03','14','141','건축'],['건축산업기사','04','14','141','건축'],
-  ['한식조리기능사','05','13','131','조리'],['양식조리기능사','05','13','131','조리'],['조리산업기사(한식)','04','13','131','조리'],['제과기능사','05','13','131','조리'],
-  ['산업안전산업기사','04','25','251','안전관리'],['산업안전기사','03','25','251','안전관리'],['건설안전기사','03','25','251','안전관리'],
-  ['소방설비산업기사(전기분야)','04','25','252','소방'],['소방설비기사(기계분야)','03','25','252','소방'],['위험물기능사','05','25','253','위험물'],['위험물산업기사','04','25','253','위험물'],
-  ['가스기능사','05','25','254','가스'],['가스산업기사','04','25','254','가스'],
-  ['대기환경기사','03','26','261','환경'],['수질환경산업기사','04','26','261','환경'],['폐기물처리기사','03','26','261','환경'],
-  ['에너지관리기능사','05','26','262','에너지.기상'],['에너지관리산업기사','04','26','262','에너지.기상'],
-  ['비서2급','06','02','023','사무'],['워드프로세서','06','02','023','사무'],['컴퓨터활용능력2급','06','02','023','사무'],['컴퓨터활용능력1급','06','02','023','사무'],
-  ['사회조사분석사2급','06','02','021','경영'],['전산회계운용사2급','06','02','022','회계'],
-  ['생활스포츠지도사2급','06','12','121','스포츠'],['조경기능사','05','24','241','조경'],['시설원예기사','03','24','242','농업'],['식품가공기능사','05','22','221','식품'],
-];
-/* 전문자격(S) — 대직무분야 공란 (샘플 응답과 동일한 형태) */
-const QN_S=[['물류관리사','61'],['경비지도사','57'],['소방시설관리사','58'],['공인노무사','31'],['정수시설운영관리사1급','54'],['직업상담사2급','63'],['청소년상담사3급','64']];
-const QNET_ITEMS=(function(){
-  const R=mulberry32(4129), used=new Set();
-  const code=()=>{let c;do{c=String(1000+Math.floor(R()*8999));}while(used.has(c));used.add(c);return c;};
-  return [
-    ...QN_T.map(([n,s,o,m,mn])=>({jmcd:code(),jmfldnm:n,mdobligfldcd:m,mdobligfldnm:mn,obligfldcd:o,obligfldnm:QN_OBLIG[o],
-      qualgbcd:'T',qualgbnm:'국가기술자격',seriescd:s,seriesnm:QN_SERIES[s]})),
-    ...QN_S.map(([n,s])=>({jmcd:code(),jmfldnm:n,mdobligfldcd:' ',mdobligfldnm:' ',obligfldcd:' ',obligfldnm:' ',
-      qualgbcd:'S',qualgbnm:'국가전문자격',seriescd:s,seriesnm:n.replace(/\d급$/,'')})),
-  ];
-})();
+const QN_SERIES={'01':'기술사','02':'기능장','03':'기사','04':'산업기사','05':'기능사'};   // 앱 등급 코드 (원본 03=기사·산업기사, 04=기능사를 정리)
+const MK=window.MK_DATA||{at:'',qn:[],jk:[]};
+const QNET_ITEMS=MK.qn.map(a=>({jmcd:a[0],jmfldnm:a[1],qualgbcd:a[2],qualgbnm:a[3],seriescd:a[4],seriesnm:a[5],
+  obligfldcd:a[6],obligfldnm:a[7],mdobligfldcd:a[8],mdobligfldnm:a[9],raw_seriescd:a[10]}));
+const QN_BY=Object.fromEntries(QNET_ITEMS.map(x=>[x.jmcd,x]));
 const QNET_URL='http://openapi.q-net.or.kr/api/service/rest/InquiryListNationalQualifcationSVC/getList';
-function qnetGetList(q={}){
-  if(!q.ServiceKey&&!q.serviceKey) return {response:{header:{resultCode:'30',resultMsg:'SERVICE KEY IS NOT REGISTERED ERROR.'}}};
-  return {response:{header:{resultCode:'00',resultMsg:'NORMAL SERVICE.'},body:{items:{item:QNET_ITEMS.map(x=>({...x}))}}}};
-}
-function qnetXml(items){
-  return `<response>\n  <header><resultCode>00</resultCode><resultMsg>NORMAL SERVICE.</resultMsg></header>\n  <body><items>\n`+
-    items.map(it=>'    <item>\n'+['jmcd','jmfldnm','mdobligfldcd','mdobligfldnm','obligfldcd','obligfldnm','qualgbcd','qualgbnm','seriescd','seriesnm']
-      .map(k=>`      <${k}>${esc(it[k])}</${k}>`).join('\n')+'\n    </item>').join('\n')+`\n  </items></body>\n</response>`;
-}
+function qnetGetList(){ return {response:{header:{resultCode:'00',resultMsg:'NORMAL SERVICE.'},body:{items:{item:QNET_ITEMS}}}}; }
 
 /* ── 잡코리아 코드 (가이드 v4.1) ── */
 const JK_RB={'10031':'개발·데이터','10040':'엔지니어링·설계','10041':'제조·생산','10039':'고객서비스·리테일','10033':'물류·무역',
@@ -2244,9 +2289,9 @@ const JK_AREA_SUB={I000:['I000'],B000:['B150','B180','B360','B390','B310','B340'
   O000:['O000'],P000:['P000'],'1000':['1000'],H000:['H010','H070'],C000:['C040','C010'],J000:['J000'],F000:['F020'],D000:['D040','D020'],
   E000:['E010'],L000:['L000'],M000:['M000'],A000:['A090','A130'],N000:['N000']};
 const JK_CTYPE={1:'중소기업',2:'중견기업',3:'대기업',5:'벤처기업',6:'외국계',7:'공공기관·공기업'};
-const JK_JTYPE={1:'정규직',2:'계약직',3:'인턴',9:'병역특례'};
-const JK_CAREER={0:'제한없음',1:'신입',2:'경력',3:'신입/경력',4:'무관'};
-const JK_EDUN={0:'학력무관',3:'고등학교 졸업',4:'대학졸업(2,3년)',5:'대학교 졸업(4년)',6:'대학원 석사졸업'};
+const JK_JTYPE={1:'정규직',2:'계약직',3:'인턴',6:'프리랜서',7:'아르바이트',9:'병역특례'};
+const JK_CAREER={0:'제한없음',1:'신입',2:'경력',3:'신입·경력',4:'경력무관'};
+const JK_EDUN={0:'학력무관',3:'고졸',4:'초대졸(2·3년)',5:'대졸(4년)',6:'석사',255:'학력무관'};
 /* 직무 템플릿: rpcd → [rbcd, 직무명, 제목들, 키워드, 관련 자격(Q-Net 종목명)] */
 const JK_JOBS=[
   ['1000229','10031','백엔드개발자',['백엔드 개발자 신입 공채','Java/Spring 서버 개발 주니어'],'백엔드,Java,Spring,API',['정보처리기사','정보처리산업기사']],
@@ -2278,60 +2323,39 @@ const JK_JOBS=[
   ['1000406','10045','스포츠강사',['피트니스 트레이너 (교육 후 배치)','생활체육 지도자'],'트레이너,PT,체육',['생활스포츠지도사2급']],
   ['1000413','10046','방역·방재기사',['방역·소독 기사 모집','재난안전 방재 요원'],'방역,방재,소독',['위험물기능사','산업안전산업기사']],
 ];
-const JK_CO=['(주)온누리테크','(주)한울시스템','(주)가람로지스','(주)미르정밀','(주)나래시큐리티','(주)다온케어','(주)세솔F&B','(주)하람스포츠',
-  '(주)빛가람엔지니어링','(주)도담솔루션','(주)라온에이치알','(주)누리드론','(주)새움모빌리티','(주)한별방재','(재)국민안전진흥원','(주)바른설비'];
-const JK_EXT={};
-const JK_DB=(function(){
-  const R=mulberry32(20261001), pick=a=>a[Math.floor(R()*a.length)];
-  const d0=new Date(); d0.setHours(0,0,0,0);
-  const ymd=off=>{const d=new Date(d0.getTime()+off*86400000);return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;};
-  const out=[]; let seq=0;
-  JK_JOBS.forEach(([rp,rb,rn,titles,kw,certs])=>{
-    for(let k=0;k<6;k++){
-      const no=String(48200000+(seq++)*173+Math.floor(R()*120));
-      const car=pick([1,1,1,3,4,2]), edu=pick([0,3,3,4,5]), pay=R()<.75?1:0;
-      const lo=pick([2800,3000,3200,3400,3600,3800,4000]), hi=lo+pick([400,600,1000]);
-      const a1=pick(JK_AREA1.slice(0,17))[0], area=pick(JK_AREA_SUB[a1]);
-      const end=Math.floor(R()*45)-1, w=-Math.floor(R()*20);
-      const g={GI_No:no,C_URL:`http://www.jobkorea.co.kr/Recruit/Co_Read/C/mock${seq}?Oem_Code=C900&api=OOO`,C_Name:pick(JK_CO),
-        GI_Subject:titles[k%titles.length]+(k>1?` (${['경력무관','즉시입사','전역예정자 가능','2차','지역인재','상시'][k%6]})`:''),
-        GI_Part_No:rp,GI_Career:String(car),GI_Career_Year_Cnt:car===2?String(pick([1,2,3])):'100',
-        GI_Pay:String(pay),GI_Pay_Term:pay?`${lo},${hi}`:'0,0',GI_Pay_Flag:pay?'0':(R()<.5?'1':'0'),
-        GI_EDU_CutLine:String(edu),GI_Edu_Options:'0',GI_Keyword:kw,GI_Pass_Type:pick(['100000','110000','100010']),
-        GI_Job_Type:String(pick([1,1,1,2,3,9])),Staff:pick(['○','1명','2명','0명']),Jikgub:String(pick([1,1,7,6])),AreaCode:area,
-        GI_End_Date:R()<.85?ymd(end):'99991231',JK_URL:`http://www.jobkorea.co.kr/Recruit/GI_Read/${no}?Oem_Code=C900&api=OOO`,
-        GI_W_Date:ymd(w),GI_E_Date:ymd(w+Math.floor(R()*3))};
-      out.push(g);
-      JK_EXT[no]={rbcd:rb,ctype:+pick(['1','1','1','2','3','5','7','6']),certs:certs.filter(()=>R()<.85),vet:R()<.5};
-    }
-  });
-  return out;
-})();
-const JK_URL='{계약 시 발급 URL}/JK_GI_XML_List.asp';   /* 가이드: 이용사별 별도 계정·URL (EUC-KR, GET/POST) */
+const RB_OF_PART={}; JK_JOBS.forEach(j=>{RB_OF_PART[j[0]]=j[1];});
+/* 스냅샷 행 → 가이드 응답 필드 이름 */
+const JK_DB=MK.jk.map(a=>({GI_No:String(a[0]),GI_Subject:a[1],C_Name:a[2],JK_URL:a[3],AreaCode:a[4],GI_Part_No:a[5],GI_Keyword:a[6],
+  GI_Career:String(a[7]),GI_Career_Year_Cnt:String(a[8]),GI_EDU_CutLine:String(a[9]),GI_Job_Type:a[10],GI_Pay:String(a[11]),
+  GI_Pay_Term:a[12],GI_Pay_Flag:String(a[13]),GI_End_Date:a[14],GI_W_Date:a[15],GI_E_Date:a[16],GI_E_Time:a[17],
+  career_label:a[18],job_type_label:a[19],edu_label:a[20],pay_label:a[21],certs:a[22]||[],
+  parts:String(a[5]||'').split(',').filter(Boolean),areas:String(a[4]||'').split(',').filter(Boolean)}));
+/* 급여를 연봉(만원) 구간으로 환산 — 연봉·월급·시급·일급 */
+function annualRange(g){
+  const [a,b]=String(g.GI_Pay_Term||'0,0').split(',').map(Number), hi=b||a, k={1:1,2:12,5:209*12/10000,4:21.7*12/10000}[+g.GI_Pay];
+  return k&&a?[a*k,hi*k]:null;
+}
+const JK_URL='{계약 시 발급 URL}/JK_GI_XML_List.asp';
 function jobkoreaList(q={}){
-  const t=new Date(),today=`${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}${String(t.getDate()).padStart(2,'0')}`;
-  let L=JK_DB.filter(g=>g.GI_End_Date>=today);
+  const today=new Date().toISOString().slice(0,10);
+  let L=JK_DB.filter(g=>!g.GI_End_Date||g.GI_End_Date>=today);
   if(q.Keyword){const [must,...ors]=String(q.Keyword).split('|');const and=must.split(/[,&]/).map(s=>s.trim()).filter(Boolean);
-    const hay=g=>g.GI_Subject+g.C_Name+g.GI_Keyword;
+    const hay=g=>g.GI_Subject+' '+g.C_Name+' '+g.GI_Keyword;
     L=L.filter(g=>and.every(k=>hay(g).includes(k))||ors.some(k=>hay(g).includes(k.trim())));}
-  if(q.rbcd&&q.rbcd!=='0'){const B=String(q.rbcd).split(',');L=L.filter(g=>B.includes(JK_EXT[g.GI_No].rbcd));}
-  if(q.rpcd&&q.rpcd!=='0'){const P=String(q.rpcd).split(',');L=L.filter(g=>P.includes(g.GI_Part_No));}
+  if(q.rbcd&&q.rbcd!=='0'){const B=String(q.rbcd).split(',');L=L.filter(g=>g.parts.some(p=>B.includes(RB_OF_PART[p])));}
+  if(q.rpcd&&q.rpcd!=='0'){const P=String(q.rpcd).split(',');L=L.filter(g=>g.parts.some(p=>P.includes(p)));}
   if(q.area&&q.area!=='0'&&!String(q.area).includes('Q000')){const A=String(q.area).split(',').slice(0,6);
-    L=L.filter(g=>A.some(a=>a.endsWith('000')?g.AreaCode[0]===a[0]:g.AreaCode===a));}
-  if(q.edu1!=null&&q.edu1!==''&&+q.edu1!==255) L=L.filter(g=>+g.GI_EDU_CutLine<=+q.edu1);
-  if(q.mcareerchk&&+q.mcareerchk) L=L.filter(g=>g.GI_Career===String(q.mcareerchk)||g.GI_Career==='3'||g.GI_Career==='4');
-  if(q.Jtype){const J=String(q.Jtype).split(',').slice(0,3);L=L.filter(g=>J.includes(g.GI_Job_Type));}
+    L=L.filter(g=>g.areas.some(c=>A.some(a=>a.endsWith('000')?c[0]===a[0]:c===a)));}
+  if(q.edu1!=null&&q.edu1!==''&&+q.edu1!==255) L=L.filter(g=>[0,255].includes(+g.GI_EDU_CutLine)||+g.GI_EDU_CutLine<=+q.edu1);
+  if(q.mcareerchk&&+q.mcareerchk===1) L=L.filter(g=>['1','3','4'].includes(g.GI_Career));
+  if(q.Jtype){const J=String(q.Jtype).split(',').slice(0,3);L=L.filter(g=>g.GI_Job_Type.split(',').some(t=>J.includes(t)));}
   if(q.pay==='1'&&q.payterm){const [a,b]=String(q.payterm).split(',').map(Number);
-    L=L.filter(g=>g.GI_Pay!=='1'||(+g.GI_Pay_Term.split(',')[1]>=a&&+g.GI_Pay_Term.split(',')[0]<=b));}
-  if(q.ctype&&+q.ctype) L=L.filter(g=>JK_EXT[g.GI_No].ctype===+q.ctype);
-  const ob={1:(a,b)=>b.GI_W_Date.localeCompare(a.GI_W_Date),2:(a,b)=>b.GI_E_Date.localeCompare(a.GI_E_Date),3:(a,b)=>a.GI_End_Date.localeCompare(b.GI_End_Date)}[q.Ob||2];
+    L=L.filter(g=>{const r=annualRange(g);return r&&r[1]>=a&&r[0]<=b+1000;});}
+  const ob={1:(a,b)=>b.GI_W_Date.localeCompare(a.GI_W_Date),2:(a,b)=>b.GI_E_Date.localeCompare(a.GI_E_Date)||b.GI_E_Time-a.GI_E_Time,
+    3:(a,b)=>a.GI_End_Date.localeCompare(b.GI_End_Date)}[q.Ob||2];
   L=[...L].sort(ob);
   const size=Math.min(100,Math.max(1,+q.Size||100)),page=Math.max(1,+q.Page||1),items=L.slice((page-1)*size,page*size);
-  return {DataList:{TotalSumCnt:String(Math.min(500,L.length)),TotalCnt:String(items.length),Items:items.map(g=>({...g}))}};
-}
-function jobkoreaXml(r){
-  return `<?xml version="1.0" encoding="euc-kr" ?>\n<DataList>\n  <TotalSumCnt>${r.DataList.TotalSumCnt}</TotalSumCnt>\n  <TotalCnt>${r.DataList.TotalCnt}</TotalCnt>\n`+
-    r.DataList.Items.map(g=>'  <Items>\n'+Object.entries(g).map(([k,v])=>`    <${k}>${esc(v)}</${k}>`).join('\n')+'\n  </Items>').join('\n')+'\n</DataList>';
+  return {DataList:{TotalSumCnt:String(L.length),TotalCnt:String(items.length),Items:items}};
 }
 
 
@@ -2777,6 +2801,90 @@ function tick(){
 
 
 /* ═══════════════════════════════════════════════════════════════
+   [Mil-Kit v7 · FX] 화면 전환 · 효과
+   - 갤럭시(One UI)식 전체 화면 넘김: 새 화면이 오른쪽에서 통째로 밀려 들어오고,
+     이전 화면은 왼쪽으로 살짝 밀리며 작아지고 어두워진다. 뒤로 가기는 반대.
+   - 왼쪽 가장자리에서 오른쪽으로 쓸면 뒤로 가기
+   - 버튼 물결(ripple) · 숫자 올라가기 · 축하 꽃가루 (CDN 라이브러리 없으면 조용히 생략)
+   ═══════════════════════════════════════════════════════════════ */
+const FX={busy:false, reduce:matchMedia('(prefers-reduced-motion: reduce)').matches};
+function slide(dir,doRender){
+  const app=$('app');
+  if(FX.reduce||!app.animate||FX.busy){doRender();return;}
+  FX.busy=true;
+  const r=app.getBoundingClientRect();
+  const ghost=app.cloneNode(true);
+  ghost.removeAttribute('id'); ghost.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+  ghost.querySelectorAll('canvas').forEach(c=>c.removeAttribute('data-u'));
+  const src=app.querySelectorAll('canvas'), dst=ghost.querySelectorAll('canvas');
+  src.forEach((c,i)=>{try{dst[i].getContext('2d').drawImage(c,0,0);}catch(e){}});
+  const m=$('scr'), gm=ghost.querySelector('main'); if(gm) gm.scrollTop=m.scrollTop;
+  Object.assign(ghost.style,{position:'fixed',left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',
+    margin:'0',pointerEvents:'none',zIndex:dir>0?'40':'60'});
+  ghost.classList.add('ghost');
+  document.body.appendChild(ghost);
+  doRender();
+  app.style.zIndex='50';
+  const ease='cubic-bezier(.32,.72,0,1)', D=560;
+  const wide=innerWidth>=900;   // 데스크톱 휴대폰 무대: 프레임 밖으로 나가지 않게 짧게 밀고 흐리게
+  const back=wide?[{transform:'translateX(0) scale(1)',opacity:1},{transform:'translateX(-12%) scale(.94)',opacity:0}]
+    :[{transform:'translateX(0) scale(1)',filter:'brightness(1)'},{transform:'translateX(-26%) scale(.92)',filter:'brightness(.62)'}];
+  const front=wide?[{transform:'translateX(18%)',opacity:0},{transform:'translateX(0)',opacity:1}]
+    :[{transform:'translateX(100%)'},{transform:'translateX(0)'}];
+  let a1,a2;
+  if(dir>0){ a1=app.animate(front,{duration:D,easing:ease}); a2=ghost.animate(back,{duration:D,easing:ease,fill:'forwards'}); }
+  else { a1=ghost.animate([...front].reverse(),{duration:D,easing:ease,fill:'forwards'}); a2=app.animate([...back].reverse(),{duration:D,easing:ease}); }
+  const done=()=>{ghost.remove();app.style.zIndex='';FX.busy=false;};
+  Promise.all([a1.finished,a2.finished]).then(done,done);
+  setTimeout(()=>{if(ghost.isConnected) done();},D+400);
+}
+
+/* 왼쪽 가장자리 스와이프 → 뒤로 */
+(function(){
+  let x0=null,y0=0;
+  addEventListener('touchstart',e=>{const t=e.touches[0], r=$('app').getBoundingClientRect();
+    x0=(t.clientX-r.left<26&&!$('back').hidden)?t.clientX:null; y0=t.clientY;},{passive:true});
+  addEventListener('touchend',e=>{if(x0==null) return; const t=e.changedTouches[0];
+    if(t.clientX-x0>70&&Math.abs(t.clientY-y0)<60) $('back').click(); x0=null;},{passive:true});
+})();
+
+/* 버튼 물결 */
+document.addEventListener('pointerdown',e=>{
+  const b=e.target.closest('.btn,.opt,.evopt,.evchip,.chip,.famt,.crow,.post2,.rd,.mico button');
+  if(!b||b.disabled||FX.reduce) return;
+  const r=b.getBoundingClientRect(), s=Math.max(r.width,r.height)*1.2, w=document.createElement('span');
+  w.className='rip'; Object.assign(w.style,{width:s+'px',height:s+'px',left:(e.clientX-r.left-s/2)+'px',top:(e.clientY-r.top-s/2)+'px'});
+  if(getComputedStyle(b).position==='static') b.style.position='relative';
+  b.style.overflow='hidden'; b.appendChild(w); setTimeout(()=>w.remove(),620);
+},{passive:true});
+
+/* 숫자 올라가기 */
+function countUp(root){
+  (root||document).querySelectorAll('[data-count]').forEach(el=>{
+    const to=+el.dataset.count; if(FX.reduce||!to){el.textContent=won(to);return;}
+    const t0=performance.now(), D=900;
+    (function f(t){const p=Math.min(1,(t-t0)/D), e=1-Math.pow(1-p,3); el.textContent=won(to*e); if(p<1) requestAnimationFrame(f);})(t0);
+  });
+}
+/* 꽃가루 (canvas-confetti CDN) */
+function party(kind){
+  if(FX.reduce||typeof confetti!=='function') return;
+  const c=['#3182F6','#15C47E','#FFB020','#F04452','#6B7A4A'];
+  if(kind==='big'){
+    confetti({particleCount:90,spread:75,origin:{y:.62},colors:c,scalar:.9});
+    setTimeout(()=>confetti({particleCount:50,angle:60,spread:60,origin:{x:0,y:.7},colors:c}),180);
+    setTimeout(()=>confetti({particleCount:50,angle:120,spread:60,origin:{x:1,y:.7},colors:c}),300);
+  } else confetti({particleCount:45,spread:60,startVelocity:32,origin:{y:.45},colors:c,scalar:.8});
+}
+/* 요소 순차 등장 (GSAP 있으면 스프링, 없으면 CSS .up 그대로) */
+function stagger(sel,root){
+  if(FX.reduce||!window.gsap) return;
+  const els=(root||document).querySelectorAll(sel); if(!els.length) return;
+  gsap.fromTo(els,{y:26,opacity:0,scale:.97},{y:0,opacity:1,scale:1,duration:.6,ease:'back.out(1.6)',stagger:.06,clearProps:'transform,opacity'});
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
    [Mil-Kit v5 · CARD] 전역카드 · 명함 · 선후임 공유(도전장)
    이름·연락처는 명함 그리기에만 쓰이고 저장·전송되지 않는다.
    ═══════════════════════════════════════════════════════════════ */
@@ -2791,7 +2899,7 @@ function resMenu(){ const R=S.res, top=R&&R.posts[0]; return top?(top.job?top.jo
 function courseField(){ const R=S.res; return (S.ans.qnField||[])[0]||(R&&R.certs[0]&&R.certs[0].it.obligfldcd); }
 function courseItems(){
   const R=S.res, field=courseField();
-  return ['05','04','03','06'].map(sc=>(R?R.certs.map(c=>c.it):[]).find(x=>x.obligfldcd===field&&x.seriescd===sc)||QNET_ITEMS.find(x=>x.obligfldcd===field&&x.seriescd===sc))
+  return ['05','04','03'].map(sc=>(R?R.certs.map(c=>c.it):[]).find(x=>x.obligfldcd===field&&x.seriescd===sc)||QNET_ITEMS.find(x=>x.obligfldcd===field&&x.seriescd===sc))
     .filter(Boolean).slice(0,3);
 }
 const COURSE=[['🥗','애피타이저'],['🍖','메인'],['🍰','디저트']];
@@ -2960,13 +3068,12 @@ function render(){
   $('tbTitle').innerHTML={force:'입대',form:'병무청 · 신상명세서',mos:'자대 배치 면담',ev:`${S.force} · ${RANK5[S.si]} 생활`,promo:'',result:'오늘의 메뉴'}[S.scr]||'';
   $('tbStep').textContent=S.scr==='ev'?`${S.ei+1}/${EVENTS[RANK5[S.si]].length}`:'';
   $('scr').className=S.scr==='result'?'hub':'';
-  const pk=[S.scr,S.si,S.ei].join('/'); if(pk!==lastPk){lastPk=pk; void $('scr').offsetWidth; $('scr').classList.add('pgin');}
+
   $('cta').innerHTML='';
   ({splash:scSplash,force:scForce,form:scForm,mos:scMos,ev:scEvent,promo:scPromo,cook:scCook,result:scResult})[S.scr]();
 }
-let lastPk='';
 let rzT=0; addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(!$('sheetBg').classList.contains('on')) render();},150);});
-function go(scr,o={}){Object.assign(S,o);S.scr=scr;render();}
+function go(scr,o={},dir=1){Object.assign(S,o);S.scr=scr;slide(dir,render);}   // dir: 1 앞으로 · -1 뒤로
 
 /* ═══ 0. 스플래시 — 거꾸로 놓인 군모 냄비 · 2초 요리 ═══ */
 function capSvg(){
@@ -3008,11 +3115,14 @@ function scSplash(){
     </div>
     <div class="sp-brand">${typeof MILKIT_LOGO==='function'?'':''}<b>Mil-Kit</b><span>Your Next Step</span></div>
     ${CH?`<div class="chal"><b>🫡 ${esc(CH.w)}이 보낸 도전장</b><span>${esc(CH.f)} · "${esc(CH.m)} 정식" — 나는 뭐가 나올까?</span></div>`
-      :`<p class="sp-note">공고·자격 정보는 목업이에요. 입력은 이 기기 안에서만 쓰여요.</p>`}
+      :`<p class="sp-note">실제 채용공고 ${won(JK_DB.length)}건 · 국가자격 ${won(QNET_ITEMS.length)}종${MK.at?` (${MK.at.slice(0,10)} 기준)`:''}<br>입력은 이 기기 안에서만 쓰여요.</p>`}
   </div>`;
   $('cta').innerHTML=`<button class="btn hold" id="start">🍳 ${CH?'나도 요리해 보기':'요리 시작하기'}</button>`;
   $('start').onclick=()=>{haptic();go('force');};
   const done=()=>{const s=$('splash');if(!s||s.classList.contains('done')) return;s.classList.add('done');$('start').classList.remove('hold');};
+  if(window.gsap&&!FX.reduce){ document.querySelectorAll('.sp-txt b').forEach(b=>{b.innerHTML=[...b.textContent].map(ch=>`<i class="ch">${ch===' '?'&nbsp;':ch}</i>`).join('');});
+    gsap.from('.sp-txt .ch',{y:28,opacity:0,rotate:8,duration:.55,ease:'back.out(2.2)',stagger:.035});
+    gsap.from('.capsvg',{y:-90,scale:.7,duration:.8,ease:'bounce.out',delay:.15}); }
   setTimeout(done,2100);
   $('splash').onclick=done;
 }
@@ -3152,7 +3262,7 @@ function answer(v){
   if(e.id==='rbcd') S.ans.rpcd=(S.ans.rpcd||[]).filter(p=>JK_JOBS.some(j=>j[0]===p&&v.includes(j[1])));
   const g=e.gain||{}; Object.entries(g).forEach(([k,n])=>S.stats[k]+=n);
   S.lastGain[RANK5[S.si]]=Object.assign(S.lastGain[RANK5[S.si]]||{},Object.fromEntries(Object.entries(g).map(([k,n])=>[k,((S.lastGain[RANK5[S.si]]||{})[k]||0)+n])));
-  if(S.ei<EVENTS[RANK5[S.si]].length-1){S.ei++;render();}
+  if(S.ei<EVENTS[RANK5[S.si]].length-1){S.ei++;slide(1,render);}
   else promote();
 }
 function promote(){
@@ -3176,6 +3286,8 @@ function scPromo(){
     <div class="card up collected" style="--d:300ms"><div class="ct">🧺 이번 계급에서 모은 재료</div>
       ${got.map(x=>`<div class="cl"><span>${x.w}</span><b>${esc(x.a)}</b></div>`).join('')}</div>`;
   requestAnimationFrame(()=>{const h=Math.max(70,$('pst').clientHeight-16);mount($('cP'),Math.min(200,Math.floor(h*GW/GH)));});
+  setTimeout(()=>party(last?'big':'small'),380);
+  if(window.gsap&&!FX.reduce) gsap.from('.rankbig',{scale:.4,rotateX:80,opacity:0,duration:.7,ease:'back.out(2)',delay:.15});
   $('cta').innerHTML=`<button class="btn" id="next">${last?'🍳 요리 완성하기':'계속 복무하기'}</button>`;
   $('next').onclick=()=>{haptic();if(last) go('cook'); else go('ev',{si:S.si+1,ei:0});};
 }
@@ -3214,30 +3326,39 @@ function scCook(){
 
 /* ═══ 결과 계산 — 두 API 응답 결합 ═══ */
 const AREA_NAME=Object.fromEntries(JK_AREA1);
+function payText(g){
+  const [a,b]=String(g.GI_Pay_Term||'0,0').split(',').map(Number), r=b&&b!==a?`${won(a)}~${won(b)}`:won(a);
+  switch(+g.GI_Pay){case 1:return `연봉 ${r}만원`;case 2:return `월급 ${r}만원`;case 5:return `시급 ${r}원`;case 4:return `일급 ${r}원`;case 6:return `건별 ${r}원`;}
+  return g.GI_Pay_Flag==='1'?'면접 후 결정':'회사 내규';
+}
+function areaText(g){
+  const n=c=>AREA_NAME[/^\d/.test(c)?'1000':c[0]+'000']||'';
+  const u=[...new Set(g.areas.map(n).filter(Boolean))];
+  return u.length?u[0]+(u.length>1?` 외 ${u.length-1}곳`:''):'지역 미기재';
+}
 function cookResult(){
   const q0=buildJK(), notes=[];
   let q={...q0}, r=jobkoreaList(q);
-  /* 결과가 너무 적으면 조건을 하나씩 넓힌다 (화면에 안내) */
-  for(const [k,lab] of [['ctype','기업형태'],['payterm','급여'],['Jtype','고용형태'],['Keyword','검색어'],['area','근무지역'],['rpcd','소분류']]){
-    if(+r.DataList.TotalCnt>=4) break;
+  /* 결과가 너무 적으면 조건을 하나씩 넓힌다 (화면에 안내) — ctype은 스냅샷에 컬럼이 없어 거르지 않는다 */
+  for(const [k,lab] of [['payterm','급여'],['Jtype','고용형태'],['Keyword','검색어'],['area','근무지역'],['rpcd','소분류'],['mcareerchk','경력']]){
+    if(+r.DataList.TotalCnt>=6) break;
     if(q[k]!=null){delete q[k]; if(k==='payterm') delete q.pay; notes.push(lab); r=jobkoreaList(q);}
   }
-  const qn=qnetGetList({ServiceKey:'MOCK'}).response.body.items.item;
-  const byName=Object.fromEntries(qn.map(x=>[x.jmfldnm,x]));
-  const posts=r.DataList.Items.map(g=>{const X=JK_EXT[g.GI_No], P=g.GI_Pay_Term.split(',').map(Number);
-    const end=g.GI_End_Date==='99991231'?null:new Date(+g.GI_End_Date.slice(0,4),+g.GI_End_Date.slice(4,6)-1,+g.GI_End_Date.slice(6,8));
-    return {g,X,title:g.GI_Subject,co:g.C_Name,area:AREA_NAME[g.AreaCode[0]==='1'?'1000':g.AreaCode[0]+'000']||g.AreaCode,
-      pay:g.GI_Pay==='1'?`${won(P[0])}~${won(P[1])}만원`:g.GI_Pay_Flag==='1'?'면접 후 결정':'회사 내규',
-      dday:end?Math.round((end-new Date(new Date().toDateString()))/86400000):null,job:JK_JOBS.find(j=>j[0]===g.GI_Part_No),
-      certs:X.certs.map(n=>byName[n]).filter(Boolean)};});
-  /* 필요 자격 = 공고가 요구하는 자격 + 사지방에서 고른 분야·등급의 Q-Net 종목 */
+  const qn=qnetGetList().response.body.items.item;
+  const today=new Date(new Date().toDateString());
+  const posts=r.DataList.Items.map(g=>{
+    const end=g.GI_End_Date&&g.GI_End_Date<'2060'?new Date(g.GI_End_Date+'T00:00:00'):null;
+    return {g,title:g.GI_Subject,co:g.C_Name,area:areaText(g),pay:payText(g),url:g.JK_URL,
+      dday:end?Math.round((end-today)/86400000):null,job:JK_JOBS.find(j=>g.parts.includes(j[0])),
+      certs:g.certs.map(c=>QN_BY[c]).filter(Boolean)};});
+  /* 관련 자격 = 공고 내용·직무로 연결된 자격 + 사지방에서 고른 분야·등급의 종목 */
   const f=qnFilter(), need={};
   posts.forEach(p=>p.certs.forEach(c=>{need[c.jmcd]=(need[c.jmcd]||0)+1;}));
-  let pool=qn.filter(x=>need[x.jmcd]||(f.obligfldcd.includes(x.obligfldcd)&&(!f.seriescd||x.seriescd===f.seriescd)));
+  let pool=qn.filter(x=>need[x.jmcd]||(f.obligfldcd.includes(x.obligfldcd)&&(f.seriescd?x.seriescd===f.seriescd:['05','04','03'].includes(x.seriescd))));
   if(!pool.length) pool=qn.filter(x=>majorQn().includes(x.obligfldcd)&&x.seriescd==='05');
   const certs=pool.map(x=>({it:x,need:need[x.jmcd]||0,el:eligibility(x),pick:f.obligfldcd.includes(x.obligfldcd)}))
-    .sort((a,b)=>b.need-a.need||(b.pick-a.pick)||(b.el.ok-a.el.ok)||a.it.seriescd.localeCompare(b.it.seriescd)).slice(0,24);
-  return {q:q0,qUsed:q,notes,raw:r,posts,certs,qnTotal:qn.length};
+    .sort((a,b)=>b.need-a.need||(b.pick-a.pick)||(b.el.ok-a.el.ok)||b.it.seriescd.localeCompare(a.it.seriescd)).slice(0,30);
+  return {q:q0,qUsed:q,notes,raw:r,total:+r.DataList.TotalSumCnt,posts,certs,qnTotal:qn.length};
 }
 
 /* ═══ 7. 결과 — 요약 · 채용공고(잡코리아) · 필요 자격(Q-Net) ═══ */
@@ -3245,7 +3366,7 @@ function scResult(){
   const R=S.res;
   $('scr').innerHTML=`<div class="seg" style="margin-top:4px">
       <button class="${S.tab==='sum'?'on':''}" data-t="sum">요약</button>
-      <button class="${S.tab==='post'?'on':''}" data-t="post">채용공고<em>${R.posts.length}</em></button>
+      <button class="${S.tab==='post'?'on':''}" data-t="post">채용공고<em>${R.total>99?'99+':R.total}</em></button>
       <button class="${S.tab==='cert'?'on':''}" data-t="cert">자격증<em>${R.certs.length}</em></button></div>
     <div id="rbody" class="rbody"></div>`;
   document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{haptic();S.tab=b.dataset.t;S.page=0;render();});
@@ -3253,7 +3374,7 @@ function scResult(){
   ({sum:resSum,post:resPost,cert:resCert})[S.tab]($('rbody'));
   $('cta').innerHTML=`<div class="btn-row"><button class="btn sub" id="again" style="flex:0 0 104px">다시 요리</button><button class="btn" id="inv">📤 선후임에게 공유하기</button></div>`;
   $('inv').onclick=openInvite;
-  $('again').onclick=()=>{haptic();Object.assign(S,{force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
+  $('again').onclick=()=>{haptic();Object.assign(S,{partied:false,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
 }
 function resSum(box){
   const R=S.res, tc=R.certs.filter(c=>c.need).slice(0,3), ok=R.certs.filter(c=>c.el.ok).length;
@@ -3262,20 +3383,21 @@ function resSum(box){
     <div class="card menu up"><div class="mrow"><div class="cv"><canvas id="cR"></canvas></div>
       <div class="mtx"><span class="k">오늘의 메뉴</span><b>${esc(menu)} 정식</b><small>${S.force} ${esc(S.mos.특기명)} · 곁들임 ${tc[0]?esc(tc[0].it.jmfldnm):'자격 코스'}</small></div>
       <div class="mico"><button data-card="dis" aria-label="전역카드">🎖️<span>전역카드</span></button><button data-card="nc" aria-label="명함">🪪<span>명함</span></button></div></div>
-      <div class="kvs"><div><b>${R.posts.length}</b><span>맞춤 공고</span></div><div><b>${R.certs.length}</b><span>관련 자격</span></div><div><b style="color:var(--green)">${ok}</b><span>지금 응시 가능</span></div></div>
+      <div class="kvs"><div><b data-count="${R.total}">0</b><span>맞춤 공고</span></div><div><b data-count="${R.certs.length}">0</b><span>관련 자격</span></div><div><b style="color:var(--green)" data-count="${ok}">0</b><span>지금 응시 가능</span></div></div>
       ${CH?`<p class="fine vs">🫡 ${esc(CH.w)}: <b>${esc(CH.m)} 정식</b> vs 나: <b>${esc(menu)} 정식</b></p>`
         :R.notes.length?`<p class="fine relax">공고가 적어 조건 ${R.notes.length}개(${R.notes.join('·')})를 넓혀 찾았어요</p>`:''}</div>
     <div class="card up course" style="--d:60ms"><div class="ch"><b>🍽️ 코스 서비스</b><span>${field?QN_OBLIG[field]:'추천'} 분야 자격 코스</span></div>
       <div class="road3">${road.map((x,i)=>{const e=eligibility(x);return `<button class="rd ${e.ok?'ok':''}" data-j="${x.jmcd}"><i>${COURSE[i][0]} ${COURSE[i][1]}</i><b>${esc(x.jmfldnm)}</b><span>${e.ok?'✓ ':''}${e.t}</span></button>`;}).join('<em>→</em>')}</div></div>
-    <div class="card up need grow" style="--d:120ms"><div class="ct">공고에 가장 많이 필요한 자격</div>
+    <div class="card up need grow" style="--d:120ms"><div class="ct">공고와 가장 많이 연결된 자격</div>
       ${tc.length?tc.map(c=>certRow(c)).join(''):'<p class="fine">요구 자격이 없는 공고 위주예요. 위 코스로 준비해 보세요.</p>'}</div>`;
-  mount($('cR'),56);
+  mount($('cR'),56); countUp(box); stagger('.rbody>.card',box);
+  if(!S.partied){S.partied=true;setTimeout(()=>party('big'),450);}
   box.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{haptic();openCert(b.dataset.j);});
   box.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>openCardSheet(b.dataset.card));
 }
 function certRow(c){
   return `<button class="crow" data-j="${c.it.jmcd}"><span class="sb s${c.it.seriescd}">${c.it.qualgbcd==='S'?'전문':c.it.seriesnm}</span>
-    <span class="bd"><b>${esc(c.it.jmfldnm)}</b><span>${c.it.obligfldnm.trim()||'국가전문자격'}${c.need?` · 공고 ${c.need}건이 요구`:''}</span></span>
+    <span class="bd"><b>${esc(c.it.jmfldnm)}</b><span>${c.it.obligfldnm.trim()||'국가전문자격'}${c.need?` · 관련 공고 ${c.need}건`:''}</span></span>
     <em class="${c.el.ok?'ok':'no'}">${c.el.t}</em></button>`;
 }
 function resPost(box){
@@ -3285,10 +3407,10 @@ function resPost(box){
   if(!R.posts.length){$('pg').innerHTML='<div class="empty">조건에 맞는 공고가 없어요. 다시 요리하며 답을 바꿔보세요.</div>';return;}
   requestAnimationFrame(()=>{
     const r=fillPaged($('pg'),R.posts.length,86,S.page,i=>{const p=R.posts[i];
-      return `<button class="post2" data-i="${i}"><span class="co">${esc(p.co)}${p.X.vet?' · 🎖️우대':''}</span>
+      return `<button class="post2" data-i="${i}"><span class="co">${esc(p.co)}${/전역|군필|병역|제대/.test(p.title+p.g.GI_Keyword)?' · 🎖️군필 우대':''}</span>
         <b class="ti">${esc(p.title)}</b>
-        <span class="mt">${esc(p.area)} · ${JK_CAREER[+p.g.GI_Career]} · ${p.pay} · ${p.dday==null?'상시':p.dday<=0?'<em>오늘 마감</em>':`<em>D-${p.dday}</em>`}</span>
-        <span class="cc">${p.certs.slice(0,3).map(c=>`<i class="${eligibility(c).ok?'ok':''}">📜 ${esc(c.jmfldnm)}</i>`).join('')||'<i class="none">자격 요구 없음</i>'}</span></button>`;},1);
+        <span class="mt">${esc(p.area)} · ${esc(p.g.career_label||JK_CAREER[+p.g.GI_Career]||'')} · ${esc(p.pay)} · ${p.dday==null?'상시':p.dday<=0?'<em>오늘 마감</em>':`<em>D-${p.dday}</em>`}</span>
+        <span class="cc">${p.certs.slice(0,3).map(c=>`<i class="${eligibility(c).ok?'ok':''}">📜 ${esc(c.jmfldnm)}</i>`).join('')||'<i class="none">연결된 자격 없음</i>'}</span></button>`;},1);
     S.page=r.page; $('ppg').innerHTML=pagerHtml(r.page,r.pages);
     $('ppg').querySelectorAll('[data-pg]').forEach(b=>b.onclick=()=>{haptic();S.page+= +b.dataset.pg;resPost(box);});
     $('pg').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{haptic();openPost(R.posts[+b.dataset.i]);});
@@ -3308,24 +3430,24 @@ function resCert(box){
 function openPost(p){
   const g=p.g;
   openSheet(`<div class="sbody">
-    <div style="font-size:12.5px;color:var(--g500);font-weight:600">${esc(p.co)} · ${p.job?p.job[2]:''}</div>
+    <div style="font-size:12.5px;color:var(--g500);font-weight:600">${esc(p.co)}${p.job?' · '+p.job[2]:''}</div>
     <h3 style="margin-top:2px">${esc(p.title)}</h3>
-    <div class="meta"><b>📍 ${esc(p.area)}</b><b>${JK_JTYPE[+g.GI_Job_Type]||'기타'}</b><b>${JK_CAREER[+g.GI_Career]}</b><b>🎓 ${JK_EDUN[+g.GI_EDU_CutLine]||'학력무관'}</b>
-      <b>💰 ${p.pay}</b><b class="${p.dday!=null&&p.dday<=7?'warn':''}">⏰ ${p.dday==null?'상시':'D-'+Math.max(0,p.dday)}</b></div>
-    <div class="sec" style="margin-top:14px">이 공고에 필요한 자격</div>
-    ${p.certs.length?p.certs.map(c=>certRow({it:c,need:0,el:eligibility(c)})).join(''):'<p class="fine">요구 자격이 없어요.</p>'}
-    <p class="fine">자세한 채용정보는 반드시 상세정보를 통해 확인하세요. (데모용 목업 공고)</p>
-  </div><div class="sfoot"><button class="btn sm" id="sc">닫기</button></div>`,sh=>{
+    <div class="meta"><b>📍 ${esc(p.area)}</b><b>${esc(g.job_type_label||'')}</b><b>${esc(g.career_label||'')}${g.GI_Career==='2'&&+g.GI_Career_Year_Cnt?` ${g.GI_Career_Year_Cnt}년↑`:''}</b>
+      <b>🎓 ${esc(g.edu_label||'학력무관')}</b><b>💰 ${esc(p.pay)}</b><b class="${p.dday!=null&&p.dday<=7?'warn':''}">⏰ ${p.dday==null?'상시':p.dday<=0?'오늘 마감':'D-'+p.dday}</b></div>
+    ${g.GI_Keyword?`<div class="tags">${g.GI_Keyword.split(',').slice(0,8).map(t=>`<i>#${esc(t.trim())}</i>`).join('')}</div>`:''}
+    <div class="sec" style="margin-top:14px">이 공고와 연결된 자격</div>
+    ${p.certs.length?p.certs.map(c=>certRow({it:c,need:0,el:eligibility(c)})).join(''):'<p class="fine">연결된 자격이 없어요.</p>'}
+    <p class="fine">자격은 공고 제목·키워드·직무로 연결했어요. 실제 우대 조건은 원문에서 확인하세요.<br>출처 잡코리아 · 채용기업과 잡코리아의 동의 없이 무단 전재·재배포할 수 없어요.</p>
+  </div><div class="sfoot"><button class="btn sub sm" id="sc" style="flex:0 0 90px">닫기</button>${p.url?`<a class="btn sm" href="${esc(p.url)}" target="_blank" rel="noopener">공고 원문 보기 ↗</a>`:''}</div>`,sh=>{
     $('sc').onclick=closeSheet; sh.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>openCert(b.dataset.j));});
 }
 const SERIES_INFO={'05':'기초 기능을 익히는 입문 자격이에요. 학력·경력 제한 없이 누구나 응시할 수 있어요.',
   '04':'기초 이론과 숙련 기능을 함께 보는 자격이에요. 관련학과 전문대 이상이거나 실무 경력이 있으면 응시할 수 있어요.',
   '03':'공학 이론을 바탕으로 설계·시공·관리를 맡는 자격이에요. 관련학과 4년제 졸업(예정)이거나 경력이 있어야 해요.',
   '02':'현장 최고 숙련 기능을 인정하는 자격이에요. 오랜 실무 경력이 필요해요.',
-  '01':'해당 분야 최고 수준의 전문 지식을 인정하는 자격이에요. 긴 실무 경력이 필요해요.',
-  '06':'1급·2급처럼 급수로 나뉜 자격이에요. 학력·경력 제한 없이 응시할 수 있어요.'};
+  '01':'해당 분야 최고 수준의 전문 지식을 인정하는 자격이에요. 긴 실무 경력이 필요해요.'};
 function openCert(jmcd){
-  const it=QNET_ITEMS.find(x=>x.jmcd===jmcd), e=eligibility(it), posts=(S.res?S.res.posts:[]).filter(p=>p.certs.some(c=>c.jmcd===jmcd));
+  const it=QN_BY[jmcd], e=eligibility(it), posts=(S.res?S.res.posts:[]).filter(p=>p.certs.some(c=>c.jmcd===jmcd));
   const S_=it.qualgbcd==='S', grade=S_?'국가전문자격':it.seriesnm;
   const info=S_?'법령에 따라 운영되는 전문 자격이에요. 시험마다 응시 요건이 달라요.':SERIES_INFO[it.seriescd]||'';
   openSheet(`<div class="sbody">
@@ -3336,17 +3458,17 @@ function openCert(jmcd){
     <p class="cdesc">${info}</p>
     <div class="gap" style="margin-top:8px"><span class="t ${e.ok?'p':''}" style="background:${e.ok?'var(--green)':'var(--red)'}">${e.t}</span><b>${e.d}</b></div>
     <p class="fine">학력 "${EDU5.find(x=>x[0]===S.edu)?.[1]||'-'}" · 전공 "${esc(S.major||'-')}" 기준 간이 판정이에요. 실제 응시자격은 큐넷에서 확인하세요.</p>
-    <div class="sec" style="margin-top:12px">이 자격을 원하는 공고 ${posts.length}건</div>
+    <div class="sec" style="margin-top:12px">이 자격과 연결된 공고 ${posts.length}건</div>
     ${posts.slice(0,3).map(p=>`<div class="gap">📄 <b>${esc(p.title)}</b><em>${esc(p.co)}</em></div>`).join('')||'<p class="fine">이번 결과에는 없어요.</p>'}
   </div><div class="sfoot"><a class="btn sub sm" href="https://www.q-net.or.kr" target="_blank" rel="noopener" style="flex:0 0 140px">시험 일정 보기 ↗</a><button class="btn sm" id="sc">닫기</button></div>`,()=>{$('sc').onclick=closeSheet;});
 }
 /* ── 뒤로 ── */
 $('back').onclick=()=>{
   haptic();
-  if(S.scr==='form') return go('force');
-  if(S.scr==='mos') return go('form');
-  if(S.scr==='ev'){ const h=S.hist.pop(); if(!h) return go('mos');
-    S.stats=h.stats;S.items=h.items;S.si=h.si;S.ei=h.ei; if(S.rk>h.si) S.rk=h.si; render(); }
+  if(S.scr==='form') return go('force',{},-1);
+  if(S.scr==='mos') return go('form',{},-1);
+  if(S.scr==='ev'){ const h=S.hist.pop(); if(!h) return go('mos',{},-1);
+    S.stats=h.stats;S.items=h.items;S.si=h.si;S.ei=h.ei; if(S.rk>h.si) S.rk=h.si; slide(-1,render); }
 };
 $('sheetBg').onclick=e=>{if(e.target===$('sheetBg')) closeSheet();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape') closeSheet();});

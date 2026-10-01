@@ -10,6 +10,22 @@ const FTHEME={
   '기타':{c1:'#2F3640',c2:'#56606E',acc:'#9FB4C8',tag:'기타'}};
 const fth=()=>FTHEME[S.force]||FTHEME['육군'];
 
+/* 태극 — 중심(0,0) · 반지름 r. 빨강 위·파랑 아래, 경계(S자)는 건괘↔곤괘 대각선(3:2 깃면 33.69°) 위에 놓인다 */
+function taegeukG(r){
+  const h=r/2;
+  return `<g transform="rotate(33.69)"><circle r="${r}" fill="#0047A0"/>`+
+    `<path d="M${-r} 0A${r} ${r} 0 0 1 ${r} 0A${h} ${h} 0 0 0 0 0A${h} ${h} 0 0 1 ${-r} 0Z" fill="#CD2E3A"/></g>`;
+}
+/* 태극기 3:2 — (x,y) 왼쪽 위, 너비 w. 건(☰)좌상 · 곤(☷)우하 · 감(☵)우상 · 리(☲)좌하, 괘는 대각선에 수직 */
+function flagSvg(x,y,w){
+  const H=w*2/3, s=H/2, L=.5, t=1/12, g=1/24, gb=1/12, d0=.75;
+  const tri=(pat,ang)=>`<g transform="rotate(${ang})">`+pat.map((solid,i)=>{const bx=d0+i*(t+g);
+    return solid?`<rect x="${bx}" y="${-L/2}" width="${t}" height="${L}"/>`
+      :`<rect x="${bx}" y="${-L/2}" width="${t}" height="${(L-gb)/2}"/><rect x="${bx}" y="${gb/2}" width="${t}" height="${(L-gb)/2}"/>`;}).join('')+'</g>';
+  return `<g transform="translate(${x+w/2} ${y+H/2}) scale(${s})"><rect x="-1.5" y="-1" width="3" height="2" fill="#fff" stroke="#C9CDD2" stroke-width="${.6/s}"/>`+
+    `${taegeukG(.5)}<g fill="#111">${tri([1,1,1],-146.31)}${tri([0,0,0],33.69)}${tri([0,1,0],-33.69)}${tri([1,0,1],146.31)}</g></g>`;
+}
+
 function forceArt(force){
   const f=force||'육군', sky=(a,b)=>`<defs><linearGradient id="sk${f}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="360" height="120" fill="url(#sk${f})"/>`;
   let g='';
@@ -20,8 +36,7 @@ function forceArt(force){
      <rect x="0" y="98" width="360" height="22" fill="#6D7A3F"/>
      <g transform="translate(58 62)"><path d="M-6 14 L40 -2 L86 14Z" fill="#6B4E2E"/><rect x="0" y="14" width="80" height="34" fill="#D8C9A0"/>
        ${[8,26,44,62].map(x=>`<rect x="${x}" y="22" width="10" height="9" fill="#5A7896"/>`).join('')}<rect x="34" y="34" width="12" height="14" fill="#6B4E2E"/></g>
-     <g transform="translate(176 40)"><rect x="0" y="0" width="2" height="60" fill="#888"/><rect x="2" y="2" width="22" height="15" fill="#fff"/>
-       <circle cx="13" cy="9.5" r="4.4" fill="#C8102E"/><path d="M8.6 9.5a4.4 4.4 0 0 0 8.8 0a2.2 2.2 0 0 1-4.4 0a2.2 2.2 0 0 0-4.4 0" fill="#0047A0"/></g>
+     <g transform="translate(176 40)"><rect x="0" y="0" width="2" height="60" fill="#888"/>${flagSvg(2,2,24)}</g>
      <g stroke="#4A5530" stroke-width="2">${Array.from({length:19},(_,i)=>`<line x1="${i*20}" y1="96" x2="${i*20}" y2="108"/>`).join('')}<line x1="0" y1="100" x2="360" y2="100"/></g>`;
   } else if(f==='해군'){
     g=sky('#A9D2F0','#E4F2FB')+

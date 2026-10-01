@@ -81,3 +81,12 @@ function stagger(sel,root){
   const els=(root||document).querySelectorAll(sel); if(!els.length) return;
   gsap.fromTo(els,{y:26,opacity:0,scale:.97},{y:0,opacity:1,scale:1,duration:.6,ease:'back.out(1.6)',stagger:.06,clearProps:'transform,opacity'});
 }
+
+/* 목록 페이지 넘김을 좌우 스와이프로 — data-swipe-pager="페이저 id" */
+(function(){
+  let sx=null,sy=0,el=null;
+  addEventListener('touchstart',e=>{el=e.target.closest('[data-swipe-pager]'); if(!el) return; sx=e.touches[0].clientX; sy=e.touches[0].clientY;},{passive:true});
+  addEventListener('touchend',e=>{if(!el||sx==null) return; const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3){const b=document.querySelector(`#${el.dataset.swipePager} [data-pg="${dx<0?1:-1}"]`); if(b&&!b.disabled) b.click();}
+    sx=null; el=null;},{passive:true});
+})();

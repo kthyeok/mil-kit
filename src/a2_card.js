@@ -35,7 +35,7 @@ function drawDischarge(x){
   x.fillStyle='rgba(255,255,255,.12)'; rrect(x,W/2-68,90,136,150,18); x.fill();
   x.save(); x.translate(W/2-56,98); x.imageSmoothingEnabled=false; paint(x,2.5,0); x.restore();
   T(CARD.name.trim()||'병장 ○○○','900',22,'#fff',W/2,270);
-  T(`${S.mos?S.mos.특기명:''} · 복무 ${months()}개월`,'600',12,'rgba(255,255,255,.8)',W/2,290);
+  T(`${mosLabel()} · 복무 ${months()}개월`,'600',12,'rgba(255,255,255,.8)',W/2,290);
   x.fillStyle='rgba(255,255,255,.2)'; x.fillRect(24,304,W-48,1);
   T('오늘의 메뉴','800',10,t.acc,W/2,324); T(`${menu} 정식`,'900',18,'#fff',W/2,346);
   const cw=(W-36-12)/3;
@@ -52,7 +52,7 @@ function drawNamecard(x){
   x.save(); rrect(x,0,0,W,H,14); x.clip(); x.fillStyle='#fff'; x.fillRect(0,0,W,H);
   x.fillStyle=t.c2; x.fillRect(0,0,10,H);
   T(`희망 직무 · ${menu}`,'800',15,'#191F28',34,46); x.fillStyle=t.c2; x.fillRect(34,56,26,3);
-  T(`${S.force} ${S.mos?S.mos.특기명:''} 출신 · 병장 만기전역`,'600',11.5,'#8B95A1',34,78);
+  T(`${S.force} ${mosLabel()} 출신 · 병장 만기전역`,'600',11.5,'#8B95A1',34,78);
   T(CARD.name.trim()||'홍길동','800',34,'#191F28',34,132);
   T(co.length?`준비 자격 ${co.slice(0,2).map(c=>c.jmfldnm).join(' → ')}`:'자격 준비 중','700',12.5,t.c2,34,156,'left',280);
   x.fillStyle='#E5E8EB'; x.fillRect(34,172,230,1);
@@ -130,7 +130,7 @@ function kakaoReady(){
   try{ if(!Kakao.isInitialized()) Kakao.init(key); return Kakao.isInitialized()&&!!Kakao.Share; }catch(e){ return false; }
 }
 function inviteText(to){
-  const menu=resMenu(), me=`${S.force} ${S.mos?S.mos.특기명:''}`;
+  const menu=resMenu(), me=`${S.force} ${mosLabel()}`;
   return {
     '후임':`야, 내 군생활(${me}) 요리해봤더니 "${menu} 정식" 나왔다 🍳\n너도 해봐. 뭐 나오는지 보자.`,
     '선임':`선임님! 제 군생활 요리해봤더니 "${menu} 정식" 나왔습니다 🫡\n선임님은 무슨 메뉴 나오실지 궁금합니다. 한번 해보십시오!`,

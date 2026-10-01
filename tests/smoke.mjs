@@ -38,11 +38,11 @@ await sleep(1400); await shot('00_splash_mid'); await sleep(1200); await shot('0
 await click('#start'); await shot('02_force');
 await click('[data-f="해군"]'); await click('#next'); await shot('03_form');
 await click('[data-e="4.5"]'); await click('[data-m="컴퓨터·IT"]'); await click('#next'); await sleep(300); await shot('04_mos');
-await click('.famt'); await sleep(200); await shot('04b_mos_pick'); await click('#next'); await sleep(300);
+await click('.famt'); await sleep(200); await shot('04_mos'); await click('#next'); await sleep(300);
 let n=0;
 for(let guard=0;guard<30;guard++){
   const scr=await ev(`S.scr`);
-  if(scr==='cook'||scr==='result') break;
+  if(['path','cook','result'].includes(scr)) break;
   if(scr==='promo'){ await shot('promo_'+(n)); await click('#next'); await sleep(300); continue; }
   const k=await ev(`curEv().kind`); const id=await ev(`curEv().id`);
   await shot(`ev_${String(++n).padStart(2,'0')}_${id}`);
@@ -52,13 +52,17 @@ for(let guard=0;guard<30;guard++){
   else if(k==='text'){ await click('.quick button'); await click('#ok'); }
   await sleep(250);
 }
+await sleep(400); await shot('09_path'); await click('[data-p="school"]'); await sleep(900); await shot('09b_school');
+await ev(`(()=>{const c=document.querySelectorAll('#sb .evchip');if(c[0]&&!c[0].classList.contains('on'))c[0].click();})()`); await sleep(150); await click('#next');
 console.log('JK params:',await ev(`JSON.stringify(buildJK())`));
-await sleep(900); await shot('12_cook'); await sleep(2400);
-await shot('13_result_sum');
+await sleep(900); await shot('12_cook'); await sleep(2600);
+await shot('13_result_course');
+for(const i of [1,2,3,4]){ await ev(`(()=>{const c=document.getElementById('crs');c.scrollLeft=${i}*c.clientWidth;})()`); await sleep(500); await shot('13_course_'+i); }
+
 console.log('result:',await ev(`JSON.stringify({posts:S.res.posts.length,certs:S.res.certs.length,notes:S.res.notes,ok:S.res.certs.filter(c=>c.el.ok).length})`));
 await click('[data-t="post"]'); await shot('14_posts'); await click('.post2'); await shot('15_post_sheet'); await ev(`closeSheet()`);
 await click('[data-t="cert"]'); await shot('16_certs'); await click('#cg .crow'); await shot('17_cert_sheet'); await ev(`closeSheet()`);
-await click('[data-t="sum"]'); await click('[data-card="dis"]'); await sleep(400); await shot('18_card_dis'); await click('[data-ck="nc"]'); await sleep(300);
+await click('[data-t="course"]'); await sleep(300); await click('[data-card="dis"]'); await sleep(400); await shot('18_card_dis'); await click('[data-ck="nc"]'); await sleep(300);
 await ev(`(()=>{const i=document.getElementById('ncName');i.value='김밀킷';i.dispatchEvent(new Event('input'));})()`); await shot('19_card_nc'); await ev(`closeSheet()`);
 await click('#inv'); await sleep(300); await shot('20_invite'); await click('[data-w="선임"]'); await shot('21_invite_sr'); await ev(`closeSheet()`);
 await send('Page.navigate',{url:FILE+'#ch='+encodeURIComponent(JSON.stringify({f:'공군',m:'정비원',w:'선임'}))}); await send('Page.reload',{}); await sleep(3000); await shot('22_challenge');

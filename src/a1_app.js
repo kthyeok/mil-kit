@@ -11,7 +11,7 @@ const fam=()=>S.mos?S.mos.직군:null;
 const rankIdx=()=>S.rk;
 const months=()=>(DS_SERVICE.find(x=>x.군별===S.force)||{}).복무기간_개월||18;
 const EV_ALL=RANK5.flatMap(r=>EVENTS[r].map(e=>({...e,rank:r})));
-const STEPS_TOTAL=3+EV_ALL.length+RANK5.length+1;
+const STEPS_TOTAL=3+EV_ALL.length+RANK5.length+2;
 
 /* ── 진행률 ── */
 function stepNo(){
@@ -28,15 +28,16 @@ function render(){
   $('app').classList.toggle('gray',S.scr==='result');
   $('prog').hidden=full||S.scr==='result';
   $('progBar').style.width=Math.min(100,stepNo()/STEPS_TOTAL*100)+'%';
-  $('back').hidden=!['form','mos','ev'].includes(S.scr);
+  $('back').hidden=!['form','mos','ev','school'].includes(S.scr);
   const TB={force:['STEP 1','📮','입영 통지서'],form:['STEP 2','🏛️','병무청 신상명세서'],mos:['STEP 3','🏕️','자대 배치 면담'],
-    ev:[RANK5[S.si],rankMark(S.si),`${S.force} ${RANK5[S.si]} 생활`],result:['완성','🍽️','오늘의 메뉴']}[S.scr];
+    ev:[RANK5[S.si],rankMark(S.si),`${S.force} ${RANK5[S.si]} 생활`],path:['전역','🎖️','전역 후 진로'],school:['복학','🎓','졸업 후 목표'],
+    result:['완성','🍽️','꿈을 위한 코스']}[S.scr];
   $('tbTitle').innerHTML=TB?`<span class="tbc ${S.scr==='ev'?'rk':''}">${TB[0]}</span><span class="tbi">${TB[1]}</span><b class="tbt">${TB[2]}</b>`:'';
   $('tbStep').textContent=S.scr==='ev'?`${S.ei+1}/${EVENTS[RANK5[S.si]].length}`:'';
   $('scr').className=S.scr==='result'?'hub':'';
 
   $('cta').innerHTML='';
-  ({splash:scSplash,force:scForce,form:scForm,mos:scMos,ev:scEvent,promo:scPromo,cook:scCook,result:scResult})[S.scr]();
+  ({splash:scSplash,force:scForce,form:scForm,mos:scMos,ev:scEvent,promo:scPromo,path:scPath,school:scSchool,cook:scCook,result:scResult})[S.scr]();
 }
 /* 계급장(병) — 이병 1줄 · 일병 2줄 · 상병 3줄 · 병장 4줄 */
 function rankMark(i){ return `<svg class="rkm" viewBox="0 0 14 18" aria-hidden="true">${Array.from({length:i+1},(_,k)=>`<rect x="1" y="${15-k*4.4}" width="12" height="2.6" rx="1"/>`).join('')}</svg>`; }
@@ -44,54 +45,72 @@ let rzT=0; addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{
 function go(scr,o={},dir=1){Object.assign(S,o);S.scr=scr;slide(dir,render);}   // dir: 1 앞으로 · -1 뒤로
 
 /* ═══ 0. 스플래시 — 거꾸로 놓인 군모 냄비 · 2초 요리 ═══ */
-const CAP_CFG={
-  '육군':{cam:['#4E5A33','#7E8B57','#5E4B33','#2E3322','#9AA36E','#6B7A4A'],base:'#6B7A4A',line:'#3D4628',tape:'#2E3322',ink:'#E9E4C9',label:'대한민국 육군'},
-  '공군':{cam:['#4F5E70','#7D8DA0','#3C4756','#2A323C','#A3B1C2','#64748A'],base:'#64748A',line:'#36414E',tape:'#2A323C',ink:'#DCE6F2',label:'대한민국 공군'},
-  '기타':{cam:['#4E5A33','#7E8B57','#5E4B33','#2E3322','#9AA36E','#6B7A4A'],base:'#6B7A4A',line:'#3D4628',tape:'#2E3322',ink:'#E9E4C9',label:'대한민국'},
-  '해병':{cam:['#6A5A3A','#8C7B52','#4B4130','#2F2A1E','#A8956A','#7A6A46'],base:'#7A6A46',line:'#3F3626',tape:'#C0392B',ink:'#F2C230',label:'해병대'}};
-function capSvg(kind='육군'){
-  const steam=`<g class="steam">${['#3E8E41','#1D4ED8','#38BDF8','#EF4444'].map((c,i)=>`<path class="st st${i}" d="M${62+i*25} 56c-9-11 8-17 0-29s8-17 1-27" stroke="${c}" stroke-width="7" stroke-linecap="round" fill="none"/>`).join('')}</g>`;
-  /* 해군: 흰 수병모 + 검은 띠 '대한민국 해군' */
-  if(kind==='해군') return `<svg class="capsvg" viewBox="0 0 200 170" aria-hidden="true">${steam}
-    <defs><clipPath id="navyBody"><path d="M34 66 Q36 122 62 136 Q100 150 138 136 Q164 122 166 66 Z"/></clipPath>
-      <linearGradient id="navySh" x1="0" x2="1"><stop offset="0" stop-color="#E4E7EA"/><stop offset=".45" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D9DDE2"/></linearGradient></defs>
-    <path d="M34 66 Q36 122 62 136 Q100 150 138 136 Q164 122 166 66 Z" fill="url(#navySh)" stroke="#C3C9D0" stroke-width="2"/>
-    <g clip-path="url(#navyBody)"><rect x="20" y="84" width="160" height="16" fill="#1B1F2A"/>
-      <text x="100" y="95.5" font-size="8.5" text-anchor="middle" font-weight="900" fill="#D4AF37" font-family="sans-serif" letter-spacing="2">대한민국 해군</text>
-      <path d="M40 120 Q100 136 160 120" stroke="#E1E5EA" stroke-width="2" fill="none"/></g>
-    <g class="mark" transform="translate(100 120)" fill="none" stroke="#2B4A7A" stroke-width="2.2" stroke-linecap="round">
-      <circle cx="0" cy="-9" r="2.6"/><path d="M0 -6.4 V9"/><path d="M-6 -2 H6"/><path d="M-8 4 Q-6 10 0 10 Q6 10 8 4"/></g>
-    <ellipse cx="100" cy="66" rx="70" ry="15" fill="#FFFFFF" stroke="#C3C9D0" stroke-width="2"/><ellipse cx="100" cy="67" rx="60" ry="10" fill="#2A3140"/>
-  </svg>`;
-  const C=CAP_CFG[kind]||CAP_CFG['육군'], r=mulberry32(7);
-  const marine=kind==='해병';
-  const body=marine?'M28 66 L36 118 L52 141 L148 141 L164 118 L172 66 Z':'M30 66 L42 132 Q44 141 53 141 L147 141 Q156 141 158 132 L170 66 Z';
-  const px=Array.from({length:120},()=>{const w=4+Math.floor(r()*3)*3;return `<rect x="${Math.round(26+r()*170)}" y="${Math.round(58+r()*92)}" width="${w}" height="${w-(r()<.5?0:3)}" fill="${C.cam[Math.floor(r()*C.cam.length)]}"/>`;}).join('');
-  const flag=`<rect x="80" y="86" width="40" height="27" rx="2" fill="#fff" stroke="${C.line}" stroke-width="1.2"/>
-      <circle cx="100" cy="99.5" r="7" fill="#0047A0"/><path d="M93 99.5 a7 7 0 0 1 14 0 a3.5 3.5 0 0 1 -7 0 a3.5 3.5 0 0 0 -7 0Z" fill="#C8102E"/>
-      <g fill="#111"><rect x="83" y="89" width="7" height="1.4" transform="rotate(35 86.5 89.7)"/><rect x="83" y="91.4" width="7" height="1.4" transform="rotate(35 86.5 92.1)"/>
-        <rect x="110" y="89" width="7" height="1.4" transform="rotate(-35 113.5 89.7)"/><rect x="110" y="91.4" width="7" height="1.4" transform="rotate(-35 113.5 92.1)"/>
-        <rect x="83" y="107" width="7" height="1.4" transform="rotate(-35 86.5 107.7)"/><rect x="83" y="109.4" width="7" height="1.4" transform="rotate(-35 86.5 110.1)"/>
-        <rect x="110" y="107" width="7" height="1.4" transform="rotate(35 113.5 107.7)"/><rect x="110" y="109.4" width="7" height="1.4" transform="rotate(35 113.5 110.1)"/></g>`;
-  /* 해병: 팔각모 + 금색 닻·별 마크 */
-  const emblem=marine?`<g fill="#D4AF37" stroke="#8A6D12" stroke-width=".8"><path d="M100 84 l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z"/>
-      <path d="M98.6 100 h2.8 v10 q5.5-.6 8-5.4 l2.4 1.4 q-3.6 7.6-12.2 8.2 q-8.6-.6-12.2-8.2 l2.4-1.4 q2.5 4.8 8 5.4z"/><rect x="94" y="102" width="12" height="2.4" rx="1"/></g>`:flag;
-  return `<svg class="capsvg" viewBox="0 0 200 170" aria-hidden="true">
-    <defs><clipPath id="capBody${kind}"><path d="${body}"/></clipPath>
-      <clipPath id="capBrim${kind}"><path d="M148 124 Q184 120 194 140 Q172 152 146 142 Z"/></clipPath></defs>${steam}
-    <path d="M148 124 Q184 120 194 140 Q172 152 146 142 Z" fill="${C.line}"/>
-    <g clip-path="url(#capBrim${kind})" opacity=".7">${px}</g>
-    <path d="M152 130 Q180 128 188 140" stroke="${C.tape}" stroke-width="1" stroke-dasharray="3 2" fill="none"/>
-    <path d="${body}" fill="${C.base}"/>
-    <g clip-path="url(#capBody${kind})">${px}</g>
-    <path d="${body}" fill="none" stroke="${C.line}" stroke-width="2.5"/>
-    ${marine?`<path d="M36 118 L164 118 M52 141 L44 70 M148 141 L156 70" stroke="${C.line}" stroke-width="1.2" opacity=".55" fill="none"/>`
-      :`<path d="M100 66 L100 140" stroke="${C.line}" stroke-width="1" stroke-dasharray="3 2" opacity=".6"/>`}
-    <ellipse cx="100" cy="66" rx="70" ry="14" fill="${C.line}"/><ellipse cx="100" cy="67" rx="63" ry="10" fill="#1F2416"/>
-    <g class="mark">${emblem}
-      <rect x="70" y="118" width="60" height="10" rx="1.5" fill="${C.tape}"/>
-      <text x="100" y="125.6" font-size="6.6" text-anchor="middle" font-weight="900" fill="${C.ink}" font-family="sans-serif" letter-spacing=".4">${C.label}</text></g>
-  </svg>`;
+const CAMO={
+  army:['#5B6B3A','#7C8656','#4A3F33','#2B2A24','#B8AE8E','#6E7B4A','#8D9C5A'],
+  cap:['#7A7B62','#5C5A48','#3B3A30','#C9B79A','#8C8A72','#4D5240','#A99B7E'],
+  marine:['#3E4A5C','#6B7686','#A9B0BA','#2A2F38','#55606E','#8A93A0','#4F5A4A']};
+/* 디지털 무늬 — 2~3칸짜리 픽셀 덩어리를 흩뿌린다 */
+function pix(seed,pal,x0,y0,w,h,n,u=5){
+  const r=mulberry32(seed); let o='';
+  for(let i=0;i<n;i++){const c=pal[Math.floor(r()*pal.length)], x=x0+Math.floor(r()*w/u)*u, y=y0+Math.floor(r()*h/u)*u, k=1+Math.floor(r()*3);
+    for(let j=0;j<k;j++) o+=`<rect x="${x+(j%2)*u}" y="${y+Math.floor(j/2)*u}" width="${u}" height="${u}" fill="${c}"/>`;}
+  return o;
+}
+const STEAM=`<g class="steam">${['#3E8E41','#1D4ED8','#38BDF8','#EF4444'].map((c,i)=>`<path class="st st${i}" d="M${62+i*25} 56c-9-11 8-17 0-29s8-17 1-27" stroke="${c}" stroke-width="7" stroke-linecap="round" fill="none"/>`).join('')}</g>`;
+const CAP_OF={'육군':'army','해군':'navy','공군':'air','해병':'marine','기타':'helmet'};
+function capSvg(kind='helmet'){
+  const id='c'+kind, wrap=b=>`<svg class="capsvg" viewBox="0 0 200 170" aria-hidden="true">${STEAM}${b}</svg>`;
+  if(kind==='helmet'){   /* 철모(위장포 커버) — 띠 · 턱끈이 손잡이처럼 */
+    const body='M26 66 Q24 150 100 152 Q176 150 174 66 Z';
+    return wrap(`<defs><clipPath id="${id}"><path d="${body}"/></clipPath><radialGradient id="${id}g" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></radialGradient></defs>
+      <path d="M40 74 Q8 92 22 118 Q30 128 44 116" stroke="#5E6B3A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M160 74 Q192 92 178 118 Q170 128 156 116" stroke="#5E6B3A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <rect x="14" y="98" width="10" height="7" rx="1.5" fill="#3E4628" transform="rotate(-20 19 101)"/><rect x="176" y="98" width="10" height="7" rx="1.5" fill="#3E4628" transform="rotate(20 181 101)"/>
+      <path d="${body}" fill="#5B6B3A"/><g clip-path="url(#${id})">${pix(11,CAMO.army,24,60,152,95,150)}
+        <path d="M28 88 Q100 108 172 88 L170 104 Q100 124 30 104 Z" fill="#6E7B4A" opacity=".55"/>
+        <path d="M28 88 Q100 108 172 88 M30 104 Q100 124 170 104" stroke="#3E4628" stroke-width="1.4" stroke-dasharray="3 2" fill="none"/>
+        <path d="M100 74 Q104 112 100 152" stroke="#3E4628" stroke-width="1.2" stroke-dasharray="3 2" fill="none" opacity=".7"/>
+        <rect width="200" height="170" fill="url(#${id}g)"/></g>
+      <path d="${body}" fill="none" stroke="#3E4628" stroke-width="2.5"/>
+      <ellipse cx="100" cy="66" rx="74" ry="15" fill="#4A5530"/><ellipse cx="100" cy="67" rx="66" ry="11" fill="#1F2416"/>
+      <path d="M60 64 L52 78 M140 64 L148 78" stroke="#5E6B3A" stroke-width="5" stroke-linecap="round"/>`);
+  }
+  if(kind==='navy'){     /* 흰 수병모 — 뒤집으면 말린 챙이 아래로 퍼진다 */
+    return wrap(`<defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="#DCE0E5"/><stop offset=".5" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D3D8DE"/></linearGradient></defs>
+      <path d="M46 96 Q46 146 100 148 Q154 146 154 96 Z" fill="url(#${id})" stroke="#C4CAD1" stroke-width="2"/>
+      <path d="M58 132 Q100 142 142 132" stroke="#D5DAE0" stroke-width="2" fill="none"/>
+      <path d="M24 64 L176 64 L164 102 Q100 114 36 102 Z" fill="url(#${id})" stroke="#C4CAD1" stroke-width="2"/>
+      ${[74,82,90].map(y=>`<path d="M${30+(y-64)*.3} ${y} Q100 ${y+12} ${170-(y-64)*.3} ${y}" stroke="#CBD1D8" stroke-width="1" stroke-dasharray="2.5 2" fill="none"/>`).join('')}
+      <ellipse cx="100" cy="64" rx="76" ry="15" fill="#FFFFFF" stroke="#C4CAD1" stroke-width="2"/><ellipse cx="100" cy="65" rx="64" ry="10" fill="#E9ECEF"/>
+      <ellipse cx="100" cy="67" rx="52" ry="7" fill="#2A3140"/>`);
+  }
+  if(kind==='marine'){   /* 해병 팔각모 — 팔각 정수리가 냄비 바닥, 챙은 옆으로 */
+    const body='M32 66 L46 128 L62 142 L100 147 L138 142 L154 128 L168 66 Z';
+    return wrap(`<defs><clipPath id="${id}"><path d="${body}"/></clipPath><clipPath id="${id}b"><path d="M150 72 Q194 70 198 90 Q186 104 154 98 Z"/></clipPath></defs>
+      <path d="M150 72 Q194 70 198 90 Q186 104 154 98 Z" fill="#3E4A5C"/><g clip-path="url(#${id}b)">${pix(5,CAMO.marine,150,66,50,40,40,4)}</g>
+      <path d="${body}" fill="#55606E"/><g clip-path="url(#${id})">${pix(21,CAMO.marine,30,60,140,90,170)}
+        <path d="M46 128 L154 128 M62 142 L52 70 M138 142 L148 70 M100 147 L100 74" stroke="#2A2F38" stroke-width="1.3" opacity=".5" fill="none"/></g>
+      <path d="${body}" fill="none" stroke="#2A2F38" stroke-width="2.5"/>
+      <g fill="#1F242B" transform="translate(100 101)"><path d="M0 -14 l2 4.2 4.6.6-3.3 3.2.8 4.6-4.1-2.2-4.1 2.2.8-4.6-3.3-3.2 4.6-.6z"/>
+        <path d="M-1.4 -2 h2.8 v13 q5-.6 7.6-5 l2.2 1.4 q-3.4 7-11 7.6 q-7.6-.6-11-7.6 l2.2-1.4 q2.6 4.4 7.6 5z"/><rect x="-6" y="0" width="12" height="2.4" rx="1"/>
+        <path d="M-12 -4 q-6 -4 -9 2 q5 -1 9 2z M12 -4 q6 -4 9 2 q-5 -1 -9 2z"/></g>
+      <ellipse cx="100" cy="66" rx="70" ry="14" fill="#3E4A5C"/><ellipse cx="100" cy="67" rx="62" ry="10" fill="#1A1E25"/>`);
+  }
+  /* 육군 모자(디지털 무늬) · 공군 모자(남색 + 흰 패치) — 야구모 형태 */
+  const air=kind==='air', body='M32 66 Q32 148 100 150 Q168 148 168 66 Z';
+  const base=air?'#2C3E73':'#7A7B62', dark=air?'#1E2C55':'#3B3A30';
+  return wrap(`<defs><clipPath id="${id}"><path d="${body}"/></clipPath><clipPath id="${id}b"><path d="M150 70 Q196 64 199 86 Q188 102 152 94 Z"/></clipPath>
+      <radialGradient id="${id}g" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#fff" stop-opacity="${air?.22:.12}"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></radialGradient></defs>
+    <path d="M150 70 Q196 64 199 86 Q188 102 152 94 Z" fill="${air?dark:base}"/>
+    ${air?'':`<g clip-path="url(#${id}b)">${pix(3,CAMO.cap,150,62,52,44,40,4)}</g>`}
+    <path d="M156 76 Q190 72 194 86 M158 82 Q188 80 191 90" stroke="${dark}" stroke-width="1" stroke-dasharray="2.5 2" fill="none" opacity=".7"/>
+    <path d="${body}" fill="${base}"/><g clip-path="url(#${id})">${air?'':pix(9,CAMO.cap,30,60,140,92,170)}
+      ${[-46,-16,16,46].map(dx=>`<path d="M100 150 Q${100+dx*1.15} 108 ${100+dx*1.5} 66" stroke="${dark}" stroke-width="1.3" stroke-dasharray="3 2" fill="none" opacity=".55"/>`).join('')}
+      <rect width="200" height="170" fill="url(#${id}g)"/></g>
+    <circle cx="100" cy="148" r="3.4" fill="${dark}"/>
+    <path d="${body}" fill="none" stroke="${dark}" stroke-width="2.5"/>
+    ${air?`<g transform="translate(86 96)"><rect width="28" height="11" rx="1.5" fill="#F4F6F8"/><rect x="3" y="4" width="22" height="3" rx="1" fill="#9FB4D6"/></g>`:''}
+    <ellipse cx="100" cy="66" rx="70" ry="14" fill="${dark}"/><ellipse cx="100" cy="67" rx="62" ry="10" fill="#15171C"/>`);
 }
 function scSplash(){
   $('scr').innerHTML=`<div class="splash" id="splash">
@@ -135,14 +154,14 @@ function scForm(){
       <div class="mma-b"><em>병무청 담당자</em><p>${S.force} 입영을 축하드려요! 배치에 참고하도록 <b>신상명세서</b>를 작성해 주세요 ✍️</p></div></div>
     <div class="paper handoff">
       <div class="ph2"><span class="emb"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#fff" stroke="#1F3B73" stroke-width="2"/>
-          <circle cx="20" cy="20" r="9" fill="#0047A0"/><path d="M11 20a9 9 0 0 1 18 0a4.5 4.5 0 0 1-9 0a4.5 4.5 0 0 0-9 0Z" fill="#C8102E"/></svg></span>
+          <g transform="translate(20 20)">${taegeukG(10)}</g></svg></span>
         <div class="pt"><small>병무청 서식 제12호</small><b>신 상 명 세 서</b><span>${S.force} 입영 대상자용</span></div>
         <span class="serial"><i class="bar"></i><em>No. ${new Date().getFullYear()}-${String(Math.floor(1000+Math.random()*8999))}</em></span></div>
       <div class="pf"><label>최종 학력</label><div class="chips5 edu">${EDU5.map(([v,l])=>`<button class="chip ${S.edu===v?'on':''}" data-e="${v}">${l}</button>`).join('')}</div></div>
       <div class="pf grow"><label>전공 <small>${S.edu===3?'(고졸이면 관심 있는 계열)':''}</small></label>
         <div class="chips5 mj">${MAJOR5.map(([m])=>`<button class="chip ${S.major===m?'on':''}" data-m="${m}">${m}</button>`).join('')}</div></div>
       <div class="pfoot"><span class="pseal">🔒 기재 내용은 이 기기 안에서만 쓰여요</span>
-        <span class="sign">병 무 청 장<i class="stamp">병무<br>청장</i></span></div>
+</div>
     </div>`;
   const sync=()=>{const ok=S.edu!=null&&S.major;$('next').disabled=!ok;$('next').textContent=ok?'제출하고 자대 배치 받기':'학력과 전공을 골라주세요';};
   $('scr').querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{haptic();S.edu=+b.dataset.e;
@@ -162,6 +181,7 @@ function mosList(){
 const FAM5={combat:['🎯','전투·경계'],comm:['📡','통신·전자'],it:['💻','전산·IT'],mech:['🔧','정비·공병'],
   trans:['🚚','수송·운전'],admin:['🗂️','행정·지원'],medic:['🏥','의무'],food:['🍳','조리·급양']};
 function topBy(L,key,n){const c={};L.forEach(m=>c[m[key]]=(c[m[key]]||0)+1);return Object.keys(c).sort((a,b)=>c[b]-c[a]).slice(0,n);}
+function mosLabel(){ return S.mos?((FAM5[S.mos.직군]||[])[1]||S.mos.특기명):''; }
 function scMos(){
   const all=mosList();
   const fams=Object.keys(FAM5).map(k=>({k,L:all.filter(m=>m.직군===k)})).filter(x=>x.L.length).sort((a,b)=>b.L.length-a.L.length);
@@ -169,24 +189,14 @@ function scMos(){
     <div class="scene2 sm up"><div class="sc-art">${forceArt(S.force)}<span class="sc-npc">${npcSvg(S.force)}</span>
         <span class="sc-tag">🏕️ ${S.force} 자대 배치 면담</span><span class="sc-me"><canvas id="cM"></canvas></span></div>
       <div class="sc-bub"><em>${S.force} 교관</em>${esc(MOS_ASK[S.force]||MOS_ASK['육군'])}</div></div>
-    <div class="famgrid up" style="--d:60ms">${fams.map(f=>`<button class="opt famt ${S.mos&&S.mos.직군===f.k?'on':''}" data-k="${f.k}">
-      <span class="em">${FAM5[f.k][0]}</span><span class="tx"><span class="tt">${FAM5[f.k][1]}</span><span class="dd">${esc(topBy(f.L,'분야',3).join('·'))}</span></span></button>`).join('')}</div>
-    <div class="subpick up" style="--d:120ms" id="sub"></div>`;
+    <div class="famgrid big up" style="--d:60ms">${fams.map(f=>`<button class="opt famt ${S.mos&&S.mos.직군===f.k?'on':''}" data-k="${f.k}">
+      <span class="em">${FAM5[f.k][0]}</span><span class="tx"><span class="tt">${FAM5[f.k][1]}</span><span class="dd">${esc(topBy(f.L,'분야',3).join('·'))}</span></span></button>`).join('')}</div>`;
   mount($('cM'),34);
-  const sub=()=>{const f=S.mos&&fams.find(x=>x.k===S.mos.직군);
-    if(!f){$('sub').innerHTML=`<span class="sl">세부 특기</span><span class="sh">위에서 하고 싶은 일을 먼저 골라주세요</span>`;return;}
-    const seen=new Set(), names=[];
-    const base=n=>n.replace(/^\([^)]*\)\s*/,'');   // "(맞춤)보수" → "보수" 중복 정리
-    const pool=[...f.L].sort((x,y)=>(/^\(/.test(x.특기명))-(/^\(/.test(y.특기명)));
-    topBy(f.L,'분야',8).forEach(b=>pool.filter(m=>m.분야===b).forEach(m=>{const k=base(m.특기명);if(!seen.has(k)&&names.length<6){seen.add(k);names.push(m);}}));
-    if(!names.some(m=>m.특기명===S.mos.특기명)) names[names.length-1]=S.mos;
-    $('sub').innerHTML=`<span class="sl">세부 특기 <small>${f.L.length}종 중 대표</small></span><div class="subchips">${names.map((m,i)=>`<button class="chip ${m.특기명===S.mos.특기명?'on':''}" data-i="${i}">${esc(m.특기명)}</button>`).join('')}</div>`;
-    $('sub').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{haptic();S.mos=names[+b.dataset.i];sub();sync();});};
-  const sync=()=>{const m=S.mos;$('next').disabled=!m;$('next').textContent=m?`"${m.특기명}" 해보고 싶습니다!`:'하고 싶은 일을 골라주세요';};
+  const sync=()=>{$('next').disabled=!S.mos;$('next').textContent=S.mos?`"${mosLabel()}" 해보고 싶습니다!`:'하고 싶은 일을 골라주세요';};
   $('scr').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{haptic();const f=fams.find(x=>x.k===b.dataset.k);
-    const top=topBy(f.L,'분야',1)[0]; S.mos=f.L.find(m=>m.분야===top)||f.L[0];
-    $('scr').querySelectorAll('.famt').forEach(o=>o.classList.toggle('on',o===b));sub();sync();});
-  $('cta').innerHTML=`<button class="btn" id="next" disabled></button>`;sub();sync();
+    const top=topBy(f.L,'분야',1)[0]; S.mos=f.L.find(m=>m.분야===top)||f.L[0];   // 대표 특기(가장 흔한 분야)로 배치
+    $('scr').querySelectorAll('.famt').forEach(o=>o.classList.toggle('on',o===b));sync();});
+  $('cta').innerHTML=`<button class="btn" id="next" disabled></button>`;sync();
   $('next').onclick=()=>{haptic();
     const b=FAMILY_BASE[S.mos.직군]; S.stats={str:0,tech:0,lead:0,dili:0,comm:0}; SK.forEach(k=>S.stats[k]+=b[k]);
     S.items=new Set(['cap',FAM_TOOL[S.mos.직군]]); S.rk=0;S.si=0;S.ei=0;S.hist=[];
@@ -270,7 +280,6 @@ function scPromo(){
   $('scr').innerHTML=`
     <div class="stage pop grow fstage" id="pst">${forceArt(S.force)}<canvas id="cP"></canvas></div>
     <div class="celebrate">
-      <div class="badge-up up">${last?'전역 명령':'진급 발령'}</div>
       <div class="rankbig up" style="--d:80ms">${last?'<em>전역</em>! 이제 요리할 시간':`<em>${next}</em>(으)로 진급!`}</div>
       <div class="deltas">${SK.filter(k=>g[k]).map((k,i)=>`<b class="pop" style="--d:${160+i*60}ms">${SN(k).i} ${SN(k).n} <i>+${g[k]}</i></b>`).join('')}
         ${RANK_ITEM[r]?`<b class="pop" style="--d:420ms">${iemoji(RANK_ITEM[r])} ${iname(RANK_ITEM[r])}</b>`:''}</div>
@@ -280,8 +289,8 @@ function scPromo(){
   requestAnimationFrame(()=>{const h=Math.max(70,$('pst').clientHeight-16);mount($('cP'),Math.min(200,Math.floor(h*GW/GH)));});
   setTimeout(()=>party(last?'big':'small'),380);
   if(window.gsap&&!FX.reduce) gsap.fromTo('.rankbig',{scale:.6},{scale:1,duration:.6,ease:'back.out(2.4)',delay:.1,clearProps:'transform'});
-  $('cta').innerHTML=`<button class="btn" id="next">${last?'🍳 요리 완성하기':'계속 복무하기'}</button>`;
-  $('next').onclick=()=>{haptic();if(last) go('cook'); else go('ev',{si:S.si+1,ei:0});};
+  $('cta').innerHTML=`<button class="btn" id="next">${last?'🧭 전역 후 계획 세우기':'계속 복무하기'}</button>`;
+  $('next').onclick=()=>{haptic();if(last) go('path'); else go('ev',{si:S.si+1,ei:0});};
 }
 
 /* ═══ 5. 두 API 요청 조립 ═══ */
@@ -296,6 +305,11 @@ function buildJK(){
   if(a.jtype&&a.jtype.length) q.Jtype=a.jtype.slice(0,3).join(',');
   if(a.pay){q.pay='1';q.payterm=a.pay.join(',');}
   if(a.ctype&&a.ctype!=='0') q.ctype=a.ctype;
+  if(S.plan==='school'){            // 복학: 졸업 후 학력 · 신입 · 졸업 후 희망 분야
+    q.edu1=eduCode(gradEdu()); q.mcareerchk='1';
+    const R2=S.ans.rbcd2||[];
+    if(R2.length){ q.rbcd=R2.join(','); const rp=(a.rpcd||[]).filter(p=>R2.includes(RB_OF_PART[p])); if(rp.length) q.rpcd=rp.join(','); else delete q.rpcd; }
+  }
   return q;
 }
 function qnFilter(){ return {obligfldcd:S.ans.qnField||[],seriescd:S.ans.qnSeries&&S.ans.qnSeries!=='all'?S.ans.qnSeries:null,major:S.major}; }
@@ -303,7 +317,7 @@ function qnFilter(){ return {obligfldcd:S.ans.qnField||[],seriescd:S.ans.qnSerie
 const COOK_STEPS=[['📮','채용공고 모으는 중'],['📜','자격증 정보 모으는 중'],['🔗','공고와 자격 연결'],['🍽️','코스 플레이팅']];
 function scCook(){
   $('scr').innerHTML=`<div class="splash cook">
-    <div class="sp-stage small">${capSvg(S.force)}<div class="flame"><i></i><i></i><i></i></div></div>
+    <div class="sp-stage small">${capSvg(CAP_OF[S.force]||'helmet')}<div class="flame"><i></i><i></i><i></i></div></div>
     <div class="anlt"><b id="apct">0%</b><span>당신의 군생활을 요리하는 중</span></div>
     <div class="abar"><i id="abar"></i></div>
     <div class="asteps">${COOK_STEPS.map(s=>`<div class="astep"><span class="ai">${s[0]}</span><span class="an">${s[1]}</span><span class="ac"></span></div>`).join('')}</div></div>`;
@@ -312,7 +326,7 @@ function scCook(){
     const p=Math.min(1,(t-t0)/T),e=1-Math.pow(1-p,2.2);
     $('abar').style.width=e*100+'%';$('apct').textContent=Math.round(e*100)+'%';
     document.querySelectorAll('.astep').forEach((s,i)=>{s.classList.toggle('doing',e>=i/N&&e<(i+1)/N);s.classList.toggle('done',e>=(i+1)/N);});
-    if(p<1) requestAnimationFrame(tk); else setTimeout(()=>{S.res=cookResult();go('result',{tab:'sum',page:0});},300);
+    if(p<1) requestAnimationFrame(tk); else setTimeout(()=>{S.res=cookResult();go('result',{tab:'course',page:0});},300);
   })(t0);
 }
 
@@ -357,23 +371,23 @@ function cookResult(){
 function scResult(){
   const R=S.res;
   $('scr').innerHTML=`<div class="seg" style="margin-top:4px">
-      <button class="${S.tab==='sum'?'on':''}" data-t="sum">요약</button>
+      <button class="${S.tab==='course'?'on':''}" data-t="course">코스</button>
       <button class="${S.tab==='post'?'on':''}" data-t="post">채용공고<em>${R.total>99?'99+':R.total}</em></button>
       <button class="${S.tab==='cert'?'on':''}" data-t="cert">자격증<em>${R.certs.length}</em></button></div>
     <div id="rbody" class="rbody"></div>`;
   document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{haptic();S.tab=b.dataset.t;S.page=0;render();});
-  if(S.tab==='card') S.tab='sum';
-  ({sum:resSum,post:resPost,cert:resCert})[S.tab]($('rbody'));
+  if(!['course','post','cert'].includes(S.tab)) S.tab='course';
+  ({course:resCourse,post:resPost,cert:resCert})[S.tab]($('rbody'));
   $('cta').innerHTML=`<div class="btn-row"><button class="btn sub" id="again" style="flex:0 0 104px">다시 요리</button><button class="btn" id="inv">📤 선후임에게 공유하기</button></div>`;
   $('inv').onclick=openInvite;
-  $('again').onclick=()=>{haptic();Object.assign(S,{partied:false,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
+  $('again').onclick=()=>{haptic();Object.assign(S,{partied:false,plan:null,cslide:0,force:null,mos:null,edu:null,major:null,ans:{},si:0,ei:0,rk:0,hist:[],lastGain:{},res:null,mosQ:'',mosCat:'전체',mosPage:0});go('force');};
 }
 function resSum(box){
   const R=S.res, tc=R.certs.filter(c=>c.need).slice(0,3), ok=R.certs.filter(c=>c.el.ok).length;
   const menu=resMenu(), field=courseField(), road=courseItems();
   box.innerHTML=`
     <div class="card menu up"><div class="mrow"><div class="cv"><canvas id="cR"></canvas></div>
-      <div class="mtx"><span class="k">오늘의 메뉴</span><b>${esc(menu)} 정식</b><small>${S.force} ${esc(S.mos.특기명)} · 곁들임 ${tc[0]?esc(tc[0].it.jmfldnm):'자격 코스'}</small></div>
+      <div class="mtx"><span class="k">오늘의 메뉴</span><b>${esc(menu)} 정식</b><small>${S.force} ${esc(mosLabel())} · 곁들임 ${tc[0]?esc(tc[0].it.jmfldnm):'자격 코스'}</small></div>
       <div class="mico"><button data-card="dis" aria-label="전역카드">🎖️<span>전역카드</span></button><button data-card="nc" aria-label="명함">🪪<span>명함</span></button></div></div>
       <div class="kvs"><div><b data-count="${R.total}">0</b><span>맞춤 공고</span></div><div><b data-count="${R.certs.length}">0</b><span>관련 자격</span></div><div><b style="color:var(--green)" data-count="${ok}">0</b><span>지금 응시 가능</span></div></div>
       ${CH?`<p class="fine vs">🫡 ${esc(CH.w)}: <b>${esc(CH.m)} 정식</b> vs 나: <b>${esc(menu)} 정식</b></p>`
@@ -394,7 +408,7 @@ function certRow(c){
 }
 function resPost(box){
   const R=S.res;
-  box.innerHTML=`<div class="fgrid one" id="pg"></div><div id="ppg"></div>`;
+  box.innerHTML=`<div class="fgrid one" id="pg" data-swipe-pager="ppg"></div><div id="ppg"></div>`;
   box.className='rbody col';
   if(!R.posts.length){$('pg').innerHTML='<div class="empty">조건에 맞는 공고가 없어요. 다시 요리하며 답을 바꿔보세요.</div>';return;}
   requestAnimationFrame(()=>{
@@ -410,7 +424,7 @@ function resPost(box){
 }
 function resCert(box){
   const R=S.res;
-  box.innerHTML=`<div class="fgrid one" id="cg"></div><div id="cpg"></div>`;
+  box.innerHTML=`<div class="fgrid one" id="cg" data-swipe-pager="cpg"></div><div id="cpg"></div>`;
   box.className='rbody col';
   requestAnimationFrame(()=>{
     const r=fillPaged($('cg'),R.certs.length,58,S.page,i=>certRow(R.certs[i]),1);
@@ -454,11 +468,127 @@ function openCert(jmcd){
     ${posts.slice(0,3).map(p=>`<div class="gap">📄 <b>${esc(p.title)}</b><em>${esc(p.co)}</em></div>`).join('')||'<p class="fine">이번 결과에는 없어요.</p>'}
   </div><div class="sfoot"><a class="btn sub sm" href="https://www.q-net.or.kr" target="_blank" rel="noopener" style="flex:0 0 140px">시험 일정 보기 ↗</a><button class="btn sm" id="sc">닫기</button></div>`,()=>{$('sc').onclick=closeSheet;});
 }
+/* ═══ 8. 전역 후 진로 — 취업 / 복학 ═══ */
+function scPath(){
+  const school=S.edu>=4&&S.edu<=4.5?'복학':'진학·복학';
+  $('scr').innerHTML=`
+    <div class="scene2 up"><div class="sc-art">${forceArt(S.force)}<span class="sc-npc">${npcSvg(S.force)}</span>
+        <span class="sc-tag">🎖️ 전역 신고 직후</span><span class="sc-rk">예비역</span><span class="sc-me"><canvas id="cE"></canvas></span></div>
+      <div class="sc-bub"><em>${S.force} 인사장교</em>전역 축하한다! 사회에 나가면<br>바로 일할 건가, 학교로 돌아갈 건가?</div></div>
+    <div class="pathgrid up" style="--d:80ms">
+      <button class="pathc ${S.plan==='job'?'on':''}" data-p="job"><span class="em">💼</span><b>바로 취업</b><span>전역 후 바로 일을 시작해요</span><i>지금 학력 기준으로 공고·자격을 찾아요</i></button>
+      <button class="pathc ${S.plan==='school'?'on':''}" data-p="school"><span class="em">🎓</span><b>${school}</b><span>학교로 돌아가 졸업 후 취업해요</span><i>졸업 후 학력(${EDU5.find(x=>x[0]===gradEdu())?.[1]||'-'}) 기준으로 미리 준비해요</i></button>
+    </div>`;
+  mount($('cE'),44);
+  $('scr').querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{haptic();S.plan=b.dataset.p;
+    $('scr').querySelectorAll('.pathc').forEach(x=>x.classList.toggle('on',x===b));
+    setTimeout(()=>go(S.plan==='job'?'cook':'school'),220);});
+}
+function scSchool(){
+  const sel=new Set(S.ans.rbcd2||S.ans.rbcd||[]), rec=new Set([...majorRb(),...(FAM_RB[fam()]||[])]);
+  const O=Object.keys(JK_RB).map(v=>({v,l:RB_LABEL[v],star:rec.has(v)})).sort((a,b)=>b.star-a.star);
+  $('scr').innerHTML=`
+    <div class="schoolh up"><span class="em">🎓</span><div><b>복학 후 어느 곳에 취업하고 싶어?</b>
+      <small>${esc(S.major||'')} 전공 · 졸업 후 ${EDU5.find(x=>x[0]===gradEdu())?.[1]||''} 기준으로 공고를 찾아요</small></div></div>
+    <div class="evbody evmulti up" style="--d:60ms" id="sb">${O.map((o,i)=>`<button class="evchip ${sel.has(o.v)?'on':''}" data-i="${i}">${o.l}${o.star?'<i>★</i>':''}</button>`).join('')}</div>
+    <div class="evfoot"><span>★ 전공·주특기 추천 · 최대 2개</span><span>졸업 후 신입 기준</span></div>`;
+  const sync=()=>{$('next').disabled=!sel.size;$('next').textContent=sel.size?`졸업 후 코스 짜기 (${sel.size}/2)`:'희망 분야를 골라주세요';};
+  $('sb').querySelectorAll('[data-i]').forEach(x=>x.onclick=()=>{const v=O[+x.dataset.i].v;
+    if(sel.has(v)) sel.delete(v); else { if(sel.size>=2){toast('2개까지 고를 수 있어요');return;} sel.add(v); }
+    haptic();x.classList.toggle('on',sel.has(v));sync();});
+  $('cta').innerHTML=`<button class="btn" id="next" disabled></button>`;sync();
+  $('next').onclick=()=>{haptic();S.ans.rbcd2=[...sel];go('cook');};
+}
+
+/* ═══ 9. 꿈을 위한 코스 서비스 — 공고 데이터 분석 ═══
+   스냅샷에 담긴 필드(학력·경력·고용형태·키워드 태그·제목)와 연결된 자격으로 요건을 집계하고,
+   채용 절차는 직무군별 일반 전형에 공고 문구에서 찾은 단계(코딩테스트·NCS·실기 등)를 겹쳐 보여준다.
+   공고 원문의 상세 요강은 담지 않는다 — 각 공고의 '원문 보기'에서 확인. */
+const PROC={
+  '10031':['서류','코딩테스트','기술면접','컬처핏·임원면접'],'10040':['서류','직무면접(전공·PT)','임원면접','건강검진'],
+  '10041':['서류','면접','건강검진','교대근무 배치'],'10039':['서류','실기·실무 확인','면접'],'10033':['서류','면접','실무 확인(장비·시스템)'],
+  '10034':['서류(면허·경력)','운전 실기','면접'],'10043':['서류(자격증)','면접','현장 배치'],'10038':['서류','실기(조리 테스트)','면접','보건증'],
+  '10044':['서류(면허)','면접','건강검진'],'10027':['서류','인적성·NCS','실무면접','임원면접'],'10028':['서류','인적성·NCS','실무면접','임원면접'],
+  '10035':['서류','면접','영업 PT'],'10045':['서류','실기 시연','면접'],'10046':['서류','필기(NCS·전공)','면접','신원조회']};
+const PROC_HINT=[[/코딩\s?테스트|코테|알고리즘/,'코딩테스트'],[/과제|포트폴리오/,'과제·포트폴리오'],[/PT|프레젠테이션|발표/,'PT 면접'],
+  [/NCS|인적성|필기/,'필기·인적성'],[/실기|시연|테스트/,'실기'],[/체력/,'체력 측정'],[/수습|인턴/,'수습 기간']];
+const VET_RX=/전역|군필|병역필|제대|예비역|군\s?경력|ROTC|부사관|장교|군\s?우대/;
+const TAG_STOP=new Set(['정규직','계약직','신입','경력','경력무관','신입·경력','채용','모집','사원','직원','주5일','4대보험','인턴','아르바이트','상시','즉시','급구']);
+function analyzeCourse(R){
+  const P=R.posts, n=Math.max(1,P.length), pct=f=>Math.round(P.filter(f).length/n*100);
+  const edu=[['학력무관',pct(p=>['0','255'].includes(p.g.GI_EDU_CutLine))],['고졸',pct(p=>p.g.GI_EDU_CutLine==='3')],
+    ['초대졸',pct(p=>p.g.GI_EDU_CutLine==='4')],['대졸↑',pct(p=>['5','6'].includes(p.g.GI_EDU_CutLine))]];
+  const myEdu=eduCode(effEdu()), eduOk=pct(p=>['0','255'].includes(p.g.GI_EDU_CutLine)||+p.g.GI_EDU_CutLine<=myEdu);
+  const newbie=pct(p=>['1','3','4'].includes(p.g.GI_Career));
+  const yrs=P.filter(p=>p.g.GI_Career==='2'&&+p.g.GI_Career_Year_Cnt>0&&+p.g.GI_Career_Year_Cnt<40).map(p=>+p.g.GI_Career_Year_Cnt);
+  const jt={}; P.forEach(p=>String(p.g.job_type_label||'').split(',').filter(t=>t&&t!=='0').forEach(t=>{jt[t]=(jt[t]||0)+1;}));
+  const jobType=Object.entries(jt).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([t,c])=>[t,Math.round(c/n*100)]);
+  const vet=pct(p=>VET_RX.test(p.title+' '+p.g.GI_Keyword));
+  const tg={}; P.forEach(p=>String(p.g.GI_Keyword||'').split(',').map(t=>t.trim()).filter(t=>t&&t.length<=12&&!TAG_STOP.has(t)).forEach(t=>{tg[t]=(tg[t]||0)+1;}));
+  const tags=Object.entries(tg).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const rbc={}; P.forEach(p=>p.g.parts.forEach(x=>{const r=RB_OF_PART[x]; if(r) rbc[r]=(rbc[r]||0)+1;}));
+  const rb=Object.keys(rbc).sort((a,b)=>rbc[b]-rbc[a])[0]||(S.ans.rbcd2||S.ans.rbcd||[])[0]||'10027';
+  const found=[...new Set(PROC_HINT.filter(([rx])=>P.some(p=>rx.test(p.title+' '+p.g.GI_Keyword))).map(([,l])=>l))];
+  const certs=R.certs.filter(c=>c.need).slice(0,4); if(!certs.length) certs.push(...R.certs.slice(0,3));
+  return {n:P.length,total:R.total,edu,eduOk,newbie,yrs:yrs.length?Math.round(yrs.reduce((a,b)=>a+b,0)/yrs.length):0,jobType,vet,tags,rb,
+    proc:PROC[rb]||PROC['10027'],found,certs,top:P[0]};
+}
+function certWhen(c){
+  const nowOk=eligibility(c.it).ok;
+  if(c.it.seriescd==='05'||c.it.qualgbcd==='S') return nowOk?'지금 바로':'요건 확인';
+  if(nowOk) return S.plan==='school'?'졸업 전까지':'전역 직후';
+  return '경력 쌓은 뒤';
+}
+function resCourse(box){
+  const R=S.res, A=analyzeCourse(R), menu=resMenu(), road=courseItems();
+  box.className='rbody col course2';
+  const bar=A.edu.map(([l,v],i)=>v?`<i class="e${i}" style="flex:${v}" title="${l} ${v}%"></i>`:'').join('');
+  const cards=[
+    ['📋','지원 자격',`<div class="kv2"><span>내 학력으로 지원 가능</span><b>${A.eduOk}%</b></div>
+      <div class="ebar">${bar}</div><div class="elg">${A.edu.map(([l,v],i)=>`<span><i class="e${i}"></i>${l} ${v}%</span>`).join('')}</div>
+      <div class="kv2"><span>신입 지원 가능</span><b>${A.newbie}%</b></div>
+      ${A.yrs?`<div class="kv2"><span>경력 요구 시 평균</span><b>${A.yrs}년</b></div>`:''}
+      <div class="kv2"><span>고용 형태</span><b>${A.jobType.map(([t,v])=>`${esc(t)} ${v}%`).join(' · ')||'-'}</b></div>
+      <div class="kv2 hi"><span>🎖️ 군필·전역 우대 언급</span><b>${A.vet}%</b></div>`],
+    ['📜','갖춰야 할 자격',`<div class="road3 mini">${road.map((x,i)=>{const e=eligibility(x);return `<button class="rd ${e.ok?'ok':''}" data-j="${x.jmcd}"><i>${COURSE[i][0]} ${COURSE[i][1]}</i><b>${esc(x.jmfldnm)}</b><span>${e.ok?'✓ ':''}${e.t}</span></button>`;}).join('<em>→</em>')}</div>
+      <div class="clist">${A.certs.map(c=>`<button class="cl2" data-j="${c.it.jmcd}"><b>${esc(c.it.jmfldnm)}</b><span>${c.need?`공고 ${c.need}건 연결`:'분야 추천'}</span><em class="${c.el.ok?'ok':'no'}">${certWhen(c)}</em></button>`).join('')}</div>`],
+    ['✨','우대 역량 키워드',`<div class="tcloud">${A.tags.map(([t,c],i)=>`<span style="--w:${Math.max(.82,1.25-i*.05)}">#${esc(t)}<em>${c}</em></span>`).join('')||'<p class="fine">키워드가 적은 공고예요.</p>'}</div>
+      <p class="fine">공고 ${A.n}건의 키워드 태그를 모았어요. 숫자는 그 키워드를 단 공고 수예요.</p>`],
+    ['🧭','채용 프로세스',`<ol class="proc">${A.proc.map((s,i)=>`<li><b>${i+1}</b><span>${esc(s)}</span>${A.found.some(f=>s.includes(f.split('·')[0]))?'<em>공고 확인</em>':''}</li>`).join('')}</ol>
+      ${A.found.length?`<p class="fine">공고 문구에서 찾은 단계: <b>${A.found.join(' · ')}</b></p>`:''}
+      <p class="fine">${esc(JK_RB[A.rb]||'')} 직무의 일반 전형이에요. 실제 절차는 공고마다 달라요.</p>`],
+    ['🗓️','나의 코스',`<ol class="tl">
+      <li class="done"><b>군 복무</b><span>${esc(S.force)} ${esc(mosLabel())} · ${months()}개월 · 주특기 경험 정리</span></li>
+      ${S.plan==='school'?`<li><b>복학</b><span>${esc(S.major||'전공')} 공부 + ${road[1]?esc(road[1].jmfldnm):'산업기사'} 준비 · ${A.tags.slice(0,2).map(t=>'#'+esc(t[0])).join(' ')} 역량 쌓기</span></li>
+        <li><b>졸업</b><span>${EDU5.find(x=>x[0]===gradEdu())?.[1]||''} · ${road[2]?esc(road[2].jmfldnm):'상위 자격'} 도전</span></li>`
+        :`<li><b>전역 직후</b><span>${road[0]?esc(road[0].jmfldnm):'기능사'} 취득 · 이력서에 군 경력 녹이기</span></li>`}
+      <li><b>지원</b><span>${esc(A.proc[1]||'면접')} 대비 · 공고 ${A.total}건 중 ${A.n}건 우선 지원</span></li>
+      <li class="goal"><b>${esc(menu)}</b><span>꿈 완성 🍽️</span></li></ol>`]];
+  box.innerHTML=`
+    <div class="chd up"><div class="ctx"><span class="k">당신의 꿈을 이루기 위한 <b>코스 서비스</b></span><b>${esc(menu)} 정식</b>
+        <small>${S.plan==='school'?'🎓 복학 후 취업':'💼 바로 취업'} · 공고 <b data-count="${A.total}">0</b>건 분석</small></div>
+      <div class="mico"><button data-card="dis" aria-label="전역카드">🎖️<span>전역카드</span></button><button data-card="nc" aria-label="명함">🪪<span>명함</span></button></div></div>
+    <div class="crs" id="crs">${cards.map(([e,t,b],i)=>`<section class="ccard"><h4><span>${e}</span>${t}<em>${i+1}/${cards.length}</em></h4><div class="cb">${b}</div></section>`).join('')}</div>
+    <div class="dots" id="dots">${cards.map((c,i)=>`<button data-d="${i}" aria-label="${c[1]}">${c[0]}</button>`).join('')}</div>
+    ${A.top?`<button class="toppost" id="tp"><span>대표 공고</span><b>${esc(A.top.co)} · ${esc(A.top.title)}</b><em>원문 ↗</em></button>`:''}`;
+  countUp(box); stagger('.ccard,.chd',box);
+  if(!S.partied){S.partied=true;setTimeout(()=>party('big'),450);}
+  const crs=$('crs'), dots=[...box.querySelectorAll('[data-d]')];
+  const mark=()=>{const i=Math.round(crs.scrollLeft/Math.max(1,crs.clientWidth)); S.cslide=i; dots.forEach((d,k)=>d.classList.toggle('on',k===i));};
+  crs.addEventListener('scroll',()=>requestAnimationFrame(mark),{passive:true});
+  dots.forEach(d=>d.onclick=()=>{haptic();crs.scrollTo({left:+d.dataset.d*crs.clientWidth,behavior:'smooth'});});
+  requestAnimationFrame(()=>{crs.scrollLeft=(S.cslide||0)*crs.clientWidth; mark();});
+  box.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{haptic();openCert(b.dataset.j);});
+  box.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>openCardSheet(b.dataset.card));
+  if($('tp')) $('tp').onclick=()=>{haptic();openPost(A.top);};
+}
+
 /* ── 뒤로 ── */
 $('back').onclick=()=>{
   haptic();
   if(S.scr==='form') return go('force',{},-1);
   if(S.scr==='mos') return go('form',{},-1);
+  if(S.scr==='school') return go('path',{},-1);
   if(S.scr==='ev'){ const h=S.hist.pop(); if(!h) return go('mos',{},-1);
     S.stats=h.stats;S.items=h.items;S.si=h.si;S.ei=h.ei; if(S.rk>h.si) S.rk=h.si; slide(-1,render); }
 };

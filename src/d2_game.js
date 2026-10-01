@@ -74,7 +74,7 @@ const RANK_ITEM={이병:'patch',일병:'glasses',상병:'medal',병장:'armband'
 function majorQn(){ const m=MAJOR5.find(x=>x[0]===S.major); return m?m[1]:[]; }
 function majorRb(){ const m=MAJOR5.find(x=>x[0]===S.major); return m?m[2]:[]; }
 function canSeries(sc,obl){
-  const e=S.edu||3, rel=obl?majorQn().includes(obl):majorQn().length>0;
+  const e=effEdu(), rel=obl?majorQn().includes(obl):majorQn().length>0;
   if(sc==='05') return true;
   if(sc==='04') return e>=4&&rel;
   if(sc==='03') return e>=5&&rel;
@@ -96,3 +96,7 @@ const MOS_ASK={'육군':'자대 배치 면담이다. 전역하고도 써먹을 �
   '공군':'비행단 배치 면담이다. 활주로 뒤에서 어떤 일을 해보고 싶나?',
   '해병':'해병대 배치 면담이다! 어떤 특기로 한번 붙어보겠나?',
   '기타':'복무지 배치 면담이에요. 어떤 일을 맡아보고 싶어요?'};
+
+/* 졸업 후 학력 — 대학 재학·휴학 → 대졸, 전문대 재학 → 전문대 졸 */
+function gradEdu(){ const e=S.edu||3; return e===4.5?5:e; }
+function effEdu(){ return S.plan==='school'?gradEdu():(S.edu||3); }

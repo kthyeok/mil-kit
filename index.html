@@ -3511,7 +3511,12 @@ function render(){
 }
 /* 계급장(병) — 이병 1줄 · 일병 2줄 · 상병 3줄 · 병장 4줄 */
 function rankMark(i){ return `<svg class="rkm" viewBox="0 0 14 18" aria-hidden="true">${Array.from({length:i+1},(_,k)=>`<rect x="1" y="${15-k*4.4}" width="12" height="2.6" rx="1"/>`).join('')}</svg>`; }
-let rzT=0; addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(!$('sheetBg').classList.contains('on')) render();},150);});
+/* 화면 크기가 바뀌면 다시 그린다. 단, 높이만 바뀐 경우(모바일 키보드가 열리고 닫힘)는 그대로 둔다
+   — 다시 그리면 입력창이 새로 만들어져 포커스를 잃고, 키보드가 닫혔다 열리기를 반복한다 */
+let rzT=0, rzW=innerWidth;
+addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{
+  if(innerWidth===rzW) return;
+  rzW=innerWidth; if(!$('sheetBg').classList.contains('on')) render();},150);});
 function go(scr,o={},dir=1){Object.assign(S,o);S.scr=scr;slide(dir,render);}   // dir: 1 앞으로 · -1 뒤로
 
 /* ═══ 0. 스플래시 — 거꾸로 놓인 군모 냄비 · 2초 요리 ═══ */

@@ -5,6 +5,8 @@ Mil-Kit 데이터 스냅샷 생성기
   접속 정보는 코드에 넣지 않고 환경변수로만 받습니다.
     PGHOST, PGPORT, PGUSER, PGPASSWORD, (PGDATABASE=postgres)
   사용:  python export_snapshot.py  [출력경로=data.js]
+  공고 범위: 마감 전(상시 포함) · 등록일 최근 DAYS일(기본 30) · 최신순 최대 LIMIT건(기본 10000)
+         예) DAYS=14 LIMIT=8000 python export_snapshot.py
 
   GitHub Pages 같은 정적 호스팅은 DB에 직접 붙을 수 없고, 붙더라도 비밀번호가
   공개됩니다. 그래서 필요한 컬럼만 골라 정적 스냅샷(data.js)으로 내보냅니다.
@@ -13,6 +15,8 @@ import os, sys, re, json, datetime
 import psycopg2
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else 'data.js'
+DAYS = int(os.environ.get('DAYS', 30))        # 최근 며칠 안에 등록된 공고만
+LIMIT = int(os.environ.get('LIMIT', 10000))   # 최신순 최대 건수 (data.js 용량 관리)
 
 # 직무(rpcd) → 관련 국가자격 (앱의 JK_JOBS와 같은 편집 매핑)
 JOB_CERTS = {
@@ -52,7 +56,9 @@ def main():
     Q = [dict(zip(cols, r)) for r in cur.fetchall()]
     cur.execute('select gi_no,gi_subject,c_name,jk_url,area_code,gi_part_no,gi_keyword,gi_career,gi_career_year_cnt,'
                 'gi_edu_cutline,gi_job_type,gi_pay,gi_pay_term,gi_pay_flag,gi_end_date,gi_w_date,gi_e_date,gi_e_time,'
-                'career_label,job_type_label,edu_label,pay_label from public.jobkorea_job_posting')
+                'career_label,job_type_label,edu_label,pay_label from public.jobkorea_job_posting '
+                'where gi_end_date >= current_date and gi_w_date >= current_date - %s '
+                'order by gi_w_date desc, gi_e_time desc nulls last, gi_no desc limit %s', (DAYS, LIMIT))
     cols = [d[0] for d in cur.description]
     J = [dict(zip(cols, r)) for r in cur.fetchall()]
 

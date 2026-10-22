@@ -1,0 +1,11 @@
+{
+  "name": "milkit-board-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Mil-Kit '우리들의 이야기' 게시판 API (Postgres)",
+  "main": "board-api.mjs",
+  "scripts": { "start": "node board-api.mjs" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "pg": "^8.13.0" }
+}

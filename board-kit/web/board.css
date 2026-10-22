@@ -1,0 +1,85 @@
+/* Mil-Kit · 우리들의 이야기 — 게시판 레이어 (별도 파일) */
+.bd{position:absolute;inset:0;z-index:90;background:#F4F5F7;display:flex;flex-direction:column;transform:translateY(102%);
+  transition:transform .42s cubic-bezier(.32,.72,0,1);visibility:hidden}
+.bd.on{transform:none;visibility:visible}
+.bd-top{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 8px;background:#fff;
+  border-bottom:1px solid #EEF0F2}
+.bd-top b{flex:1;font-size:17px;font-weight:900;letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bd-back{width:40px;height:40px;border-radius:50%;font-size:24px;color:#333D4B}
+.bd-close{height:36px;padding:0 14px;border-radius:999px;background:#191F28;color:#fff;font-size:13px;font-weight:800}
+.bd-close:active,.bd-back:active{transform:scale(.95)}
+.bd-body{flex:1;min-height:0;display:flex;flex-direction:column;position:relative}
+.bd-tabs{flex:0 0 auto;display:flex;gap:5px;padding:10px 12px 8px;overflow-x:auto;scrollbar-width:none;background:#fff}
+.bd-tabs::-webkit-scrollbar{display:none}
+.bd-tabs button{flex:1 0 auto;padding:8px 11px;border-radius:999px;background:#F2F4F6;font-size:13px;font-weight:800;color:#4E5968}
+.bd-tabs button.on{background:#3182F6;color:#fff}
+/* 목록 */
+.bd-list{flex:1;min-height:0;overflow-y:auto;padding:8px 12px 90px;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
+.bd-item{text-align:left;background:#fff;border-radius:16px;padding:13px 14px 11px;display:flex;flex-direction:column;gap:4px;
+  box-shadow:0 2px 10px -6px rgba(0,0,0,.2);animation:bdIn .35s backwards}
+.bd-item:active{background:#F9FAFB}
+.bd-item b{font-size:15.5px;font-weight:900;letter-spacing:-.4px;color:#191F28}
+.bd-item p{margin:0;font-size:13.5px;color:#4E5968;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+.bd-meta{display:flex;gap:8px;font-size:11.5px;color:#8B95A1}
+.bd-meta i{font-style:normal}.bd-meta .c{margin-left:auto;color:#3182F6;font-weight:800}
+.bd-note{position:absolute;left:0;right:0;bottom:64px;margin:0;text-align:center;font-size:11px;color:#8B95A1;pointer-events:none}
+.bd-fab{position:absolute;right:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));height:46px;padding:0 20px;border-radius:999px;background:#3182F6;color:#fff;
+  font-size:15px;font-weight:900;box-shadow:0 10px 24px -10px rgba(49,130,246,.9)}
+.bd-fab:active{transform:scale(.96)}
+.bd-empty{text-align:center;color:#8B95A1;font-size:13px;padding:40px 0;display:flex;flex-direction:column;gap:5px;align-items:center}
+.bd-empty span{font-size:34px}.bd-empty b{color:#333D4B;font-size:15px}
+.bd-empty.sm{padding:18px 0}
+@keyframes bdIn{from{transform:translateY(10px);opacity:0}}
+/* 글쓰기 */
+.bd-body[data-v=write]{padding:0 0 calc(12px + env(safe-area-inset-bottom,0px));gap:8px;background:#fff}
+.bd-body[data-v=write]>*:not(.bd-tabs){margin:0 14px}
+.bd-in{width:100%;border:1.5px solid #E5E8EB;border-radius:12px;padding:11px 13px;font:inherit;font-size:15px;background:#fff;color:#191F28}
+.bd-in:focus{outline:none;border-color:#3182F6}
+.bd-ta{flex:1;min-height:120px;resize:none;line-height:1.55}
+.bd-wfoot{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#8B95A1}
+.bd-submit{height:50px;border-radius:14px;background:#3182F6;color:#fff;font-size:16px;font-weight:900}
+.bd-submit:disabled,.bd-send:disabled{opacity:.5}
+/* 글 + 댓글 */
+.bd-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:10px}
+.bd-post{background:#fff;padding:16px 16px 18px;display:flex;flex-direction:column;gap:6px}
+.bd-tag{align-self:flex-start;font-size:11.5px;font-weight:800;color:#3182F6;background:#E8F3FF;padding:3px 9px;border-radius:999px}
+.bd-post h3{margin:2px 0 0;font-size:19px;font-weight:900;letter-spacing:-.6px;line-height:1.35}
+.bd-text{font-size:15px;line-height:1.65;color:#333D4B;margin-top:6px;word-break:keep-all;overflow-wrap:anywhere}
+.bd-ccount{padding:12px 16px 6px;font-size:13px;font-weight:900;color:#4E5968}
+.bd-cmts{display:flex;flex-direction:column;background:#fff}
+.bd-c{padding:11px 16px;border-top:1px solid #F2F4F6;position:relative}
+.bd-c.re{padding-left:40px;background:#FAFBFC}
+.bd-c.re::before{content:'↳';position:absolute;left:20px;top:11px;color:#B0B8C1;font-weight:900}
+.bd-c.new{animation:bdNew 1.6s ease}
+@keyframes bdNew{0%{background:#E8F3FF}100%{background:inherit}}
+.bd-ch{display:flex;gap:8px;align-items:baseline}
+.bd-ch b{font-size:13px;font-weight:800;color:#333D4B}.bd-ch i{font-style:normal;font-size:11px;color:#8B95A1}
+.bd-c p{margin:3px 0 0;font-size:14px;line-height:1.5;color:#333D4B;overflow-wrap:anywhere}
+.bd-re{margin-top:4px;font-size:12px;font-weight:800;color:#8B95A1;padding:2px 0}
+.bd-composer{flex:0 0 auto;background:#fff;border-top:1px solid #EEF0F2;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px))}
+.bd-replying{font-size:12px;color:#4E5968;padding:0 4px 6px}
+.bd-replying b{color:#3182F6}.bd-replying button{margin-left:6px;font-size:12px;font-weight:800;color:#8B95A1}
+.bd-crow{display:flex;gap:6px}
+.bd-crow .bd-in{padding:10px 12px;font-size:14px;min-width:0;flex:1}
+.bd-crow .bd-in.sm{flex:0 0 84px}
+.bd-send{flex:0 0 auto;padding:0 16px;border-radius:12px;background:#3182F6;color:#fff;font-weight:900;font-size:14px}
+/* 메인 버튼 */
+.cta2{display:flex;flex-direction:column;gap:8px}
+.btn.story{background:#fff;color:#191F28;border:1.5px solid #E5E8EB;box-shadow:none}
+.btn.story::after{display:none}
+.toast{z-index:300}
+@media(prefers-reduced-motion:reduce){.bd{transition:none}}
+.cta #story{transition:opacity .45s ease,transform .5s cubic-bezier(.2,.9,.3,1.2)}
+.bd-body[data-v=write]>.bd-in{width:auto;box-sizing:border-box}
+.bd-in{box-sizing:border-box}
+html.compact .btn.story{height:44px;font-size:15px}
+html.compact .cta2{gap:6px}
+html.compact .pphint{display:none}
+.bd-mk{font-style:normal;display:inline-block;vertical-align:2px;margin-right:6px;font-size:10.5px;font-weight:800;color:#8B95A1;background:#F2F4F6;border-radius:6px;padding:2px 6px}
+/* 단독 페이지(Mil-Kit 밖)에서 쓸 때 */
+.bd.bd-fixed{position:fixed;font-family:'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#191F28}
+.bd-fixed button{font:inherit;border:0;background:none;cursor:pointer;color:inherit;padding:0}
+.bd-fixed .bd-tabs button{padding:8px 11px;background:#F2F4F6}.bd-fixed .bd-tabs button.on{background:#3182F6;color:#fff}
+.bd-fixed .bd-close{padding:0 14px;background:#191F28;color:#fff}.bd-fixed .bd-fab,.bd-fixed .bd-submit,.bd-fixed .bd-send{background:#3182F6;color:#fff}
+.bd-fixed .bd-fab{padding:0 20px}.bd-fixed .bd-send{padding:0 16px}
+.bd-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:400;background:rgba(25,31,40,.92);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:700;white-space:nowrap}

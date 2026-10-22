@@ -3,9 +3,16 @@
    별도 파일: index.html 뒤에 <script src="board.js"> 로 붙는다.
    - API: <meta name="board-api" content="https://…"> (server/board-api.mjs)
      없거나 연결 실패면 이 기기(localStorage)에 저장하고 data.js 스냅샷 글을 함께 보여준다
-   - 앱 공용 함수 사용: $ · esc · toast · haptic · LS · FORCE5
+   - Mil-Kit 안에서는 앱 공용 함수(esc · toast · haptic · LS · FORCE5)를 쓰고,
+     단독 페이지에서는 아래 대체 함수로 동작한다 → 전역에서 openBoard() / closeBoard()
    ═══════════════════════════════════════════════════════════════ */
-(function(){
+(function(APP){
+  /* ── 앱 함수가 없으면(단독 실행) 대체 ── */
+  const esc=APP.esc||(s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
+  const haptic=APP.haptic||(()=>{try{if(navigator.vibrate&&navigator.userActivation&&navigator.userActivation.isActive) navigator.vibrate(8);}catch(e){}});
+  const LS=APP.LS||{get(k,d){try{const v=localStorage.getItem('mk6-'+k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
+    set(k,v){try{localStorage.setItem('mk6-'+k,JSON.stringify(v));}catch(e){}}};
+  const toast=APP.toast||(m=>{const t=document.createElement('div');t.className='bd-toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2400);});
   const API=((document.querySelector('meta[name="board-api"]')||{}).content||'').trim().replace(/\/$/,'');
   const FORCES=(typeof FORCE5!=='undefined'?FORCE5:[{n:'육군',i:'🪖'},{n:'해군',i:'⚓'},{n:'공군',i:'✈️'},{n:'해병',i:'🔱'},{n:'기타',i:'🎖️'}]);
   const ICON=Object.fromEntries(FORCES.map(f=>[f.n,f.i]));
@@ -72,7 +79,8 @@
     root.setAttribute('role','dialog'); root.setAttribute('aria-modal','true'); root.setAttribute('aria-label','우리들의 이야기');
     root.innerHTML=`<div class="bd-top"><button class="bd-back" id="bdBack" aria-label="뒤로">‹</button><b id="bdTitle">우리들의 이야기</b>
       <button class="bd-close" id="bdClose">닫기 ✕</button></div><div class="bd-body" id="bdBody"></div>`;
-    (document.getElementById('app')||document.body).appendChild(root);
+    const host=document.getElementById('app');
+    if(host) host.appendChild(root); else { root.classList.add('bd-fixed'); document.body.appendChild(root); }   // 단독 페이지: 화면 전체
     root.querySelector('#bdClose').onclick=close;
     root.querySelector('#bdBack').onclick=()=>{haptic(); if(ST.view==='list') close(); else show('list');};
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root.classList.contains('on')) close();});
@@ -178,4 +186,5 @@
 
   window.openBoard=open;
   window.closeBoard=close;
-})();
+})({esc:typeof esc==='function'?esc:null, toast:typeof toast==='function'?toast:null,
+    haptic:typeof haptic==='function'?haptic:null, LS:typeof LS==='object'&&LS?LS:null});

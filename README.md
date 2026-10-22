@@ -17,6 +17,7 @@
 | `tests/smoke.mjs` | 헤드리스 크롬으로 전체 흐름 자동 완주·화면 넘침·콘솔 에러 검사 |
 | `tools/export_snapshot.py` | Postgres → `data.js` 스냅샷 생성기 |
 | `server/` | 군별 사용자 수 · 롤링페이퍼 — `schema.sql`(테이블·함수) · `counter-api.mjs`(작은 API 서버) |
+| **`board-kit/`** | **게시판 운영 이관 패키지** — 게시판 화면·예시 글·API 서버·DB 테이블만 모음 ([안내](board-kit/README.md)) |
 | `board.js` · `board.css` | 우리들의 이야기 게시판 화면 (index.html과 분리된 파일) |
 | `server/board-api.mjs` · `server/board.sql` | 게시판 API 서버(단독 실행) · 테이블 |
 | `render.yaml` | API 서버 원클릭 배포(Render Blueprint) — 카운터 · 게시판 |

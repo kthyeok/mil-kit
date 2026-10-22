@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mil-Kit · 우리들의 이야기</title>
+<!-- 게시판 API 주소 (server/board-api.mjs). 비우면 이 기기(localStorage)에만 저장 -->
+<meta name="board-api" content="">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="board.css">
+<style>
+  body{margin:0;min-height:100dvh;display:grid;place-items:center;background:#F4F5F7;font-family:'Pretendard Variable',sans-serif}
+  .open{height:54px;padding:0 28px;border-radius:14px;border:1.5px solid #E5E8EB;background:#fff;font:inherit;font-size:17px;font-weight:800;cursor:pointer}
+</style>
+</head>
+<body>
+  <!-- 기존 페이지에서는 이 버튼처럼 openBoard() 만 부르면 된다 -->
+  <button class="open" onclick="openBoard()">💬 우리들의 이야기</button>
+
+  <!-- 예시 글이 필요 없으면 아래 한 줄을 지운다 -->
+  <script src="board-mock.js"></script>
+  <script src="board.js"></script>
+</body>
+</html>

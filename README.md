@@ -17,7 +17,9 @@
 | `tests/smoke.mjs` | 헤드리스 크롬으로 전체 흐름 자동 완주·화면 넘침·콘솔 에러 검사 |
 | `tools/export_snapshot.py` | Postgres → `data.js` 스냅샷 생성기 |
 | `server/` | 군별 사용자 수 · 롤링페이퍼 — `schema.sql`(테이블·함수) · `counter-api.mjs`(작은 API 서버) |
-| `render.yaml` | API 서버 원클릭 배포(Render Blueprint) |
+| `board.js` · `board.css` | 우리들의 이야기 게시판 화면 (index.html과 분리된 파일) |
+| `server/board-api.mjs` · `server/board.sql` | 게시판 API 서버(단독 실행) · 테이블 |
+| `render.yaml` | API 서버 원클릭 배포(Render Blueprint) — 카운터 · 게시판 |
 
 - 군 선택: 육군 · 해군 · 공군 · 해병 · 기타(상근예비역 · 카투사 등)
 - 흐름: 스플래시 → 입대 → 병무청 신상명세서(학력·전공) → 자대 배치 면담(8개 분야) → 계급별 생활 이벤트 → 전역 후 진로(바로 취업 / 복학 → 졸업 후 희망 분야 → 목표 공고 선택 → 그 공고에 맞춘 나의 코스) → 요리(결과)
@@ -46,6 +48,24 @@ node tests/smoke.mjs 390x844 shots # 전체 흐름 자동 점검 (Node 22+, Chro
 2. 앱 설정 → 플랫폼 → Web → 사이트 도메인에 `https://kthyeok.github.io` 등록
 3. `src/shell.html`의 `<meta name="kakao-js-key" content="">`에 키를 넣고 `python build.py` 후 푸시
    (키가 없으면 휴대폰 공유창 → 카카오톡으로 문구 + 링크 미리보기 카드가 전송됩니다)
+
+## 우리들의 이야기 (군별 익명 게시판)
+메인의 **💬 우리들의 이야기** → 화면을 꽉 채우는 레이어. 육군·해군·공군·해병·기타 탭마다 글 · 댓글 · 대댓글을 자유롭게 쓰고, **닫기**로 닫습니다.
+- 파일: 화면 `board.js` · `board.css` / 서버 `server/board-api.mjs` / 테이블 `server/board.sql` — 서버로 옮기기 쉽게 따로 둠
+- 저장: `public.milkit_board_post`(글) · `public.milkit_board_comment`(댓글, `parent_id`가 있으면 대댓글 — 대댓글에 단 답글은 원 댓글 아래로 모음)
+- 규칙: 닉네임 선택(12자) · 제목 2~40자 · 본문 1000자 · 댓글 300자 · 욕설 가림 · 링크 금지 · IP당 10분에 글 3개/댓글 15개 (IP는 저장 안 함)
+- 연결: 서버를 띄운 뒤 `src/shell.html`의 `<meta name="board-api" content="">`에 주소를 넣고 `python build.py` (비어 있으면 이 기기에만 저장)
+
+| API | 설명 |
+|---|---|
+| `GET /board?force=해군&limit=30&before=123` | 글 목록(최신순, 댓글 수 포함) |
+| `GET /board/:id` | 글 + 댓글·대댓글 |
+| `POST /board` `{force,name,title,body}` | 글쓰기 |
+| `POST /board/:id/comments` `{name,body,parent_id?}` | 댓글 · 대댓글 |
+
+```bash
+cd server && npm i && PGHOST=... PGPORT=... PGUSER=... PGPASSWORD=... ALLOW_ORIGIN=https://kthyeok.github.io node board-api.mjs   # :8788
+```
 
 ## 군별 사용자 수 · 롤링페이퍼
 - **사용자 수**: 입영통지서에서 고른 군을 `public.milkit_force_count`에 1씩 세고, 메인 · 입영통지서 · 결과 · 공유 화면에 k/m 단위로 표시

@@ -3,9 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Mil-Kit 군별 사용자 수 카운터 API (Postgres)",
+  "description": "Mil-Kit API — 군별 사용자 수·롤링페이퍼(counter-api.mjs) · 우리들의 이야기 게시판(board-api.mjs)",
   "main": "counter-api.mjs",
-  "scripts": { "start": "node counter-api.mjs" },
-  "engines": { "node": ">=18" },
-  "dependencies": { "pg": "^8.13.0" }
+  "scripts": {
+    "start": "node counter-api.mjs",
+    "start:board": "node board-api.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "pg": "^8.13.0"
+  }
 }

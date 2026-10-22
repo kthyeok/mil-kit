@@ -130,9 +130,10 @@ function scSplash(){
       :`<p class="sp-note">실제 채용공고 ${won(JK_DB.length)}건 · 국가자격 ${won(QNET_ITEMS.length)}종${MK.at?` (${MK.at.slice(0,10)} 기준)`:''}<br>입력은 이 기기 안에서만 쓰여요.</p>`}
     <div class="spcnt"><small>지금까지 <b data-cnt="all">${kfmt(countTotal())}</b>명이 군생활을 요리했어요</small>${countStrip()}<em class="pphint">👆 숫자를 누르면 우리 군 롤링페이퍼</em></div>
   </div>`;
-  $('cta').innerHTML=`<button class="btn hold" id="start">🍳 ${CH?'나도 요리해 보기':'요리 시작하기'}</button>`;
+  $('cta').innerHTML=`<div class="cta2"><button class="btn story hold" id="story">💬 우리들의 이야기</button><button class="btn hold" id="start">🍳 ${CH?'나도 요리해 보기':'요리 시작하기'}</button></div>`;
+  $('story').onclick=()=>{ if(typeof openBoard==='function') openBoard(); };
   $('start').onclick=()=>{haptic();go('force');};
-  const done=()=>{const s=$('splash');if(!s||s.classList.contains('done')) return;s.classList.add('done');$('start').classList.remove('hold');};
+  const done=()=>{const s=$('splash');if(!s||s.classList.contains('done')) return;s.classList.add('done');$('start').classList.remove('hold');$('story').classList.remove('hold');};
   if(window.gsap&&!FX.reduce){ document.querySelectorAll('.sp-txt b').forEach(b=>{b.innerHTML=[...b.textContent].map(ch=>`<i class="ch">${ch===' '?'&nbsp;':ch}</i>`).join('');});
     gsap.from('.sp-txt .ch',{y:28,opacity:0,rotate:8,duration:.55,ease:'back.out(2.2)',stagger:.035});
     gsap.from('.capsvg',{y:-90,scale:.7,duration:.8,ease:'bounce.out',delay:.15}); }

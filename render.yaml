@@ -22,3 +22,25 @@ services:
         value: postgres
       - key: ALLOW_ORIGIN
         value: https://kthyeok.github.io
+  # 우리들의 이야기 게시판 API (server/board-api.mjs) — 카운터와 별도 서버
+  - type: web
+    name: milkit-board
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install
+    startCommand: node board-api.mjs
+    healthCheckPath: /health
+    envVars:
+      - key: PGHOST
+        sync: false
+      - key: PGPORT
+        sync: false
+      - key: PGUSER
+        sync: false
+      - key: PGPASSWORD
+        sync: false
+      - key: PGDATABASE
+        value: postgres
+      - key: ALLOW_ORIGIN
+        value: https://kthyeok.github.io

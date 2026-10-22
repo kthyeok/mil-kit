@@ -111,7 +111,20 @@ def main():
             papers.setdefault(f, []).append({'id': int(i), 'name': n, 'msg': m, 'at': t.isoformat()})
     except Exception:
         c.rollback()
-    snap = {'at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), 'qn': qn, 'jk': jk, 'counts': counts, 'papers': papers}
+    board = {'posts': {}, 'comments': {}}
+    try:   # 우리들의 이야기 — 군별 최신 글 20개와 그 댓글 (server/board.sql)
+        cur.execute("select id, force, name, title, body, created_at from (select *, row_number() over (partition by force order by id desc) rn "
+                    "from public.milkit_board_post where not hidden) t where rn <= 20 order by force, id desc")
+        ids = []
+        for i, f, n, t, b, at in cur.fetchall():
+            board['posts'].setdefault(f, []).append({'id': int(i), 'force': f, 'name': n, 'title': t, 'body': b, 'at': at.isoformat()}); ids.append(int(i))
+        if ids:
+            cur.execute('select id, post_id, parent_id, name, body, created_at from public.milkit_board_comment where not hidden and post_id = any(%s) order by id', (ids,))
+            for i, pid, par, n, b, at in cur.fetchall():
+                board['comments'].setdefault(str(pid), []).append({'id': int(i), 'post_id': int(pid), 'parent_id': int(par) if par else None, 'name': n, 'body': b, 'at': at.isoformat()})
+    except Exception:
+        c.rollback()
+    snap = {'at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), 'qn': qn, 'jk': jk, 'counts': counts, 'papers': papers, 'board': board}
     with open(OUT, 'w', encoding='utf-8') as f:
         f.write('/* Mil-Kit 데이터 스냅샷 · export_snapshot.py 로 생성 · 잡코리아 채용정보 + Q-Net 국가자격 종목 */\n')
         f.write('window.MK_DATA=' + json.dumps(snap, ensure_ascii=False, separators=(',', ':')) + ';\n')

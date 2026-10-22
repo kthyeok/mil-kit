@@ -5,10 +5,10 @@
    - API가 있으면 서버에 저장·조회, 없으면 data.js 스냅샷 + 이 기기에 남긴 글
    ═══════════════════════════════════════════════════════════════ */
 const PAPER={local:LS.get('papers',[]),cache:{}};
-const PAPER_BAD=/씨발|시발|ㅅㅂ|ㅆㅂ|병신|ㅂㅅ|개새|좆|존나|지랄|꺼져|닥쳐|느금|fuck|shit/gi;
+const PAPER_BAD=/개새끼|개새|씨발|씨바|시발|ㅅㅂ|ㅆㅂ|병신|ㅂㅅ|좆|존나|졸라|지랄|꺼져|닥쳐|느금마|느금|fuck|shit/gi;
 const PAPER_LINK=/https?:|www\.|\.(com|net|kr|io|me|ly)\b/i;
 const NOTE_C=['#FFF4B8','#FFDDE4','#D9EEFF','#DDF6E4','#EEE5FF','#FFE8CC'];
-const paperClean=(v,max)=>String(v||'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim().slice(0,max).replace(PAPER_BAD,m=>'*'.repeat(m.length));
+const paperClean=(v,max)=>String(v||'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim().slice(0,max).replace(PAPER_BAD,'**');
 function ago(t){
   const s=Math.max(0,(Date.now()-new Date(t).getTime())/1000);
   return s<60?'방금':s<3600?`${Math.floor(s/60)}분 전`:s<86400?`${Math.floor(s/3600)}시간 전`:s<86400*30?`${Math.floor(s/86400)}일 전`:new Date(t).toLocaleDateString('ko-KR');

@@ -36,8 +36,8 @@ function paperAllowed(ip) {
   if (a.length >= PLIMIT) { pHits.set(ip, a); return false; }
   a.push(now); pHits.set(ip, a); return true;
 }
-const BAD = /씨발|시발|ㅅㅂ|ㅆㅂ|병신|ㅂㅅ|개새|좆|존나|지랄|꺼져|닥쳐|느금|fuck|shit/gi;
-const clean = (v, max) => String(v || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max).replace(BAD, m => '*'.repeat(m.length));
+const BAD = /개새끼|개새|씨발|씨바|시발|ㅅㅂ|ㅆㅂ|병신|ㅂㅅ|좆|존나|졸라|지랄|꺼져|닥쳐|느금마|느금|fuck|shit/gi;
+const clean = (v, max) => String(v || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max).replace(BAD, '**');
 const LINK = /https?:|www\.|\.(com|net|kr|io|me|ly)\b/i;
 const row = r => ({ id: Number(r.id), name: r.name, msg: r.msg, at: r.created_at });
 

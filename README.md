@@ -52,8 +52,9 @@ node tests/smoke.mjs 390x844 shots # 전체 흐름 자동 점검 (Node 22+, Chro
 ## 우리들의 이야기 (군별 익명 게시판)
 메인의 **💬 우리들의 이야기** → 화면을 꽉 채우는 레이어. 육군·해군·공군·해병·기타 탭마다 글 · 댓글 · 대댓글을 자유롭게 쓰고, **닫기**로 닫습니다.
 - 파일: 화면 `board.js` · `board.css` / 서버 `server/board-api.mjs` / 테이블 `server/board.sql` — 서버로 옮기기 쉽게 따로 둠
+- 예시 글: `board-mock.js` — 군별 5개씩(댓글·대댓글 포함), 화면에 **예시** 배지로 표시. 필요 없으면 이 파일과 `src/shell.html`의 `<script src="board-mock.js">` 한 줄을 지우면 됩니다
 - 저장: `public.milkit_board_post`(글) · `public.milkit_board_comment`(댓글, `parent_id`가 있으면 대댓글 — 대댓글에 단 답글은 원 댓글 아래로 모음)
-- 규칙: 닉네임 선택(12자) · 제목 2~40자 · 본문 1000자 · 댓글 300자 · 욕설 가림 · 링크 금지 · IP당 10분에 글 3개/댓글 15개 (IP는 저장 안 함)
+- 규칙: 닉네임 선택(12자) · 제목 2~40자 · 본문 1000자 · 댓글 300자 · 욕설은 단어째 `**` · 링크 금지 · IP당 10분에 글 3개/댓글 15개 (IP는 저장 안 함)
 - 연결: 서버를 띄운 뒤 `src/shell.html`의 `<meta name="board-api" content="">`에 주소를 넣고 `python build.py` (비어 있으면 이 기기에만 저장)
 
 | API | 설명 |

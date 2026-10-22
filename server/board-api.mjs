@@ -28,13 +28,13 @@ function allowed(kind, ip) {
 }
 setInterval(() => { const now = Date.now(); for (const m of Object.values(buckets)) for (const [ip, a] of m) if (!a.some(t => now - t < WINDOW)) m.delete(ip); }, WINDOW).unref();
 
-const BAD = /씨발|시발|ㅅㅂ|ㅆㅂ|병신|ㅂㅅ|개새|좆|존나|지랄|꺼져|닥쳐|느금|fuck|shit/gi;
+const BAD = /개새끼|개새|씨발|씨바|시발|ㅅㅂ|ㅆㅂ|병신|ㅂㅅ|좆|존나|졸라|지랄|꺼져|닥쳐|느금마|느금|fuck|shit/gi;
 const LINK = /https?:|www\.|\.(com|net|kr|io|me|ly)\b/i;
 /* 한 줄 입력(닉네임·제목·댓글) */
-const line = (v, max) => String(v || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max).replace(BAD, m => '*'.repeat(m.length));
+const line = (v, max) => String(v || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max).replace(BAD, '**');
 /* 여러 줄 입력(본문) — 줄바꿈은 살리고 3줄 이상 빈 줄은 줄인다 */
 const text = (v, max) => String(v || '').replace(/\r\n?/g, '\n').replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, ' ').replace(/[ \t]+/g, ' ')
-  .replace(/\n{3,}/g, '\n\n').trim().slice(0, max).replace(BAD, m => '*'.repeat(m.length));
+  .replace(/\n{3,}/g, '\n\n').trim().slice(0, max).replace(BAD, '**');
 const post = r => ({ id: Number(r.id), force: r.force, name: r.name, title: r.title, body: r.body, at: r.created_at, comments: Number(r.comments || 0) });
 const cmt = r => ({ id: Number(r.id), parent_id: r.parent_id == null ? null : Number(r.parent_id), name: r.name, body: r.body, at: r.created_at });
 

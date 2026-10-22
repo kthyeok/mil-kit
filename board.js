@@ -10,11 +10,11 @@
   const FORCES=(typeof FORCE5!=='undefined'?FORCE5:[{n:'육군',i:'🪖'},{n:'해군',i:'⚓'},{n:'공군',i:'✈️'},{n:'해병',i:'🔱'},{n:'기타',i:'🎖️'}]);
   const ICON=Object.fromEntries(FORCES.map(f=>[f.n,f.i]));
   const SNAP=(window.MK_DATA||{}).board||{posts:{},comments:{}};
-  const BAD=/씨발|시발|ㅅㅂ|ㅆㅂ|병신|ㅂㅅ|개새|좆|존나|지랄|꺼져|닥쳐|느금|fuck|shit/gi;
+  const BAD=/개새끼|개새|씨발|씨바|시발|ㅅㅂ|ㅆㅂ|병신|ㅂㅅ|좆|존나|졸라|지랄|꺼져|닥쳐|느금마|느금|fuck|shit/gi;   // 욕설은 단어째 ** 로
   const LINK=/https?:|www\.|\.(com|net|kr|io|me|ly)\b/i;
-  const line=(v,max)=>String(v||'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim().slice(0,max).replace(BAD,m=>'*'.repeat(m.length));
+  const line=(v,max)=>String(v||'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim().slice(0,max).replace(BAD,'**');
   const text=(v,max)=>String(v||'').replace(/\r\n?/g,'\n').replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g,' ').replace(/[ \t]+/g,' ')
-    .replace(/\n{3,}/g,'\n\n').trim().slice(0,max).replace(BAD,m=>'*'.repeat(m.length));
+    .replace(/\n{3,}/g,'\n\n').trim().slice(0,max).replace(BAD,'**');
   const ago=t=>{const s=Math.max(0,(Date.now()-new Date(t).getTime())/1000);
     return s<60?'방금':s<3600?`${Math.floor(s/60)}분 전`:s<86400?`${Math.floor(s/3600)}시간 전`:s<86400*30?`${Math.floor(s/86400)}일 전`:new Date(t).toLocaleDateString('ko-KR');};
   const who=(n,f)=>esc(n||`익명의 ${f||''} 예비역`.replace('  ',' '));
@@ -24,24 +24,32 @@
   const local=Object.assign({posts:[],comments:[]},LS.get('board',{}));
   const saveLocal=()=>{local.posts=local.posts.slice(0,200);local.comments=local.comments.slice(-1000);LS.set('board',local);};
   let live=false;
+  /* 예시 글(board-mock.js): 지금 기준 몇 분 전으로 시간을 매기고, 욕설은 ** 로 가린다 */
+  const RAW=window.MK_BOARD_MOCK||{posts:[],comments:[]}, NOW=Date.now(), tAt=m=>new Date(NOW-(+m||0)*60000).toISOString();
+  const MOCK={posts:RAW.posts.map(p=>({id:p.id,force:p.force,name:line(p.name,12),title:line(p.title,40),body:text(p.body,1000),at:tAt(p.min),mock:true})),
+    comments:RAW.comments.map(c=>({id:c.id,post_id:c.post_id,parent_id:c.parent_id,name:line(c.name,12),body:line(c.body,300),at:tAt(c.min),mock:true}))};
+  const isLocalId=id=>/^[LM]/.test(String(id));   // L: 이 기기에 쓴 글 · M: 예시 글 → 서버로 보내지 않는다
+  const mockCmts=id=>MOCK.comments.filter(c=>String(c.post_id)===String(id));
   async function api(path,opt){
     const r=await fetch(API+path,Object.assign({cache:'no-store'},opt||{}));
     if(!r.ok){const e=new Error('http '+r.status);e.status=r.status;throw e;}
     live=true; return r.json();
   }
   const post$=(body)=>({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  const localCount=id=>local.comments.filter(c=>String(c.post_id)===String(id)).length+((SNAP.comments||{})[id]||[]).length;
+  const localCount=id=>local.comments.filter(c=>String(c.post_id)===String(id)).length+((SNAP.comments||{})[id]||[]).length+mockCmts(id).length;
   async function listPosts(f){
-    if(API){ try{ return await api(`/board?force=${encodeURIComponent(f)}&limit=40`); }catch(e){} }
+    const mock=MOCK.posts.filter(p=>p.force===f).map(p=>({...p,comments:localCount(p.id)}));
+    const byNew=(a,b)=>new Date(b.at)-new Date(a.at);
+    if(API){ try{ const real=await api(`/board?force=${encodeURIComponent(f)}&limit=40`); return [...real,...mock].sort(byNew); }catch(e){} }
     live=false;
     const mine=local.posts.filter(p=>p.force===f), snap=(SNAP.posts||{})[f]||[];
-    return [...mine,...snap].map(p=>({...p,comments:localCount(p.id)})).sort((a,b)=>new Date(b.at)-new Date(a.at));
+    return [...mine,...snap].map(p=>({...p,comments:localCount(p.id)})).concat(mock).sort(byNew);
   }
   async function getPost(id){
-    if(API&&!String(id).startsWith('L')){ try{ return await api(`/board/${id}`); }catch(e){ if(e.status===404) return null; } }
-    const p=local.posts.find(x=>String(x.id)===String(id))||Object.values(SNAP.posts||{}).flat().find(x=>String(x.id)===String(id));
+    if(API&&!isLocalId(id)){ try{ return await api(`/board/${id}`); }catch(e){ if(e.status===404) return null; } }
+    const p=local.posts.find(x=>String(x.id)===String(id))||Object.values(SNAP.posts||{}).flat().find(x=>String(x.id)===String(id))||MOCK.posts.find(x=>String(x.id)===String(id));
     if(!p) return null;
-    const comments=[...((SNAP.comments||{})[id]||[]),...local.comments.filter(c=>String(c.post_id)===String(id))].sort((a,b)=>new Date(a.at)-new Date(b.at));
+    const comments=[...mockCmts(id),...((SNAP.comments||{})[id]||[]),...local.comments.filter(c=>String(c.post_id)===String(id))].sort((a,b)=>new Date(a.at)-new Date(b.at));
     return {post:{...p,comments:comments.length},comments};
   }
   async function createPost(d){
@@ -49,9 +57,9 @@
     const p={id:'L'+Date.now(),...d,at:new Date().toISOString(),comments:0,local:true}; local.posts.unshift(p); saveLocal(); return p;
   }
   async function createComment(postId,d){
-    if(API&&!String(postId).startsWith('L')){ try{ return await api(`/board/${postId}/comments`,post$(d)); }catch(e){ if(e.status===429){toast('잠시 후 다시 남겨주세요');return null;} if(e.status===400){toast('내용을 확인해 주세요');return null;} } }
+    if(API&&!isLocalId(postId)){ try{ return await api(`/board/${postId}/comments`,post$(d)); }catch(e){ if(e.status===429){toast('잠시 후 다시 남겨주세요');return null;} if(e.status===400){toast('내용을 확인해 주세요');return null;} } }
     let parent=d.parent_id||null;
-    if(parent){ const all=[...((SNAP.comments||{})[postId]||[]),...local.comments]; const q=all.find(c=>String(c.id)===String(parent)); if(q&&q.parent_id) parent=q.parent_id; }
+    if(parent){ const all=[...mockCmts(postId),...((SNAP.comments||{})[postId]||[]),...local.comments]; const q=all.find(c=>String(c.id)===String(parent)); if(q&&q.parent_id) parent=q.parent_id; }
     const c={id:'L'+Date.now(),post_id:postId,parent_id:parent,name:d.name,body:d.body,at:new Date().toISOString(),local:true}; local.comments.push(c); saveLocal(); return c;
   }
 
@@ -102,7 +110,7 @@
     if(ST.view!=='list'||ST.force!==f) return;
     const L=b.querySelector('#bdList');
     L.innerHTML=posts.length?posts.map(p=>`<button class="bd-item" data-pid="${esc(p.id)}">
-        <b>${esc(p.title)}</b><p>${esc(p.body)}</p>
+        <b>${p.mock?'<em class="bd-mk">예시</em>':''}${esc(p.title)}</b><p>${esc(p.body)}</p>
         <span class="bd-meta"><i>${who(p.name,p.force)}</i><i>${ago(p.at)}</i><i class="c">💬 ${p.comments||0}</i></span></button>`).join('')
       :`<div class="bd-empty"><span>💬</span><b>아직 ${f} 이야기가 없어요</b><small>첫 글의 주인공이 되어보세요</small></div>`;
     L.querySelectorAll('[data-pid]').forEach(x=>x.onclick=()=>{haptic();show('post',x.dataset.pid);});
@@ -143,7 +151,7 @@
     const cHtml=(c,reply)=>`<div class="bd-c ${reply?'re':''}" data-cid="${esc(c.id)}"><div class="bd-ch"><b>${who(c.name,'')}</b><i>${ago(c.at)}</i></div>
       <p>${esc(c.body)}</p>${reply?'':`<button class="bd-re" data-re="${esc(c.id)}" data-nm="${who(c.name,'')}">답글</button>`}</div>`;
     b.innerHTML=`<div class="bd-scroll" id="bdScroll">
-        <article class="bd-post"><span class="bd-tag">${ICON[p.force]||''} ${esc(p.force||'')}</span><h3>${esc(p.title)}</h3>
+        <article class="bd-post"><span class="bd-tag">${ICON[p.force]||''} ${esc(p.force||'')}${p.mock?' · 예시 글':''}</span><h3>${esc(p.title)}</h3>
           <div class="bd-meta"><i>${who(p.name,p.force)}</i><i>${ago(p.at)}</i></div><div class="bd-text">${para(p.body)}</div></article>
         <div class="bd-ccount">댓글 ${d.comments.length}</div>
         <div class="bd-cmts">${tops.length?tops.map(c=>cHtml(c,false)+kids(c.id).map(k=>cHtml(k,true)).join('')).join(''):'<div class="bd-empty sm">첫 댓글을 남겨보세요</div>'}</div>
